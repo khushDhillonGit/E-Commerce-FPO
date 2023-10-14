@@ -10,21 +10,17 @@ namespace JattanaNursury.Models
         [Key]
         public Guid Id { get; set; }
         public virtual ICollection<ProductOrder> ProductOrders { get; set; }
+
         [Required]
         public string EmployeeId { get; set; }
 
         public decimal Price { get; set; }
         public decimal Discount { get; set; }
         public decimal BillPrice { get; set; }
-
-        //Customer
-        [Required]
-        public string CustomerName { get; set; }
-        [Required]
-        public string PhoneNumber { get; set; }
-        public string EmailAddress { get; set; }
-        public string FullAddress { get; set; }
-        [DefaultValue("getutcdate()")]
-        public DateTime OrderDate { get; set; }
+        
+        public Guid CustomerId { get; set; }
+        [ForeignKey(nameof(CustomerId))]
+        public Customer Customer { get; set; }
+     
     }
 }
