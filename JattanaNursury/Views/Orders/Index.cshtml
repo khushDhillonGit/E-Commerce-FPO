@@ -1,0 +1,59 @@
+﻿@model JattanaNursury.ViewModels.OrderViewModel;
+
+<div class="row" style="border:2px solid green;">
+    <h2>Order# 001</h2>
+    <div class="col-12">
+        <div class="row" style="border:2px solid red;">
+            <h2> Customer Information</h2>
+            <div class="col-3">
+                <input placeholder="Name" />
+            </div>
+            <div class="col-3">
+                <input placeholder="Phone Number" />
+            </div>
+            <div class="col-3">
+                <input placeholder="Email" />
+            </div>
+            <div class="col-3">
+                <input placeholder="Address" />
+            </div>
+        </div>
+    </div>
+    <div class="col-8" style="border:2px solid blue;">
+        <div class="row">
+            <div class="col-12">
+                <input placeholder="Product"/>
+                <input placeholder="Quantity"/>
+                <button>Add</button>
+            </div>
+            <div class="col-12">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>TotalPrice</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+@*                         @foreach(var product in Model.ProductOrders)
+                        {
+                            <tr>
+                                <td>@product.Product.Name</td>
+                                <td>@product.Quantity</td>
+                                <td>@product.Product.SellingPrice</td>
+                                <td>@product.TotalPrice</td>
+                            </tr>
+                        } *@
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+    </div>
+    <div class="col-4" style="border:2px solid yellow;">
+
+    </div>
+</div>

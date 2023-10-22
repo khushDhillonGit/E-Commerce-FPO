@@ -9,7 +9,7 @@ namespace JattanaNursury.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public Guid Id { get; set; }
-        public virtual ICollection<ProductOrder> ProductOrders { get; set; }
+        public virtual ICollection<ProductOrder>? ProductOrders { get; set; }
 
         [Required]
         public string EmployeeId { get; set; }
@@ -20,7 +20,7 @@ namespace JattanaNursury.Models
         
         public Guid CustomerId { get; set; }
         [ForeignKey(nameof(CustomerId))]
-        public Customer Customer { get; set; }
+        public virtual Customer? Customer { get; set; }
      
     }
 }

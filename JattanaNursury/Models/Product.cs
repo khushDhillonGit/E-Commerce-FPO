@@ -17,6 +17,6 @@ namespace JattanaNursury.Models
         public decimal Quantity { get; set; }
         public Guid CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
-        public virtual Category Category { get; set; }
+        public virtual Category? Category { get; set; }
     }
 }
