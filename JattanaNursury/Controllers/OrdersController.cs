@@ -17,7 +17,6 @@ namespace JattanaNursury.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var a = await GetProductsByName("Urea");
             return View();
         }
 
@@ -38,7 +37,7 @@ namespace JattanaNursury.Controllers
 
             try
             {
-                var pList = await _context.Products.Where(a => a.Name == search).ToListAsync();
+                var pList = await _context.Products.Where(a => a.Name.ToLower().Contains(search.ToLower())).ToListAsync();
                 var mapper = new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<Product, ProductModel>()));
                 products = mapper.Map<List<Product>, List<ProductModel>>(pList);
             }

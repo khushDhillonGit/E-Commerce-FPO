@@ -21,10 +21,12 @@
     </div>
     <div class="col-8" style="border:2px solid blue;">
         <div class="row">
-            <div class="col-12">
-                <input placeholder="Product"/>
-                <input placeholder="Quantity"/>
-                <button>Add</button>
+            <div class="form-group col-12">
+                <select class="form-control" id="productSearch">
+                    <option value=""></option>
+                </select>
+                <input placeholder="Quantity" id="quantityInput"/>
+                <button id="addBtn">Add</button>
             </div>
             <div class="col-12">
                 <table class="table">
@@ -38,22 +40,114 @@
                         </tr>
                     </thead>
                     <tbody>
-@*                         @foreach(var product in Model.ProductOrders)
+                        @*                         @foreach(var product in Model.ProductOrders)
                         {
-                            <tr>
-                                <td>@product.Product.Name</td>
-                                <td>@product.Quantity</td>
-                                <td>@product.Product.SellingPrice</td>
-                                <td>@product.TotalPrice</td>
-                            </tr>
+                        <tr>
+                        <td>@product.Product.Name</td>
+                        <td>@product.Quantity</td>
+                        <td>@product.Product.SellingPrice</td>
+                        <td>@product.TotalPrice</td>
+                        </tr>
                         } *@
                     </tbody>
                 </table>
             </div>
         </div>
-        
-    </div>
-    <div class="col-4" style="border:2px solid yellow;">
 
     </div>
+    <div class="col-4" style="border:2px solid yellow;">
+    </div>
 </div>
+
+@section Scripts{
+    <script>
+
+        let productsInList = [];
+        $(document).ready(function () {
+            $('#productSearch').select2({
+                ajax:
+                {
+                    url: '/Orders/GetProductsByName',
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        return{
+                            results: data.map((item) => ({
+                                    id: item.id,
+                                    text: item.name,
+                                    price: item.unitPrice,
+                                    quantity: item.quantity,
+                                    totalPrice: item.totalPrice
+                            }))
+                        };
+                    },
+                },
+                placeholder: 'Search Product...',
+                minimumInputLength: 1,
+                templateResult: formatResults
+            });
+        });
+
+        function formatResults(data) {
+
+            if (data.loading)
+                return data.text;
+
+            var container = $(
+                `<table width="100%">
+                            <tr>
+                                <td>
+                                    <p>${data.text}</p>
+                                </td>
+                                              <td>
+                                                    <p>${data.price}</p>
+                                        </td>
+                                                     <td>
+                                            <p>${data.quantity}</p>
+                                        </td>
+                            </tr>
+                         </table>`
+            );
+
+            return container;
+        }
+
+        $('#addBtn').on('click', function () {
+
+            var product = $('#productSearch').select2('data')[0];
+
+            var quantity = $('#quantityInput').val();
+
+            productsInList.push({ id: product.id, name: product.text, quantity: quantity, price: product.price });
+            showProductsInList();
+        });
+
+        function showProductsInList()
+        {
+            let totalPrice = 0;
+            let no = 0;
+            var tbody = $('.table tbody');
+            tbody.html("");
+            productsInList.forEach((item) => {
+                totalPrice = item.price * item.quantity;
+                no = no + 1;
+                tbody.append(
+                    $('<tr>').append(
+                        $('<td>').text(no),
+                        $('<td>').text(item.name),
+                        $('<td>').text(item.quantity),
+                        $('<td>').text(item.price),
+                        $('<td>').text(totalPrice)
+                    )
+                );
+            });
+        }
+
+    </script>
+    }
