@@ -1,32 +1,24 @@
 ﻿@model JattanaNursury.ViewModels.OrderViewModel;
 
 <div class="row" style="border:2px solid green;">
-    <h2>Order# 001</h2>
-    <div class="col-12">
-        <div class="row" style="border:2px solid red;">
-            <h2> Customer Information</h2>
-            <div class="col-3">
-                <input placeholder="Name" />
-            </div>
-            <div class="col-3">
-                <input placeholder="Phone Number" />
-            </div>
-            <div class="col-3">
-                <input placeholder="Email" />
-            </div>
-            <div class="col-3">
-                <input placeholder="Address" />
-            </div>
-        </div>
-    </div>
+    <h2 class="text-center">Sale</h2>
+
     <div class="col-8" style="border:2px solid blue;">
         <div class="row">
-            <div class="form-group col-12">
-                <select class="form-control" id="productSearch">
-                    <option value=""></option>
-                </select>
-                <input placeholder="Quantity" id="quantityInput"/>
-                <button id="addBtn">Add</button>
+            <div class="col-12">
+                <div class="row form-group ">
+                    <div class="col-6">
+                        <select class="form-control" id="productSearch">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <input placeholder="Quantity" class="w-100" id="quantityInput" type="number" />
+                    </div>
+                    <div class="col-4">
+                        <button id="addBtn" class="w-100">Add</button>
+                    </div>
+                </div>
             </div>
             <div class="col-12">
                 <table class="table">
@@ -40,22 +32,43 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @*                         @foreach(var product in Model.ProductOrders)
-                        {
-                        <tr>
-                        <td>@product.Product.Name</td>
-                        <td>@product.Quantity</td>
-                        <td>@product.Product.SellingPrice</td>
-                        <td>@product.TotalPrice</td>
-                        </tr>
-                        } *@
                     </tbody>
                 </table>
             </div>
         </div>
-
     </div>
-    <div class="col-4" style="border:2px solid yellow;">
+
+    <div class="col-4">
+        <div class="row" style="border:2px solid red;">
+            <h2> Customer Information</h2>
+            <div class="col-12">
+
+                <div class="d-flex flex-column">
+
+                    <input placeholder="Name" required id="nameInput" />
+
+                    <input placeholder="Phone Number" id="phoneInput" required />
+
+                    <input placeholder="Email" id="emailInput" required />
+
+                    <input placeholder="Address" required id="addInput" />
+
+                </div>
+            </div>
+            <div class="col-12 mt-2 d-flex flex-column">
+                <input placeholder="Employee" id="empInput" />
+                <div>
+                    <label>Price: </label>
+                    <input disabled type="number" value="0.00" id="totalPrice" />
+                </div>
+                <input placeholder="Discount" type="number" value="0" id="discountInput" />
+                <div>
+                    <label>Bill Price: </label>
+                    <input disabled id="billPrice" value="0.00" type="number" />
+                </div>
+                <button type="submit" id="saleBtn">Sale</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -69,6 +82,7 @@
                 {
                     url: '/Orders/GetProductsByName',
                     dataType: 'json',
+                    type:'get',
                     contentType: "application/json; charset=utf-8",
                     delay: 250,
                     data: function (params) {
@@ -79,11 +93,11 @@
                     processResults: function (data) {
                         return{
                             results: data.map((item) => ({
-                                    id: item.id,
-                                    text: item.name,
-                                    price: item.unitPrice,
-                                    quantity: item.quantity,
-                                    totalPrice: item.totalPrice
+                                id: item.id,
+                                text: item.name,
+                                price: item.unitPrice,
+                                quantity: item.quantity,
+                                totalPrice: item.totalPrice
                             }))
                         };
                     },
@@ -101,18 +115,18 @@
 
             var container = $(
                 `<table width="100%">
-                            <tr>
-                                <td>
-                                    <p>${data.text}</p>
-                                </td>
-                                              <td>
-                                                    <p>${data.price}</p>
-                                        </td>
-                                                     <td>
-                                            <p>${data.quantity}</p>
-                                        </td>
-                            </tr>
-                         </table>`
+                                                           <tr>
+                                                                <td>
+                                                                    <p>${data.text}</p>
+                                                                </td>
+                                                                              <td>
+                                                                                    <p>${data.price}</p>
+                                                                        </td>
+                                                                                     <td>
+                                                                            <p>${data.quantity}</p>
+                                                                        </td>
+                                                            </tr>
+                                                         </table>`
             );
 
             return container;
@@ -120,22 +134,25 @@
 
         $('#addBtn').on('click', function () {
 
-            var product = $('#productSearch').select2('data')[0];
+            const product = $('#productSearch').select2('data')[0];
 
-            var quantity = $('#quantityInput').val();
+            const quantity = parseFloat($('#quantityInput').val());
 
-            productsInList.push({ id: product.id, name: product.text, quantity: quantity, price: product.price });
+            const price = parseFloat(product.price);
+
+            productsInList.push({ id: product.id, name: product.text, quantity: quantity, price: price, totalPrice: price * quantity });
+
+            console.log(productsInList);
             showProductsInList();
+            updatePrice();
         });
 
-        function showProductsInList()
-        {
-            let totalPrice = 0;
+        function showProductsInList() {
+
             let no = 0;
-            var tbody = $('.table tbody');
+            let tbody = $('.table tbody');
             tbody.html("");
             productsInList.forEach((item) => {
-                totalPrice = item.price * item.quantity;
                 no = no + 1;
                 tbody.append(
                     $('<tr>').append(
@@ -143,11 +160,49 @@
                         $('<td>').text(item.name),
                         $('<td>').text(item.quantity),
                         $('<td>').text(item.price),
-                        $('<td>').text(totalPrice)
+                        $('<td>').text(item.totalPrice)
                     )
                 );
             });
         }
+
+        function updatePrice() {
+            const price = productsInList.reduce((acc, item) => { return acc + item.totalPrice }, 0);
+            $('#totalPrice').val(price);
+            calculateBillPrice();
+        }
+
+        $('#discountInput').on('change', function () {
+            calculateBillPrice();
+        });
+
+        function calculateBillPrice() {
+            const billPrice = parseFloat($('#totalPrice').val()) * ((100 - parseFloat($('#discountInput').val())) / 100);
+            $('#billPrice').val(billPrice);
+        }
+
+        $('#saleBtn').on('click', function () {
+            let products = [];
+
+            productsInList.forEach((item) => {
+                products.push({ productId: item.id, quantity: item.quantity });
+            });
+
+            const orderModel = { customerName: $("#nameInput").val(), phoneNumber: $("#phoneInput").val(), fullAddress: $("#addInput").val(), emailAddress: $("#emailInput").val(), discount: parseFloat($("#discountInput").val()), employee: $("#empInput").val(), products: products }
+
+            $.ajax({
+                url: '/Orders/SaveSaleOrder',
+                type: 'post',
+                dataType: 'json',
+                data: JSON.stringify(orderModel),
+                contentType: 'application/json; charset=utf-8',
+                success: function (message) {
+                    console.log(message);
+                }
+
+            });
+
+        });
 
     </script>
     }

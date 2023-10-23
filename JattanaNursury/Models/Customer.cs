@@ -16,7 +16,6 @@ namespace JattanaNursury.Models
         public string PhoneNumber { get; set; }
         public string EmailAddress { get; set; }
         public string FullAddress { get; set; }
-        [DefaultValue("getutcdate()")]
-        public DateTime OrderDate { get; set; }
+   
     }
 }
