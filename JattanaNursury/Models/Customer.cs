@@ -6,16 +6,15 @@ namespace JattanaNursury.Models
 {
     public class Customer
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        public string CustomerName { get; set; }
+        public string? CustomerName { get; set; }
         [Required]
-        public string PhoneNumber { get; set; }
-        public string EmailAddress { get; set; }
-        public string FullAddress { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? EmailAddress { get; set; }
+        public string? FullAddress { get; set; }
    
     }
 }

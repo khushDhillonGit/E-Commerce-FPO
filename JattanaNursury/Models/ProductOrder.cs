@@ -5,9 +5,8 @@ namespace JattanaNursury.Models
 {
     public class ProductOrder
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public Guid ProductId { get; set; }
         [ForeignKey(nameof(ProductId))]

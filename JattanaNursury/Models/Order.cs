@@ -11,13 +11,12 @@ namespace JattanaNursury.Models
             ProductOrders = new List<ProductOrder>();
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public virtual ICollection<ProductOrder>? ProductOrders { get; set; }
 
         [Required]
-        public string EmployeeId { get; set; } = string.Empty;
+        public string? EmployeeId { get; set; }
 
         public decimal Price { get ; set ; }
         public decimal Discount { get; set; }

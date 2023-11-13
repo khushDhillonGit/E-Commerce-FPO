@@ -5,15 +5,14 @@ namespace JattanaNursury.Models
 {
     public class Product
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal SellingPrice { get; set; }
-        public string SKU { get; set; }
+        public string? SKU { get; set; }
         public decimal Quantity { get; set; }
         public Guid CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
