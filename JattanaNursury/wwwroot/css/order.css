@@ -1,0 +1,18 @@
+﻿.select2-selection, .select2-selection__rendered {
+    height:100% !important; 
+}
+
+.select2-selection__rendered {
+    padding:1% !important;
+}
+.select2-selection__arrow {
+    height:95% !important;
+}
+
+.select2-container--classic .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: #79bf9f !important;
+}
+
+.c-pointer {
+    cursor:pointer;
+}
