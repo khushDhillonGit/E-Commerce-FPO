@@ -53,37 +53,41 @@ namespace JattanaNursury.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveSaleOrderAsync([FromBody] OrderViewModel saleOrder)
         {
-            if (saleOrder == null) return View(nameof(Index));
 
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<OrderViewModel, Customer>()));
-            var customer = mapper.Map<OrderViewModel, Customer>(saleOrder);
-            _context.Customers.Add(customer);
-
-            var order = new Order { CustomerId = customer.Id, OrderDate = DateTime.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee };
-
-            decimal totalPrice = 0;
-            foreach (var item in saleOrder.Products)
+            if (ModelState.IsValid)
             {
-                var product = _context.Products.FirstOrDefault(p => p.Id == item.ProductId);
+                if (saleOrder == null) return View(nameof(Index));
 
+                var mapper = new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<OrderViewModel, Customer>()));
+                var customer = mapper.Map<OrderViewModel, Customer>(saleOrder);
+                customer.CreatedDate = DateTime.UtcNow;
+                _context.Customers.Add(customer);
 
-                if (product == null) continue;
-                if (product.Quantity < item.Quantity)
+                var order = new Order { CustomerId = customer.Id, OrderDate = DateTime.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee };
+
+                decimal totalPrice = 0;
+                foreach (var item in saleOrder.Products)
                 {
-                    return RedirectToAction(nameof(Index));
+                    var product = _context.Products.FirstOrDefault(p => p.Id == item.ProductId);
+
+                    if (product == null || item.Quantity < 1 || product.Quantity < item.Quantity)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                    var productOrder = new ProductOrder { ProductId = product.Id, Quantity = item.Quantity, TotalPrice = product.UnitPrice * item.Quantity };
+                    totalPrice += productOrder.TotalPrice;
+                    order.ProductOrders?.Add(productOrder);
+                    product.Quantity -= item.Quantity;
                 }
-                var productOrder = new ProductOrder { ProductId = product.Id, Quantity = item.Quantity, TotalPrice = product.UnitPrice * item.Quantity };
-                totalPrice += productOrder.TotalPrice;
-                order.ProductOrders?.Add(productOrder);
-                product.Quantity -= item.Quantity;
+
+                order.Price = totalPrice;
+                
+                order.BillPrice = order.Price * ((100 - saleOrder.Discount) / 100);
+
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
             }
-
-            order.Price = totalPrice;
-            order.BillPrice = order.Price * ((100 - saleOrder.Discount) / 100);
-
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-            return View(nameof(Index));
+            return RedirectToAction(nameof(Index));
         }
     }
 }

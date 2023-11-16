@@ -7,16 +7,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JattanaNursury.Data;
 using JattanaNursury.Models;
+using Microsoft.AspNetCore.Connections;
+using JattanaNursury.Helpers;
 
 namespace JattanaNursury.Controllers
 {
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductsController(ApplicationDbContext context)
+        public ProductsController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Products
@@ -55,13 +59,25 @@ namespace JattanaNursury.Controllers
         // POST: Products/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost]  
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,UnitPrice,SellingPrice,SKU,Quantity,CategoryId")] Product product)
-        {
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,UnitPrice,SellingPrice,SKU,Quantity,CategoryId")] Product product, IFormFile? Image)
+        {           
             if (ModelState.IsValid)
-            {
+            {       
                 product.Id = Guid.NewGuid();
+                product.CreatedDate = DateTime.UtcNow;
+                if (Image != null) 
+                {   
+                    try
+                    {
+                        product.ImageUrl = await ImageUtility.SaveImageToServerAsync(_webHostEnvironment,Image, Path.Combine("images", "product"));
+                    }
+                    catch (Exception ex) 
+                    {
+                        //TODO:Handle Exception
+                    }
+                }   
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -69,6 +85,8 @@ namespace JattanaNursury.Controllers
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
             return View(product);
         }
+
+    
 
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
@@ -83,6 +101,7 @@ namespace JattanaNursury.Controllers
             {
                 return NotFound();
             }
+
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
             return View(product);
         }
@@ -92,7 +111,7 @@ namespace JattanaNursury.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Description,UnitPrice,SellingPrice,SKU,Quantity,CategoryId")] Product product)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Description,UnitPrice,SellingPrice,SKU,Quantity,CategoryId,ImageUrl")] Product product, IFormFile? Image)
         {
             if (id != product.Id)
             {
@@ -103,6 +122,11 @@ namespace JattanaNursury.Controllers
             {
                 try
                 {
+                    if (Image != null) 
+                    {
+                        product.ImageUrl = await ImageUtility.SaveImageToServerAsync(_webHostEnvironment, Image, Path.Combine("images", "product"));
+                    }
+
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }

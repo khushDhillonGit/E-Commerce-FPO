@@ -23,7 +23,6 @@ namespace JattanaNursury.Models
 
         public decimal BillPrice { get ; set ; }
 
-        [DefaultValue("getutcdate()")]
         public DateTime OrderDate { get; set; }
 
         public Guid CustomerId { get; set; }

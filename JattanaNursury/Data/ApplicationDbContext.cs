@@ -13,7 +13,6 @@ namespace JattanaNursury.Data
         public virtual DbSet<Product> Products { get; set; }  
         public virtual DbSet<ProductOrder> ProductOrders { get; set; }  
 
-
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
