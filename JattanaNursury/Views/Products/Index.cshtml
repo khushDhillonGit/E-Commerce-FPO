@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<JattanaNursury.Models.Product>
-
 @{
     ViewData["Title"] = "Index";
 }
@@ -23,7 +22,7 @@
                                 <span>@Html.DisplayFor(modelItem => item.Description)</span>
                             </li>
                             <li class="home-attri">
-                                <i class="fa fa-bars" ></i>
+                                <i class="fa fa-bars"></i>
                                 <span><strong>@Html.DisplayFor(modelItem => item.Category.Name)</strong></span>
                             </li>
                             <li class="home-attri">

@@ -16,11 +16,28 @@ namespace JattanaNursury.Controllers
         {
             _context = context;
         }
-
-        public IActionResult Index()
+        public IActionResult Index() 
         {
             return View();
         }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+
+        public List<OrderIndexViewModel> GetOrders() 
+        {
+            var orders = _context.Orders;
+            List<OrderIndexViewModel> result = new();
+            foreach (var order in orders) 
+            {
+                result.Add(new OrderIndexViewModel { OrderId = order.Id, OrderDate = order.OrderDate, BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount });
+            }
+            return result;
+        } 
+
 
         public class ProductModel
         {
@@ -56,7 +73,7 @@ namespace JattanaNursury.Controllers
 
             if (ModelState.IsValid)
             {
-                if (saleOrder == null) return View(nameof(Index));
+                if (saleOrder == null) return View(nameof(Create));
 
                 var mapper = new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<OrderViewModel, Customer>()));
                 var customer = mapper.Map<OrderViewModel, Customer>(saleOrder);
@@ -72,7 +89,7 @@ namespace JattanaNursury.Controllers
 
                     if (product == null || item.Quantity < 1 || product.Quantity < item.Quantity)
                     {
-                        return RedirectToAction(nameof(Index));
+                        return RedirectToAction(nameof(Create));
                     }
                     var productOrder = new ProductOrder { ProductId = product.Id, Quantity = item.Quantity, TotalPrice = product.UnitPrice * item.Quantity };
                     totalPrice += productOrder.TotalPrice;
@@ -87,7 +104,7 @@ namespace JattanaNursury.Controllers
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Create));
         }
     }
 }
