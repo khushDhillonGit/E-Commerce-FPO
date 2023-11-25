@@ -1,33 +1,69 @@
-﻿
-<table id="table"
-       data-toggle="table"
-       data-ajax="ajaxRequest"
-       data-search="true"
-data-side-pagination="server"
-data-pagination="true"
-data-sort="true">
-<thead>
-    <tr>
-        <th data-field="orderDate">Date</th>
-        <th data-field="employee">Employee</th>
-        <th data-field="price">Price</th>
-        <th data-field="discount">Discount</th>
-        <th data-field="billPrice">Bill Price</th>
-    </tr>
-</thead>
-</table>
+﻿@model IEnumerable<JattanaNursury.ViewModels.OrderIndexViewModel>
+
+<table id="ordersTable" class="table table-striped"></table>
 
 @section Scripts{
     <script>
         $(document).ready(function () {
-            
+           
         });
-        function ajaxRequest(params) 
+        var obj = @Json.Serialize(Model);
+
+        console.log(obj);
+        $('#ordersTable').bootstrapTable({
+            columns: [{
+                field:"orderNumber",
+                title:"Order#",
+                sortable:true,
+                align:'right'
+            }, {
+                field: "employee",
+                title: "Employee",
+                sortable: true,
+                align: 'right'
+            }, {
+                field: "price",
+                title: "Price",
+                formatter: "priceFormatter",
+                sortable: true,
+                align: 'right'
+            }, {
+                field: "discount",
+                title: "Discount",
+                sortable: true,
+                formatter: "percentageFormatter",
+                align: 'right'
+            }, {
+                field: "billPrice",
+                title: "Bill Price",
+                formatter: "priceFormatter",
+                sortable: true,
+                align: 'right'
+            }, {
+                field: "orderDate",
+                title: "Order date",
+                sortable: true,
+                formatter: "dateFormatter",
+                align: 'right'
+            },],
+            data:obj,
+            search:true,
+            pagination:true,
+            sortName:'orderDate',
+            sortOrder:'desc'
+        
+        });
+
+        function dateFormatter(data, row, index) 
         {
-            var url = 'Orders/GetOrders'
-            $.get(url).then(function (res) {
-                params.success(res);
-            });
+            const date = new Date(Date.parse(data));
+            return date.toDateString();
+        }
+        function percentageFormatter(data, row, index) {
+            return data + '%';
+        }
+        function priceFormatter(data, row, index) {
+            return '₹' + data;
         }
     </script>
 

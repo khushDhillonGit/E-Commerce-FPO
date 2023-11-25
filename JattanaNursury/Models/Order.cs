@@ -14,7 +14,8 @@ namespace JattanaNursury.Models
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
         public virtual ICollection<ProductOrder>? ProductOrders { get; set; }
-
+        [Required]
+        public string OrderNumber { get; set; }
         [Required]
         public string? EmployeeId { get; set; }
 

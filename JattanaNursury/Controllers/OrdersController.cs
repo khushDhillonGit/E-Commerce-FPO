@@ -16,28 +16,22 @@ namespace JattanaNursury.Controllers
         {
             _context = context;
         }
+
         public IActionResult Index() 
         {
-            return View();
+            var orders = _context.Orders;
+            List<OrderIndexViewModel> result = new();
+            foreach (var order in orders)
+            {
+                result.Add(new OrderIndexViewModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount });
+            }
+            return View(result);
         }
 
         public IActionResult Create()
         {
             return View();
         }
-
-
-        public List<OrderIndexViewModel> GetOrders() 
-        {
-            var orders = _context.Orders;
-            List<OrderIndexViewModel> result = new();
-            foreach (var order in orders) 
-            {
-                result.Add(new OrderIndexViewModel { OrderId = order.Id, OrderDate = order.OrderDate, BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount });
-            }
-            return result;
-        } 
-
 
         public class ProductModel
         {
@@ -49,11 +43,10 @@ namespace JattanaNursury.Controllers
         }
 
         [HttpGet]
-        public async Task<List<ProductModel>> GetProductsByNameAsync(string search)
+        public async Task<List<ProductModel>> GetProductsByNameAsync(string search = "")
         {
             List<ProductModel> products = new();
-            if (string.IsNullOrEmpty(search)) return products;
-
+            
             try
             {
                 var pList = await _context.Products.Where(a => a.Name.ToLower().Contains(search.ToLower())).ToListAsync();
@@ -100,11 +93,12 @@ namespace JattanaNursury.Controllers
                 order.Price = totalPrice;
                 
                 order.BillPrice = order.Price * ((100 - saleOrder.Discount) / 100);
-
+                var totalOrders = _context.Orders.Count();
+                order.OrderNumber = (totalOrders + 1001).ToString();
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction(nameof(Create));
+            return RedirectToAction(nameof(Index));
         }
     }
 }

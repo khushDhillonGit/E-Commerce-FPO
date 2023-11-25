@@ -99,6 +99,7 @@
                 theme: "classic",
                 ajax:
                 {
+                    delay:200,
                     url: '/Orders/GetProductsByName',
                     dataType: 'json',
                     type: 'get',
@@ -122,7 +123,7 @@
                     },
                 },
                 placeholder: 'Search Product...',
-                minimumInputLength: 1,
+                minimumInputLength: 0,
                 templateResult: formatResults
             });
         });

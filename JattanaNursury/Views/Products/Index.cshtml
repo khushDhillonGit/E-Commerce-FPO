@@ -23,7 +23,7 @@
                             </li>
                             <li class="home-attri">
                                 <i class="fa fa-bars"></i>
-                                <span><strong>@Html.DisplayFor(modelItem => item.Category.Name)</strong></span>
+                                <span>@Html.DisplayFor(modelItem => item.Category.Name)</span>
                             </li>
                             <li class="home-attri">
                                 <i class="fa fa-warehouse"></i>
@@ -38,10 +38,10 @@
                                 <span>Selling Price: @Html.DisplayFor(modelItem => item.SellingPrice)</span>
                             </li>
                         </ul>
-                        <div class="row justify-content-evenly">
+                        <div class="row justify-content-around">
                             
-                                <a class="col-3 link-card btn-success" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                                <a class="col-3 link-card btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                <a class="col-3 btn link-card btn-success" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                <a class="col-3 btn link-card btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                         </div>
                     </div>
                 </div>
@@ -49,75 +49,3 @@
         </div>
     </div>
 </div>
-@* <h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UnitPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SellingPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SKU)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Quantity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageUrl)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UnitPrice)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SellingPrice)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SKU)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Quantity)
-                </td>
-                <td>
-                   <img src="~/@Html.DisplayFor(modelItem=>item.ImageUrl)" alt="Product Image">
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ImageUrl)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table> *@
