@@ -31,7 +31,7 @@
                 field: "discount",
                 title: "Discount",
                 sortable: true,
-                formatter: "percentageFormatter",
+                formatter: "priceFormatter",
                 align: 'right'
             }, {
                 field: "billPrice",
@@ -58,9 +58,6 @@
         {
             const date = new Date(Date.parse(data));
             return date.toDateString();
-        }
-        function percentageFormatter(data, row, index) {
-            return data + '%';
         }
         function priceFormatter(data, row, index) {
             return '₹' + data;

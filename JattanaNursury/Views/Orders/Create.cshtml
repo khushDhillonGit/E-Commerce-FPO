@@ -71,15 +71,15 @@
                             <input placeholder="Employee" class="form-control" id="empInput" />
                         </div>
                         <div class="input-group">
-                            <span class="input-group-text" id="inputGroup-sizing-default">$ Price</span>
+                            <span class="input-group-text" id="inputGroup-sizing-default">₹ Price</span>
                             <input disabled type="number" class="form-control" value="0.00" id="totalPrice" />
                         </div>
                         <div class="input-group">
-                            <span class="input-group-text" id="inputGroup-sizing-default">Discount %</span>
+                            <span class="input-group-text" id="inputGroup-sizing-default">₹ Discount</span>
                             <input placeholder="Discount" min="0" type="number" value="0" class="form-control" id="discountInput" />
                         </div>
                         <div class="input-group">
-                            <span class="input-group-text" id="inputGroup-sizing-default">$ Bill</span>
+                            <span class="input-group-text" id="inputGroup-sizing-default">₹ Bill</span>
                             <input disabled id="billPrice" class="form-control" value="0.00" type="number" />
                         </div>
                         <button type="submit" id="saleBtn" class="btn btn-danger">Sale</button>
@@ -150,7 +150,7 @@
                          <p>${data.text}</p>
                      </td>
                                    <td>
-                                         <p>${data.price}</p>
+                                                         <p>₹${data.price}</p>
                              </td>
                                           <td>
                                  <p>${data.quantity}</p>
@@ -216,8 +216,8 @@
                         $('<td>').text(no),
                         $('<td>').text(item.name),
                         $('<td>').text(item.quantity),
-                        $('<td>').text(item.price),
-                        $('<td>').text(item.totalPrice),
+                        $('<td>').text('₹' + item.price),
+                        $('<td>').text('₹' + item.totalPrice),
                         $('<td>').append($('<i>').addClass('remove-btn c-pointer fa fa-trash').data("uId", item.pId)),
                     )
                 );
@@ -248,12 +248,12 @@
             calculateBillPrice();
         }
 
-        $('#discountInput').on('change', function () {
+        $('#discountInput').on('keyup', function () {
             calculateBillPrice();
         });
 
         function calculateBillPrice() {
-            const billPrice = parseFloat($('#totalPrice').val()) * ((100 - parseFloat($('#discountInput').val())) / 100);
+            const billPrice = parseFloat($('#totalPrice').val()) - parseFloat($('#discountInput').val());
             $('#billPrice').val(billPrice);
         }
 
