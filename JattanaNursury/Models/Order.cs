@@ -24,6 +24,8 @@ namespace JattanaNursury.Models
 
         public decimal BillPrice { get ; set ; }
 
+        public bool IsPaid { get; set; } = true;
+
         public DateTime OrderDate { get; set; }
 
         public Guid CustomerId { get; set; }

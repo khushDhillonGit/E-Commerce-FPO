@@ -5,6 +5,7 @@ using JattanaNursury.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace JattanaNursury.Controllers
 {
@@ -46,7 +47,6 @@ namespace JattanaNursury.Controllers
         public async Task<List<ProductModel>> GetProductsByNameAsync(string search = "")
         {
             List<ProductModel> products = new();
-            
             try
             {
                 var pList = await _context.Products.Where(a => a.Name.ToLower().Contains(search.ToLower())).ToListAsync();
@@ -68,44 +68,119 @@ namespace JattanaNursury.Controllers
             {
                 if (saleOrder == null) return View(nameof(Create));
 
-                var mapper = new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<OrderViewModel, Customer>()));
-                var customer = mapper.Map<OrderViewModel, Customer>(saleOrder);
-                customer.CreatedDate = DateTime.UtcNow;
-                _context.Customers.Add(customer);
+                var customerId = AddCustomer(saleOrder);
 
-                var order = new Order { CustomerId = customer.Id, OrderDate = DateTime.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee };
+                var order = new Order { CustomerId = customerId, OrderDate = DateTime.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee };
 
-                decimal totalPrice = 0;
-                foreach (var item in saleOrder.Products)
+                try
                 {
-                    var product = _context.Products.FirstOrDefault(p => p.Id == item.ProductId);
-
-                    if (product == null || item.Quantity < 1 || product.Quantity < item.Quantity)
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
-                    var productOrder = new ProductOrder { ProductId = product.Id, Quantity = item.Quantity, TotalPrice = product.UnitPrice * item.Quantity };
-                    totalPrice += productOrder.TotalPrice;
-                    order.ProductOrders?.Add(productOrder);
-                    product.Quantity -= item.Quantity;
+                    order.Price = await AddProductOrdersReturnTotalPriceAsync(order, saleOrder);
+                }
+                catch (Exception ex)
+                {
+                    return View(nameof(Create));
                 }
 
-                order.Price = totalPrice;
-
-                var discountPercetage = (saleOrder.Discount / totalPrice) * 100;
-
-                if (discountPercetage > 20) 
+                try
                 {
-                    return RedirectToAction(nameof(Index));
+                    SetDiscountAndPrice(order, saleOrder);
+                }
+                catch (Exception ex)
+                {
+                    return View(nameof(Create));
                 }
 
-                order.BillPrice = order.Price  - saleOrder.Discount;
-                var totalOrders = _context.Orders.Count();
-                order.OrderNumber = (totalOrders + 1001).ToString();
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
         }
+
+        //for security reasons we need another function to process saleorderpaymentremaining
+        [HttpPost]
+        public async Task<IActionResult> SaleOrderPaymentRemaining([FromBody] OrderViewModel saleOrder) 
+        {
+            if (ModelState.IsValid)
+            {
+                if (saleOrder == null) return View(nameof(Create));
+
+                if (string.IsNullOrEmpty(saleOrder.PhoneNumber) || string.IsNullOrEmpty(saleOrder.FullAddress)) 
+                {
+                    return View(nameof(Create));
+                }
+
+                var customerId = AddCustomer(saleOrder);
+
+                var order = new Order { CustomerId = customerId, OrderDate = DateTime.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee };
+
+                try 
+                { 
+                    order.Price = await AddProductOrdersReturnTotalPriceAsync(order, saleOrder);
+                }
+                catch (Exception ex) 
+                {
+                    return View(nameof(Create));
+                }
+
+                try
+                {
+                    SetDiscountAndPrice(order, saleOrder);
+                }
+                catch (Exception ex)
+                {
+                    return View(nameof(Create));
+                }
+
+                //Order is not paid
+                order.IsPaid = false;
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        private Guid AddCustomer(OrderViewModel saleOrder) 
+        {
+            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<OrderViewModel, Customer>()));
+            var customer = mapper.Map<OrderViewModel, Customer>(saleOrder);
+            customer.CreatedDate = DateTime.UtcNow;
+            _context.Customers.Add(customer);
+            return customer.Id;
+        }
+
+        private async Task<decimal> AddProductOrdersReturnTotalPriceAsync(Order order,OrderViewModel saleOrder) 
+        {
+            decimal result = 0;
+            foreach (var item in saleOrder.Products)
+            {
+                var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == item.ProductId);
+
+                if (product == null || item.Quantity < 1 || product.Quantity < item.Quantity)
+                {
+                    throw new InvalidDataException("Quantity is invalid");
+                }
+                var productOrder = new ProductOrder { ProductId = product.Id, Quantity = item.Quantity, TotalPrice = product.UnitPrice * item.Quantity };
+                result += productOrder.TotalPrice;
+                order.ProductOrders?.Add(productOrder);
+                product.Quantity -= item.Quantity;
+            }
+            return result;
+        }
+
+        private void SetDiscountAndPrice(Order order, OrderViewModel saleOrder) 
+        {
+            var discountPercetage = (saleOrder.Discount / order.Price) * 100;
+
+            if (discountPercetage > 20)
+            {
+                throw new Exception("Invalid Discount");
+            }
+
+            order.BillPrice = order.Price - saleOrder.Discount;
+            var totalOrders = _context.Orders.Count();
+            order.OrderNumber = (totalOrders + 1001).ToString();
+        }
+
+
     }
 }
