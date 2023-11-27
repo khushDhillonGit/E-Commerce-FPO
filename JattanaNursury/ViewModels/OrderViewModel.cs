@@ -14,7 +14,8 @@ namespace JattanaNursury.ViewModels
         [RegularExpression(@"^(?:\s*|[\w._%+-]+@[\w.-]+\.[a-zA-Z]{2,})$", ErrorMessage = "Invalid email format")]
         public string EmailAddress { get; set; } = string.Empty;
 
-        [Range(1,50,ErrorMessage = "Discount must be between 1 - 50")]
+        //Client wants discount to be value not percentage
+        [Range(1, 500, ErrorMessage = "Discount must be between 1 - 500")]
         public decimal Discount { get; set; }
         public string? Employee { get; set; }
         public List<ProductOrderDetail> Products { get; set; } = new List<ProductOrderDetail>();

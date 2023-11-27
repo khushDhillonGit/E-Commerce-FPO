@@ -37,7 +37,7 @@ namespace JattanaNursury.Controllers
         {
             public Guid Id { get; set; }
             public string? Name { get; set; }
-            public decimal UnitPrice { get; set; }
+            public decimal SellingPrice { get; set; }
             public decimal Quantity { get; set; }
             public decimal TotalPrice { get; set; }
         }
@@ -82,7 +82,7 @@ namespace JattanaNursury.Controllers
 
                     if (product == null || item.Quantity < 1 || product.Quantity < item.Quantity)
                     {
-                        return RedirectToAction(nameof(Create));
+                        return RedirectToAction(nameof(Index));
                     }
                     var productOrder = new ProductOrder { ProductId = product.Id, Quantity = item.Quantity, TotalPrice = product.UnitPrice * item.Quantity };
                     totalPrice += productOrder.TotalPrice;
@@ -91,8 +91,15 @@ namespace JattanaNursury.Controllers
                 }
 
                 order.Price = totalPrice;
-                
-                order.BillPrice = order.Price * ((100 - saleOrder.Discount) / 100);
+
+                var discountPercetage = (saleOrder.Discount / totalPrice) * 100;
+
+                if (discountPercetage > 20) 
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+
+                order.BillPrice = order.Price  - saleOrder.Discount;
                 var totalOrders = _context.Orders.Count();
                 order.OrderNumber = (totalOrders + 1001).ToString();
                 _context.Orders.Add(order);

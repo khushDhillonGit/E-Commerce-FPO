@@ -4,9 +4,15 @@
 }
 
 <div class="row">
-    <div class="col-12"></div>
-    <div class="col-12"></div>
     <div class="col-12">
+        <h2 class="text-center">
+            All Products
+        </h2>
+    </div>
+    <div class="col-12 d-flex justify-content-end">
+        <button class="btn btn-success">Add New</button>
+    </div>
+    <div class="col-12 mt-4">
         <div id="home-cards" class="row">
             @foreach (var item in Model)
             {
@@ -39,9 +45,9 @@
                             </li>
                         </ul>
                         <div class="row justify-content-around">
-                            
-                                <a class="col-3 btn link-card btn-success" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                                <a class="col-3 btn link-card btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+
+                            <a class="col-3 btn link-card btn-success" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <a class="col-3 btn link-card btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                         </div>
                     </div>
                 </div>
