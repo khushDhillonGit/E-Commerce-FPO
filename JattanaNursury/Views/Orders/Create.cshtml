@@ -2,7 +2,8 @@
 
 <div>
     <div class="row">
-        <h2 class="text-center">Sale</h2>
+        <h2 class="text-center" id="show-error-below">Sale</h2>
+  
         <div class="col-8">
             <div class="row">
                 <div class="col-12 mt-5">
@@ -51,16 +52,16 @@
                     <h3 class="text-center mb-3"> Customer Information</h3>
                     <div class="d-flex flex-column" style="gap:15px;">
                         <div class="input-group">
-                            <input placeholder="Name" required class="form-control" id="nameInput" />
+                            <input placeholder="Name" value="Khush" required class="form-control" id="nameInput" />
                         </div>
                         <div class="input-group">
-                            <input placeholder="Phone Number" class="form-control" id="phoneInput" required />
+                            <input placeholder="Phone Number" value="9876543210" class="form-control" id="phoneInput" required />
                         </div>
                         <div class="input-group">
                             <input placeholder="Email" class="form-control" id="emailInput" required />
                         </div>
                         <div class="input-group">
-                            <input placeholder="Address" class="form-control" required id="addInput" />
+                            <input placeholder="Address" value="Chuhrian" class="form-control" required id="addInput" />
                         </div>
                     </div>
                 </div>
@@ -68,7 +69,7 @@
                     <h3 class="text-center mb-3">Billing</h3>
                     <div class="d-flex flex-column" style="gap:15px;">
                         <div class="input-group">
-                            <input placeholder="Employee" class="form-control" id="empInput" />
+                            <input placeholder="Employee" value="Demo" class="form-control" id="empInput" />
                         </div>
                         <div class="input-group">
                             <span class="input-group-text" id="inputGroup-sizing-default">₹ Price</span>
@@ -76,11 +77,15 @@
                         </div>
                         <div class="input-group">
                             <span class="input-group-text" id="inputGroup-sizing-default">₹ Discount</span>
-                            <input placeholder="Discount" min="0" type="number" value="0" class="form-control" id="discountInput" />
+                            <input placeholder="Discount" min="0" type="number" value="20" class="form-control" id="discountInput" />
                         </div>
                         <div class="input-group">
                             <span class="input-group-text" id="inputGroup-sizing-default">₹ Bill</span>
                             <input disabled id="billPrice" class="form-control" value="0.00" type="number" />
+                        </div>    
+                        <div class="input-group">
+                            <span class="input-group-text" id="inputGroup-sizing-default">₹ Customer Paid</span>
+                            <input id="customerPrice" class="form-control" value="100" type="number" />
                         </div>
                         <button type="button" data-toggle="modal" data-target="payment-modal" id="saleBtn" class="btn btn-danger">Sale</button>
                     </div>
@@ -125,7 +130,6 @@
                     dataType: 'json',
                     type: 'get',
                     contentType: "application/json; charset=utf-8",
-                    delay: 250,
                     data: function (params) {
                         return {
                             search: params.term
@@ -278,17 +282,12 @@
             $('#billPrice').val(billPrice);
         }
 
-        $('#payment-done').on('click', function () {
-            const orderModel = PrepareOrderModelToSubmit(true);
+        $('#saleBtn').on('click', function () {
+            const orderModel = PrepareOrderModelToSubmit();
             PostOrder(orderModel);
         });
 
-        $('#no-payment').on('click', function () {
-            const orderModel = PrepareOrderModelToSubmit(false);
-            PostOrder(orderModel);
-        });
-
-        function PrepareOrderModelToSubmit(isPaid) 
+        function PrepareOrderModelToSubmit() 
         {
             let products = [];
 
@@ -296,7 +295,7 @@
                 products.push({ productId: item.id, quantity: item.quantity });
             });
 
-            let orderModel = { customerName: $("#nameInput").val(), phoneNumber: $("#phoneInput").val(), fullAddress: $("#addInput").val(), emailAddress: $("#emailInput").val(), discount: parseFloat($("#discountInput").val()), employee: $("#empInput").val(), products: products, isPaid: isPaid };
+            let orderModel = { customerName: $("#nameInput").val(), phoneNumber: $("#phoneInput").val(), fullAddress: $("#addInput").val(), emailAddress: $("#emailInput").val(), discount: parseFloat($("#discountInput").val()), employee: $("#empInput").val(), products: products, paidByCustomer: $('#customerPrice').val() };
 
             return orderModel;
         }
@@ -305,14 +304,40 @@
         {
             $.ajax({
                 url: '/Orders/SaveSaleOrder',
-                type: 'post',
                 dataType: 'json',
+                type: 'post',
+                contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(orderModel),
-                contentType: 'application/json; charset=utf-8',
-                success: function (message) {
-                    console.log(message);
+                success: function (result) {
+                    if (result.success) {
+                        window.location.href = result.redirectUrl;
+                    } else 
+                    {
+                        showMessageToUser(result.responseText);
+                    }
+                },
+                error: function (result) 
+                {
+                    showMessageToUser(result.responseText);
                 }
             });
+        }
+
+        function showMessageToUser(errorMessage) 
+        {
+            if (typeof (errorMessage) === 'string') 
+            {
+                const div = $('<div>').addClass('mt-2 alert alert-warning alert-dismissible fade show').attr('role', 'alert').text(errorMessage);
+                var btn = $('<button>', {
+                    type: 'button',
+                    class: 'btn-close',
+                    'data-bs-dismiss': 'alert',
+                    'aria-label': 'Close'
+                });
+
+                div.append(btn);
+                $('#show-error-below').after(div);
+            }
         }
 
     </script>

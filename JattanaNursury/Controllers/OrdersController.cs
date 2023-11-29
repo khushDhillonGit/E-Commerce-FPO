@@ -44,7 +44,7 @@ namespace JattanaNursury.Controllers
         }
 
         [HttpGet]
-        public async Task<List<ProductModel>> GetProductsByNameAsync(string search = "")
+        public async Task<JsonResult> GetProductsByNameAsync(string search = "")
         {
             List<ProductModel> products = new();
             try
@@ -57,48 +57,45 @@ namespace JattanaNursury.Controllers
             {
                 Console.WriteLine(ex.Message);
             }
-            return products;
+            return Json(products);
         }
 
         [HttpPost]
         public async Task<IActionResult> SaveSaleOrderAsync([FromBody] OrderViewModel saleOrder)
         {
-
-            if (ModelState.IsValid)
+            try
             {
-                if (saleOrder == null) return View(nameof(Create));
-
-                if (!saleOrder.IsPaid && (string.IsNullOrEmpty(saleOrder.PhoneNumber) || string.IsNullOrEmpty(saleOrder.FullAddress)))
+                if (ModelState.IsValid)
                 {
-                    return View(nameof(Create));
-                }
+                    var customerId = AddCustomer(saleOrder);
 
-                var customerId = AddCustomer(saleOrder);
+                    var order = new Order { CustomerId = customerId, OrderDate = DateTime.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee, PaidByCustomer = saleOrder.PaidByCustomer };
 
-                var order = new Order { CustomerId = customerId, OrderDate = DateTime.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee, IsPaid = saleOrder.IsPaid };
+                    try
+                    {
+                        order.Price = await AddProductOrdersReturnTotalPriceAsync(order, saleOrder);
+                        SetDiscountAndPrice(order, saleOrder);
+                    }
+                    catch (Exception ex)
+                    {
+                        return BadRequest(error: ex.Message);
+                    }
 
-                try
-                {
-                    order.Price = await AddProductOrdersReturnTotalPriceAsync(order, saleOrder);
-                }
-                catch (Exception ex)
-                {
-                    return View(nameof(Create));
-                }
+                    if (order.BillPrice == saleOrder.PaidByCustomer)
+                    {
+                        order.FullyPaid = true;
+                    }
 
-                try
-                {
-                    SetDiscountAndPrice(order, saleOrder);
+                    _context.Orders.Add(order);
+                    await _context.SaveChangesAsync();
+                    return Json(new { success = true, redirectUrl = $"/{typeof(OrdersController).Name.Replace("Controller","")}/{nameof(Index)}", responseText = "Order Saved Successfully" });
                 }
-                catch (Exception ex)
-                {
-                    return View(nameof(Create));
-                }
-
-                _context.Orders.Add(order);
-                await _context.SaveChangesAsync();
+                return BadRequest(error: "Please fill correct information");
             }
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex) 
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
 
