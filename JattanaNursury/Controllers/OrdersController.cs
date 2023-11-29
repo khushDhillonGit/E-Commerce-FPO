@@ -68,9 +68,14 @@ namespace JattanaNursury.Controllers
             {
                 if (saleOrder == null) return View(nameof(Create));
 
+                if (!saleOrder.IsPaid && (string.IsNullOrEmpty(saleOrder.PhoneNumber) || string.IsNullOrEmpty(saleOrder.FullAddress)))
+                {
+                    return View(nameof(Create));
+                }
+
                 var customerId = AddCustomer(saleOrder);
 
-                var order = new Order { CustomerId = customerId, OrderDate = DateTime.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee };
+                var order = new Order { CustomerId = customerId, OrderDate = DateTime.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee, IsPaid = saleOrder.IsPaid };
 
                 try
                 {
@@ -96,48 +101,6 @@ namespace JattanaNursury.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        //for security reasons we need another function to process saleorderpaymentremaining
-        [HttpPost]
-        public async Task<IActionResult> SaleOrderPaymentRemaining([FromBody] OrderViewModel saleOrder) 
-        {
-            if (ModelState.IsValid)
-            {
-                if (saleOrder == null) return View(nameof(Create));
-
-                if (string.IsNullOrEmpty(saleOrder.PhoneNumber) || string.IsNullOrEmpty(saleOrder.FullAddress)) 
-                {
-                    return View(nameof(Create));
-                }
-
-                var customerId = AddCustomer(saleOrder);
-
-                var order = new Order { CustomerId = customerId, OrderDate = DateTime.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee };
-
-                try 
-                { 
-                    order.Price = await AddProductOrdersReturnTotalPriceAsync(order, saleOrder);
-                }
-                catch (Exception ex) 
-                {
-                    return View(nameof(Create));
-                }
-
-                try
-                {
-                    SetDiscountAndPrice(order, saleOrder);
-                }
-                catch (Exception ex)
-                {
-                    return View(nameof(Create));
-                }
-
-                //Order is not paid
-                order.IsPaid = false;
-                _context.Orders.Add(order);
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction(nameof(Index));
-        }
 
         private Guid AddCustomer(OrderViewModel saleOrder) 
         {

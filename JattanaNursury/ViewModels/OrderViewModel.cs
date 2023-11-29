@@ -18,6 +18,7 @@ namespace JattanaNursury.ViewModels
         [Range(1, 500, ErrorMessage = "Discount must be between 1 - 500")]
         public decimal Discount { get; set; }
         public string? Employee { get; set; }
+        public bool IsPaid { get; set; } = false;
         public List<ProductOrderDetail> Products { get; set; } = new List<ProductOrderDetail>();
     }
     public class ProductOrderDetail 
