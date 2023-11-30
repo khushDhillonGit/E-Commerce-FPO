@@ -273,8 +273,17 @@
             calculateBillPrice();
         }
 
-        $('#discountInput').on('keyup', function () {
+        $('#discountInput').on('keyup change', function () {
             calculateBillPrice();
+        });
+
+        $('#customerPrice').on('keyup change', function () {
+            const thisValue = $(this).val();
+            const billValue = $('#billPrice').val();
+
+            if (thisValue > billValue) {
+                $(this).val(billValue);
+            }
         });
 
         function calculateBillPrice() {
