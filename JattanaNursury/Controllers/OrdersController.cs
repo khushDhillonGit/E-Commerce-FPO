@@ -24,7 +24,7 @@ namespace JattanaNursury.Controllers
             List<OrderIndexViewModel> result = new();
             foreach (var order in orders)
             {
-                result.Add(new OrderIndexViewModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount,Employee = order.EmployeeId });
+                result.Add(new OrderIndexViewModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount,Employee = order.EmployeeId, PaidByCustomer = order.PaidByCustomer });
             }
             return View(result);
         }
