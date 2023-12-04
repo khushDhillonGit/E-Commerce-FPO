@@ -18,13 +18,24 @@ namespace JattanaNursury.Controllers
             _context = context;
         }
 
-        public IActionResult Index() 
+        public IActionResult PaidOrders() 
         {
-            var orders = _context.Orders;
-            List<OrderIndexViewModel> result = new();
+            var orders = _context.Orders.Where(a=>a.FullyPaid);
+            List<OrderPaidModel> result = new();
             foreach (var order in orders)
             {
-                result.Add(new OrderIndexViewModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount,Employee = order.EmployeeId, PaidByCustomer = order.PaidByCustomer });
+                result.Add(new OrderPaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount,Employee = order.EmployeeId });
+            }
+            return View(result);
+        }
+
+        public IActionResult UnpaidOrders()
+        {
+            var orders = _context.Orders.Where(a=>!a.FullyPaid);
+            List<OrderUnpaidModel> result = new();
+            foreach (var order in orders)
+            {
+                result.Add(new OrderUnpaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, PaidByCustomer = order.PaidByCustomer });
             }
             return View(result);
         }
@@ -97,7 +108,6 @@ namespace JattanaNursury.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
 
         private Guid AddCustomer(OrderViewModel saleOrder) 
         {
