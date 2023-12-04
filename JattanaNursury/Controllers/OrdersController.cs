@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using JattanaNursury.Data;
 using JattanaNursury.Models;
+using JattanaNursury.Models.Api;
 using JattanaNursury.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.FlowAnalysis;
@@ -99,7 +100,14 @@ namespace JattanaNursury.Controllers
 
                     _context.Orders.Add(order);
                     await _context.SaveChangesAsync();
-                    return Json(new { success = true, redirectUrl = $"/{typeof(OrdersController).Name.Replace("Controller","")}/{nameof(Index)}", responseText = "Order Saved Successfully" });
+                    PostBackModel postBack = new PostBackModel(){ Success = true, RedirectUrl = $"/{typeof(OrdersController).Name.Replace("Controller", "")}/{nameof(UnpaidOrders)}", ResponseText = "Order Saved Successfully" };
+
+                    if (order.FullyPaid) 
+                    {
+                        postBack.RedirectUrl = $"/{typeof(OrdersController).Name.Replace("Controller", "")}/{nameof(PaidOrders)}";
+                    }
+
+                    return Json(postBack);
                 }
                 return BadRequest(error: "Please fill correct information");
             }
