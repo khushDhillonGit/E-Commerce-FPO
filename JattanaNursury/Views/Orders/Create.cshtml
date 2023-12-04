@@ -3,7 +3,7 @@
 <div>
     <div class="row">
         <h2 class="text-center" id="show-error-below">Sale</h2>
-  
+        
         <div class="col-8">
             <div class="row">
                 <div class="col-12 mt-5">
@@ -73,19 +73,19 @@
                         </div>
                         <div class="input-group">
                             <span class="input-group-text" id="inputGroup-sizing-default">₹ Price</span>
-                            <input disabled type="number" class="form-control" value="0.00" id="totalPrice" />
+                            <input disabled type="number" min="0" class="form-control" value="0.00" id="totalPrice" />
                         </div>
                         <div class="input-group">
                             <span class="input-group-text" id="inputGroup-sizing-default">₹ Discount</span>
-                            <input placeholder="Discount" min="0" type="number" value="20" class="form-control" id="discountInput" />
+                            <input placeholder="Discount" type="number" value="20" class="form-control" id="discountInput" />
                         </div>
                         <div class="input-group">
                             <span class="input-group-text" id="inputGroup-sizing-default">₹ Bill</span>
-                            <input disabled id="billPrice" class="form-control" value="0.00" type="number" />
+                            <input disabled id="billPrice" class="form-control" min="0" value="0.00" type="number" />
                         </div>    
                         <div class="input-group">
                             <span class="input-group-text" id="inputGroup-sizing-default">₹ Customer Paid</span>
-                            <input id="customerPrice" class="form-control" value="100" type="number" />
+                            <input id="customerPrice" class="form-control" min="0" value="100" type="number" />
                         </div>
                         <button type="button" data-toggle="modal" data-target="payment-modal" id="saleBtn" class="btn btn-danger">Sale</button>
                     </div>
@@ -174,12 +174,12 @@
                      <td>
                          <p>${data.text}</p>
                      </td>
-                                   <td>
-                                                         <p>₹${data.price}</p>
-                             </td>
-                                          <td>
-                                 <p>${data.quantity}</p>
-                             </td>
+                     <td>
+                        <p>₹${data.price}</p>
+                     </td>
+                     <td>
+                         <p>${data.quantity}</p>
+                     </td>
                  </tr>
               </table>`
             );
@@ -192,7 +192,8 @@
             const product = $('#productSearch').select2('data')[0];
 
             const quantity = parseFloat($('#quantityInput').val());
-            if (isNaN(quantity) || quantity === null || quantity < 1) {
+            if (isNaN(quantity) || quantity === null || quantity < 1) 
+            {
                 alert("Please enter a valid quantity!");
                 return;
             }
@@ -218,10 +219,12 @@
 
                 let listProduct = { pId: createUniqueId(), id: product.id, name: product.text, quantity: quantity, price: price, totalPrice: price * quantity };
 
-                if (listProduct.pId == null) {
+                if (listProduct.pId == null) 
+                {
                     alert("error while adding product");
                 }
-                else {
+                else 
+                {
                     productsInList.push(listProduct);
                 }
             }
@@ -230,7 +233,6 @@
         });
 
         function showProductsInList() {
-
             let no = 0;
             let tbody = $('.table tbody');
             tbody.html("");
@@ -274,21 +276,60 @@
         }
 
         $('#discountInput').on('keyup change', function () {
-            calculateBillPrice();
-        });
-
-        $('#customerPrice').on('keyup change', function () {
-            const thisValue = $(this).val();
-            const billValue = $('#billPrice').val();
-
-            if (thisValue > billValue) {
-                $(this).val(billValue);
+            const value = $('#discountInput').val();
+            if (isValidNumber(value)) {
+                const number = parseFloat(value);
+                if (value < 0) {
+                    $('#discountInput').val(0);
+                }
+                const totalPrice = $('#totalPrice').val();
+                if (isValidNumber(totalPrice)) 
+                {
+                    const disCountPercent = (number/parseFloat(totalPrice))*100;
+                    if (disCountPercent > 20) 
+                    {
+                        const newDiscount = (0.2) * parseFloat(totalPrice);
+                        $('#discountInput').val(newDiscount);
+                        alert("The discount cannot be more than 20%");
+                    }
+                }
+                calculateBillPrice();
+                correctPaidPriceValue();
+            } else 
+            {
+                $('#discountInput').val('');
             }
         });
 
+        function isValidNumber(number) 
+        {
+            return !isNaN(parseFloat(number) && isFinite(number));
+        }
+
+        $('#customerPrice').on('keyup change', correctPaidPriceValue);
+
+        function maxDiscountPossible() 
+        {
+            const percentage = 20;
+
+        }
+
+        function correctPaidPriceValue() 
+        {
+            const thisValue = parseFloat($('#customerPrice').val());
+            const billValue = parseFloat($('#billPrice').val());
+
+            if (isValidNumber(thisValue) && isValidNumber(billValue) && (thisValue > billValue)) {
+                $('#customerPrice').val(billValue);
+            }
+        }
+
         function calculateBillPrice() {
             const billPrice = parseFloat($('#totalPrice').val()) - parseFloat($('#discountInput').val());
-            $('#billPrice').val(billPrice);
+            if (billPrice >= 0) 
+            {
+                $('#billPrice').val(billPrice);
+            }
         }
 
         $('#saleBtn').on('click', function () {
