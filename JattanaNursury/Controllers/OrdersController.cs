@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using JattanaNursury.Data;
 using JattanaNursury.Models;
+using JattanaNursury.Models.Api;
 using JattanaNursury.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.FlowAnalysis;
@@ -18,13 +19,24 @@ namespace JattanaNursury.Controllers
             _context = context;
         }
 
-        public IActionResult Index() 
+        public IActionResult PaidOrders() 
         {
-            var orders = _context.Orders;
-            List<OrderIndexViewModel> result = new();
+            var orders = _context.Orders.Where(a=>a.FullyPaid);
+            List<OrderPaidModel> result = new();
             foreach (var order in orders)
             {
-                result.Add(new OrderIndexViewModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount,Employee = order.EmployeeId, PaidByCustomer = order.PaidByCustomer });
+                result.Add(new OrderPaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount,Employee = order.EmployeeId });
+            }
+            return View(result);
+        }
+
+        public IActionResult UnpaidOrders()
+        {
+            var orders = _context.Orders.Where(a=>!a.FullyPaid);
+            List<OrderUnpaidModel> result = new();
+            foreach (var order in orders)
+            {
+                result.Add(new OrderUnpaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, PaidByCustomer = order.PaidByCustomer });
             }
             return View(result);
         }
@@ -88,7 +100,14 @@ namespace JattanaNursury.Controllers
 
                     _context.Orders.Add(order);
                     await _context.SaveChangesAsync();
-                    return Json(new { success = true, redirectUrl = $"/{typeof(OrdersController).Name.Replace("Controller","")}/{nameof(Index)}", responseText = "Order Saved Successfully" });
+                    PostBackModel postBack = new PostBackModel(){ Success = true, RedirectUrl = $"/{typeof(OrdersController).Name.Replace("Controller", "")}/{nameof(UnpaidOrders)}", ResponseText = "Order Saved Successfully" };
+
+                    if (order.FullyPaid) 
+                    {
+                        postBack.RedirectUrl = $"/{typeof(OrdersController).Name.Replace("Controller", "")}/{nameof(PaidOrders)}";
+                    }
+
+                    return Json(postBack);
                 }
                 return BadRequest(error: "Please fill correct information");
             }
@@ -97,7 +116,6 @@ namespace JattanaNursury.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
 
         private Guid AddCustomer(OrderViewModel saleOrder) 
         {
