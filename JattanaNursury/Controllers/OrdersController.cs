@@ -6,6 +6,7 @@ using JattanaNursury.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace JattanaNursury.Controllers
@@ -21,22 +22,36 @@ namespace JattanaNursury.Controllers
 
         public IActionResult PaidOrders() 
         {
-            var orders = _context.Orders.Where(a=>a.FullyPaid);
+            var orders = _context.Orders.AsEnumerable().Where(a=>a.FullyPaid);
             List<OrderPaidModel> result = new();
             foreach (var order in orders)
             {
-                result.Add(new OrderPaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount,Employee = order.EmployeeId });
+                var model = new OrderPaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, CustomerName = order.Customer?.CustomerName, CustomerPhone = order.Customer?.PhoneNumber, CustomerAddress = order.Customer?.FullAddress };
+
+                foreach (var product in order.ProductOrders)
+                {
+                    model.Products.Add(new OrderProductsModel { ProductId = product.ProductId, Name = product.Product?.Name, Quantity = product.Quantity, TotalPrice = product.TotalPrice, SellingPrice = product.Product?.SellingPrice, UnitPrice = product.Product?.UnitPrice });
+                }
+
+                result.Add(model);
             }
             return View(result);
         }
 
         public IActionResult UnpaidOrders()
         {
-            var orders = _context.Orders.Where(a=>!a.FullyPaid);
+            var orders = _context.Orders.Where(a => !a.FullyPaid);
             List<OrderUnpaidModel> result = new();
             foreach (var order in orders)
             {
-                result.Add(new OrderUnpaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, PaidByCustomer = order.PaidByCustomer });
+                var model = new OrderUnpaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, PaidByCustomer = order.PaidByCustomer, CustomerName = order.Customer?.CustomerName, CustomerPhone = order.Customer?.PhoneNumber, CustomerAddress = order.Customer?.FullAddress };
+
+                foreach (var product in order.ProductOrders) 
+                {
+                    model.Products.Add(new OrderProductsModel { ProductId = product.ProductId, Name = product.Product?.Name, Quantity = product.Quantity, TotalPrice = product.TotalPrice, SellingPrice = product.Product?.SellingPrice, UnitPrice = product.Product?.UnitPrice });
+                }
+
+                result.Add(model);
             }
             return View(result);
         }

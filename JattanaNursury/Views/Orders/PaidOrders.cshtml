@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<JattanaNursury.ViewModels.OrderPaidModel>
 
-<table id="ordersTable" class="table table-striped"></table>
+<table id="ordersTable" class="table table-striped" data-detail-view="true"></table>
 
 @section Scripts{
     <script>
@@ -50,7 +50,9 @@
                 search: true,
                 pagination: true,
                 sortName: 'orderDate',
-                sortOrder: 'desc'
+                sortOrder: 'desc',
+                detailView:true,
+                detailFormatter
 
             });
 
