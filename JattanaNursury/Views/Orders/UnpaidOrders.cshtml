@@ -6,7 +6,7 @@
     <script>
         var obj = @Json.Serialize(Model);
 
-        console.log(obj);
+
         function dateFormatter(data, row, index) {
             const date = new Date(Date.parse(data));
             return date.toDateString();
@@ -56,17 +56,59 @@
                     sortable: true,
                     formatter: "dateFormatter",
                     align: 'right'
-                }
-                ],
+                }],
             data: obj,
             search: true,
             pagination: true,
             sortName: 'orderDate',
             sortOrder: 'desc',
-            detailView:true,
-            detailViewFormatter:'productListFormatter'
-
+            detailView: true,
+            detailFormatter: 'productListFormatter'
         });
+        function productListFormatter(index, row) {
+            var tableRows = [];
+            console.log(row);
+            $.each(row.products, function (i, data) {
+
+                tableRows.push(`<tr>
+                        <th scope="row">${i + 1}</th>
+                        <td>${data.name}</td>
+                        <td>${data.quantity}</td>
+                        <td>${data.unitPrice}</td>
+                        <td>${data.sellingPrice}</td>
+                        <td>${data.totalPrice}</td>
+                    </tr>`);
+            
+            });
+            var rows = tableRows.join('');
+            var html = `<div class="row p-3">
+                      <div class="col-12 d-flex justify-content-evenly">
+                        <p>${row.customerName}</p>
+                        <p>${row.customerPhone}</p>
+                        <p>${row.customerAddress}</p>
+                      </div>
+                      <div class="col-12">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">Name</th>
+                              <th scope="col">Quantity</th>
+                              <th scope="col">Unit Price</th>
+                              <th scope="col">Selling Price</th>
+                              <th scope="col">Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            ${rows}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>`;
+
+            console.log(html);
+            return html;
+        }
     </script>
 
 }
