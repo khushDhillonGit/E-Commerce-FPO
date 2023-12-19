@@ -1,4 +1,12 @@
 ﻿
+.text-red {
+    color:red;
+}
+
+.table-border {
+    border: 2px solid #f2f2f2;
+}
+
 /*#Start*/
 /*Card styling*/
 .home-title {
