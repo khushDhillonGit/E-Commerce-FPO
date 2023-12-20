@@ -37,10 +37,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-using (var scope = app.Services.CreateScope()) 
-{
-    await SeedDatabase.Initialize(scope.ServiceProvider);
-}
+//using (var scope = app.Services.CreateScope()) 
+//{
+//    await SeedDatabase.Initialize(scope.ServiceProvider);
+//}
 
 app.UseAuthentication();
 app.UseAuthorization();
