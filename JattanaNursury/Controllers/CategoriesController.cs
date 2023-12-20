@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace JattanaNursury.Controllers
 {
-    [Authorize(Roles = "SuperAdmin,Admin")]
+    [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin}")]
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;

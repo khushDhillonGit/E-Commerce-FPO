@@ -14,6 +14,11 @@ namespace JattanaNursury.Models
 
     public class ApplicationRole : IdentityRole<Guid> 
     {
+        public const string Customer = "Customer";
+        public const string SuperAdmin = "SuperAdmin";
+        public const string Admin = "Admin";
+        public const string Employee = "Employee";
+
         public virtual ICollection<ApplicationRoleClaim> RoleClaims { get; set; }
         public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
     }

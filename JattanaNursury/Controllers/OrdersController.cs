@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 
 namespace JattanaNursury.Controllers
 {
-    [Authorize(Roles = "SuperAdmin,Admin,Employee")]
+    [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin},{ApplicationRole.Employee}")]
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;

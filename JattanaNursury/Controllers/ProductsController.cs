@@ -51,7 +51,7 @@ namespace JattanaNursury.Controllers
         }
 
         // GET: Products/Create
-        [Authorize(Roles = "SuperAdmin,Admin")]
+        [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin}")]
         public IActionResult Create()
         {
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
@@ -63,7 +63,7 @@ namespace JattanaNursury.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]  
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "SuperAdmin,Admin")]
+        [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin}")]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,UnitPrice,SellingPrice,SKU,Quantity,CategoryId")] Product product, IFormFile? Image)
         {           
             if (ModelState.IsValid)
@@ -92,7 +92,7 @@ namespace JattanaNursury.Controllers
 
 
         // GET: Products/Edit/5
-        [Authorize(Roles = "SuperAdmin,Admin")]
+        [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin}")]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null || _context.Products == null)
@@ -115,7 +115,7 @@ namespace JattanaNursury.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "SuperAdmin,Admin")]
+        [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin}")]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Description,UnitPrice,SellingPrice,SKU,Quantity,CategoryId,ImageUrl")] Product product, IFormFile? Image)
         {
             if (id != product.Id)
@@ -153,7 +153,7 @@ namespace JattanaNursury.Controllers
         }
 
         // GET: Products/Delete/5
-        [Authorize(Roles = "SuperAdmin,Admin")]
+        [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin}")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null || _context.Products == null)
@@ -175,7 +175,7 @@ namespace JattanaNursury.Controllers
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "SuperAdmin,Admin")]
+        [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin}")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             if (_context.Products == null)
