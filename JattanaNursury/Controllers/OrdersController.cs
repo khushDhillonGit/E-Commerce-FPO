@@ -3,6 +3,7 @@ using JattanaNursury.Data;
 using JattanaNursury.Models;
 using JattanaNursury.Models.Api;
 using JattanaNursury.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using System.Runtime.CompilerServices;
 
 namespace JattanaNursury.Controllers
 {
+    [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin},{ApplicationRole.Employee}")]
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;

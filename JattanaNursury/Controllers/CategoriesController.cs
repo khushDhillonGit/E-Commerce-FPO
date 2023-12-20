@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JattanaNursury.Data;
 using JattanaNursury.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JattanaNursury.Controllers
 {
+    [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin}")]
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;

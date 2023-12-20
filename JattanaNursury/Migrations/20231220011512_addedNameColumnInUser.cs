@@ -2,15 +2,15 @@
 
 #nullable disable
 
-namespace JattanaNursury.Data.Migrations
+namespace JattanaNursury.Migrations
 {
-    public partial class addedImageUrl : Migration
+    public partial class addedNameColumnInUser : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "ImageUrl",
-                table: "Products",
+                name: "Name",
+                table: "AspNetUsers",
                 type: "nvarchar(max)",
                 nullable: true);
         }
@@ -18,8 +18,8 @@ namespace JattanaNursury.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "ImageUrl",
-                table: "Products");
+                name: "Name",
+                table: "AspNetUsers");
         }
     }
 }

@@ -16,3 +16,8 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+p {
+    margin:0;
+    padding:0;
+}

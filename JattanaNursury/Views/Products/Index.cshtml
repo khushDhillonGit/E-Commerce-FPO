@@ -9,9 +9,12 @@
             All Products
         </h2>
     </div>
-    <div class="col-12 d-flex justify-content-end">
-        <a class="btn btn-success" asp-action="Create" asp-controller="Products" >Add New</a>
-    </div>
+    @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+    {
+        <div class="col-12 d-flex justify-content-end">
+            <a class="btn btn-success" asp-action="Create" asp-controller="Products" >Add New</a>
+        </div>
+    }
     <div class="col-12 mt-4">
         <div id="home-cards" class="row">
             @foreach (var item in Model)
