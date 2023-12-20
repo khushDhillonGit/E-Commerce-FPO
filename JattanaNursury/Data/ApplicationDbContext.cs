@@ -7,7 +7,6 @@ namespace JattanaNursury.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole,Guid,  ApplicationUserClaim, ApplicationUserRole, ApplicationUserLogin,  ApplicationRoleClaim, ApplicationUserToken>
     {
-
         public virtual DbSet<Customer> Customers { get; set; }  
         public virtual DbSet<Category> Categories { get; set; }  
         public virtual DbSet<Order> Orders { get; set; }  
@@ -17,6 +16,7 @@ namespace JattanaNursury.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -50,8 +50,6 @@ namespace JattanaNursury.Data
                     .HasForeignKey(ur => ur.UserId)
                     .IsRequired();
 
-                //TODO: put here
-               // b.HasData();
             });
 
             modelBuilder.Entity<ApplicationRole>(b =>
@@ -67,6 +65,7 @@ namespace JattanaNursury.Data
                     .WithOne(e => e.Role)
                     .HasForeignKey(rc => rc.RoleId)
                     .IsRequired();
+
             });
         }
     }

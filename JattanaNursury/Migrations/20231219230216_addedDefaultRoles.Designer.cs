@@ -4,6 +4,7 @@ using JattanaNursury.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JattanaNursury.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231219230216_addedDefaultRoles")]
+    partial class addedDefaultRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,6 +50,36 @@ namespace JattanaNursury.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("58922adb-383c-4a48-9666-012ae1ee599c"),
+                            ConcurrencyStamp = "2023-12-19 4:02:16 PM",
+                            Name = "SuperAdmin",
+                            NormalizedName = "superadmin"
+                        },
+                        new
+                        {
+                            Id = new Guid("058ec6cf-3246-4321-bf87-049391b11b96"),
+                            ConcurrencyStamp = "2023-12-19 4:02:16 PM",
+                            Name = "Admin",
+                            NormalizedName = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("faa38780-60f2-4c7e-bdd0-9c7372ce3ddb"),
+                            ConcurrencyStamp = "2023-12-19 4:02:16 PM",
+                            Name = "Employee",
+                            NormalizedName = "employee"
+                        },
+                        new
+                        {
+                            Id = new Guid("3b7a2946-53b9-4142-965c-a3ad484c9ed3"),
+                            ConcurrencyStamp = "2023-12-19 4:02:16 PM",
+                            Name = "Customer",
+                            NormalizedName = "customer"
+                        });
                 });
 
             modelBuilder.Entity("JattanaNursury.Models.ApplicationRoleClaim", b =>
@@ -99,9 +131,6 @@ namespace JattanaNursury.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
