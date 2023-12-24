@@ -25,7 +25,7 @@ namespace JattanaNursury.Services
         {
 
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Admin", _fromAddress));
+            message.From.Add(new MailboxAddress("Jattana Nursury", _fromAddress));
             message.To.Add(new MailboxAddress("Customer", toEmail));
             message.Subject = subject;
 
@@ -36,15 +36,10 @@ namespace JattanaNursury.Services
 
             message.Body = body.ToMessageBody();
 
-
-
             using var client = new MailKit.Net.Smtp.SmtpClient();
             client.Connect("smtp.gmail.com", 465, true);
             client.Authenticate(_username, _password);
-
             await client.SendAsync(message);
-
-
 
             client.Disconnect(true);
 
