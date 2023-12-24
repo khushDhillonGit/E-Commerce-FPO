@@ -1,6 +1,9 @@
 using JattanaNursury.Data;
 using JattanaNursury.Models;
+using JattanaNursury.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Proxies;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    { options.UseSqlServer(connectionString); options.UseLazyLoadingProxies(); });
+    { var sqlBuilder = new SqlConnectionStringBuilder(connectionString);
+        sqlBuilder.UserID = builder.Configuration["DBUserId"];
+        sqlBuilder.Password = builder.Configuration["DBPassword"];
+        options.UseSqlServer(sqlBuilder.ConnectionString); options.UseLazyLoadingProxies(); });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -18,6 +24,8 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options => option
     .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultUI().AddDefaultTokenProviders();
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 

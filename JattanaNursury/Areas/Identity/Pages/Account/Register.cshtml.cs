@@ -125,6 +125,8 @@ namespace JattanaNursury.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+                    //assign role customer
+                    await _userManager.AddToRoleAsync(user, ApplicationRole.Customer);
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
@@ -145,7 +147,6 @@ namespace JattanaNursury.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _userManager.AddToRoleAsync(user, ApplicationRole.Customer);
                         await _signInManager.SignInAsync(user, isPersistent: true);
                         return LocalRedirect(returnUrl);
                     }
