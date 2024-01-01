@@ -11,11 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration["DefaultConnection"];
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     { var sqlBuilder = new SqlConnectionStringBuilder(connectionString);
-        sqlBuilder.UserID = builder.Configuration["DBUserId"];
-        sqlBuilder.Password = builder.Configuration["DBPassword"];
         options.UseSqlServer(sqlBuilder.ConnectionString); options.UseLazyLoadingProxies(); });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
