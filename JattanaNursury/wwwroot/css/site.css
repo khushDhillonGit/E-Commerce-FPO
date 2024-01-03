@@ -1,3 +1,8 @@
+:root {
+    --p-color: #0d200a;
+    --s-color: #ddd0c4;
+}
+
 html {
   font-size: 14px;
 }
@@ -15,9 +20,18 @@ html {
 
 body {
   margin-bottom: 60px;
+  background-color: var(--s-color);
 }
 
 p {
     margin:0;
     padding:0;
+}
+
+.bg-green {
+    background-color: var(--p-color);
+}
+
+.text-white {
+    color:white !important;
 }
