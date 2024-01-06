@@ -1,5 +1,10 @@
 ﻿@model IEnumerable<JattanaNursury.ViewModels.OrderPaidModel>
 
+@section Styles
+    {
+    <link href="~/css/order.css" rel="stylesheet" asp-append-version="true" />
+}
+
 <table id="ordersTable" class="table table-striped" data-detail-view="true"></table>
 
 @section Scripts{
