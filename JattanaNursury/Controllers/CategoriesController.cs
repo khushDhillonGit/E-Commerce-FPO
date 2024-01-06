@@ -103,8 +103,11 @@ namespace JattanaNursury.Controllers
             {
                 try
                 {
-                    _context.Update(category);
-                    await _context.SaveChangesAsync();
+                    var cat = await _context.Categories.FirstOrDefaultAsync(a => a.Id == category.Id) ?? throw new DbUpdateConcurrencyException();
+                    cat.Name = category.Name;
+                        cat.Description = category.Description;
+                        _context.Update(cat);
+                        await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
