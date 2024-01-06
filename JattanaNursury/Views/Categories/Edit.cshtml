@@ -4,34 +4,45 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+@section Styles
+    {
+    <link href="~/css/categories.css" rel="stylesheet" asp-append-version="true" />
+}
 
-<h4>Category</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="container-fluid add-product-container mt-5">
+    <div class="row">
+        <div class="col-12 top-container p-4">
+            <h2 class="text-center text-primary">Edit Category</h2>
+        </div>
+        <div class="col-12 bottom-container p-5">
+            <form asp-action="Edit" class="create-form" enctype="multipart/form-data">
+                <div class="row g-4">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label asp-for="Name" class="control-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label asp-for="Description" class="control-label"></label>
+                            <input asp-for="Description" class="form-control" />
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4 btn-row pt-3">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn back-btn">Back to List</a>
+                            <input type="submit" value="Update" class="btn create-btn" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
