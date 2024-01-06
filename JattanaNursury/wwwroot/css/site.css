@@ -1,6 +1,7 @@
 :root {
-    --p-color: #0d200a;
-    --s-color: #ddd0c4;
+    --p-color: #104210;
+    --s-color: #e3c595;
+    --b-color: #970808;
 }
 
 html {
@@ -23,15 +24,16 @@ body {
   background-color: var(--s-color);
 }
 
-p {
-    margin:0;
-    padding:0;
+header {
+    height:10vh;
 }
 
-.bg-green {
-    background-color: var(--p-color);
+main {
+    height: 82vh;
 }
 
-.text-white {
-    color:white !important;
+footer {
+    height: 8vh;
 }
+
+

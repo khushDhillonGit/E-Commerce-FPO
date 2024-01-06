@@ -1,0 +1,28 @@
+﻿.bg-green {
+    background-color: var(--p-color);
+}
+
+.text-white {
+    color: white !important;
+}
+
+.text-primary {
+    color: var(--p-color) !important;
+}
+
+.text-secondary {
+    color: var(--s-color) !important;
+}
+
+.text-red {
+    color: var(--b-color) !important;
+}
+
+.img-full {
+    width: 100%;
+    height: 100%;
+}
+p {
+    margin: 0;
+    padding: 0;
+}
