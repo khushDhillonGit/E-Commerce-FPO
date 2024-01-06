@@ -12,7 +12,7 @@
     @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
     {
         <div class="col-12 d-flex justify-content-end">
-            <a class="btn btn-success" asp-action="Create" asp-controller="Products" >Add New</a>
+            <a class="btn primary-btn" asp-action="Create" asp-controller="Products" >Add New</a>
         </div>
     }
     <div class="col-12 mt-4">
@@ -47,10 +47,10 @@
                                 <span>Selling Price: @Html.DisplayFor(modelItem => item.SellingPrice)</span>
                             </li>
                         </ul>
-                        <div class="row justify-content-around">
+                        <div class="row justify-content-around mt-3">
 
-                            <a class="col-3 btn link-card btn-success" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                            <a class="col-3 btn link-card btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                            <a class="col-3 btn link-card secondary-btn" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <a class="col-3 btn link-card red-btn" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                         </div>
                     </div>
                 </div>
