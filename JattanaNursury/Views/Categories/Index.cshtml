@@ -4,7 +4,54 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="row">
+    <div class="col-12">
+        <h2 class="text-center">
+            All Categories
+        </h2>
+    </div>
+    @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+    {
+        <div class="col-12 d-flex justify-content-end">
+            <a class="btn primary-btn" asp-action="Create" asp-controller="Categories" >Add New</a>
+        </div>
+    }
+    <div class="col-12 mt-4">
+        <div id="home-cards" class="row">
+            @foreach (var item in Model)
+            {
+                <div class="home col-sm-12 col-md-3">
+                    <div class="home-content">
+                        <p class="home-title">@Html.DisplayFor(modelItem => item.Name)</p>
+                        <ul class="home-list">
+                            <li class="home-attri">
+                                <i class="fa fa-comment"></i>
+                                <span>@Html.DisplayFor(modelItem => item.Description)</span>
+                            </li>
+                            <li class="home-attri">
+                                <i class="fa fa-bars"></i>
+                                @{
+                                    var date = item.CreatedDate.ToString("MMM dd yyyy");
+                                    <span>@date</span>
+                                }
+                            </li>
+                        </ul>
+                        <div class="row justify-content-around mt-3">
+                            <a class="col-3 btn link-card secondary-btn" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <a class="col-3 btn link-card red-btn" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@* <h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -39,3 +86,4 @@
 }
     </tbody>
 </table>
+ *@
