@@ -32,13 +32,15 @@
                                 <i class="fa fa-bars"></i>
                                 @{
                                     var date = item.CreatedDate.ToString("MMM dd yyyy");
-                                    <span>@date</span>
+                                                                                                <span>@date</span>
                                 }
                             </li>
                         </ul>
                         <div class="row justify-content-around mt-3">
                             <a class="col-3 btn link-card secondary-btn" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                            <a class="col-3 btn link-card red-btn" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                            <a class="col-3 btn link-card red-btn" data-bs-toggle="modal" onclick="deleteBtnClicked(this)" data-id="@item.Id" data-bs-target="#deleteModel">
+                                Delete
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -47,43 +49,32 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="deleteModel" tabindex="-1" aria-labelledby="deleteModelLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModelLabel">Delete Category</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Deleting category will result in deleting all related products, Are you 100% sure?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <a class="col-3 btn link-card red-btn" style="width:10rem;" onclick="deleteItem()">Yes I am sure!</a>
+            </div>
+        </div>
+    </div>
+</div>
 
-
-
-
-@* <h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+@section Scripts
+{
+    <script src="~/js/categories.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        const url = "@Url.Action("Delete","Categories")";
+        $(function () {
+            window.initialize(url);
+        });
+    </script>
 }
-    </tbody>
-</table>
- *@
