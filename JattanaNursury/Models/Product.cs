@@ -19,5 +19,6 @@ namespace JattanaNursury.Models
         public Guid CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
         public virtual Category? Category { get; set; }
+        public bool IsDelete { get; set; }
     }
 }
