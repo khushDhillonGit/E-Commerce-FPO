@@ -153,28 +153,28 @@ namespace JattanaNursury.Controllers
         }
 
         // GET: Products/Delete/5
-        [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin}")]
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
+        //[Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin}")]
+        //public async Task<IActionResult> Delete(Guid? id)
+        //{
+        //    if (id == null || _context.Products == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+        //    var product = await _context.Products
+        //        .Include(p => p.Category)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (product == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(product);
-        }
+        //    return View(product);
+        //}
 
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin}")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
