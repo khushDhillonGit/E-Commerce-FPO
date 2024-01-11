@@ -74,10 +74,10 @@ namespace JattanaNursury.Data
 
             });
         }
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             DeleteHandler();
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            return base.SaveChangesAsync(cancellationToken);
         }
 
         public override int SaveChanges()
@@ -91,11 +91,11 @@ namespace JattanaNursury.Data
             var entities = ChangeTracker.Entries().Where(a => a.State == EntityState.Deleted);
             foreach (var entity in entities) 
             {
-                var prop = entity.GetType().GetProperty("IsDelete");
+                var prop = entity.Entity.GetType().GetProperty("IsDelete");
                 if (prop != null) 
                 {
                     entity.State = EntityState.Modified;
-                    prop.SetValue(entity, true, null);
+                    prop.SetValue(entity.Entity, true, null);
                 }
             }
         }
