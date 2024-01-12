@@ -12,5 +12,6 @@ namespace JattanaNursury.Models
         public string? Description { get; set; }
         public DateTime CreatedDate { get; set; }
         public virtual ICollection<Product>? Products { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

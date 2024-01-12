@@ -1,0 +1,33 @@
+﻿.bottom-container {
+    background-color: var(--p-color);
+    color: white;
+}
+
+.top-container {
+    background-color: white;
+}
+
+.create-btn {
+    background-color: var(--b-color);
+    font-weight: 500;
+    color: white;
+    width: 8rem;
+}
+
+.create-form .control-label {
+    margin-bottom: 0.5rem;
+}
+
+.back-btn {
+    color: #ffffff;
+    font-weight: 500;
+    border: 2px solid #ffffff;
+}
+
+.btn-row {
+    border-top: 1px solid;
+}
+
+.add-product-container {
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+}

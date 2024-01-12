@@ -1,3 +1,9 @@
+:root {
+    --p-color: #104210;
+    --s-color: #e3c595;
+    --b-color: #970808;
+}
+
 html {
   font-size: 14px;
 }
@@ -15,9 +21,92 @@ html {
 
 body {
   margin-bottom: 60px;
+  background-color: var(--s-color);
 }
 
-p {
-    margin:0;
-    padding:0;
+header {
+    height:10vh;
 }
+
+main {
+    height: 82vh;
+}
+
+footer {
+    height: 8vh;
+}
+
+/*Card styling*/
+.home-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.home-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 20px;
+    margin-bottom: 8px;
+}
+
+#home-cards {
+    gap: 20px;
+}
+
+.home-attri {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    column-gap: 15px;
+}
+
+.home-icon {
+    height: 24px;
+    width: 24px;
+    color: green;
+    margin-right: 10px;
+}
+
+.col {
+    padding: 0 !important;
+}
+
+.home img {
+    width: 100%;
+    height: 100%;
+}
+
+#home-cards {
+    gap: 20px;
+}
+
+.home {
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 20.75%);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.4s;
+    padding: 0;
+}
+
+.div-img {
+    height: 212px;
+}
+
+.home-content {
+    padding: 20px 14px;
+    background-color: white;
+    color: #3f576b;
+}
+
+
+.home:hover {
+    box-shadow: 0 32px 64px rgba(0, 0, 0, 10.75%);
+    transform: translate(0, -10px);
+}
+/*#End*/
+
+

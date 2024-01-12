@@ -23,9 +23,15 @@ namespace JattanaNursury.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Category>().HasQueryFilter(a => !a.IsDelete);
+            modelBuilder.Entity<Product>().HasQueryFilter(a => !a.IsDelete);
+            modelBuilder.Entity<Customer>().HasQueryFilter(a => !a.IsDelete);
+            modelBuilder.Entity<Vender>().HasQueryFilter(a => !a.IsDelete);
+
             modelBuilder.Entity<ApplicationUser>(b =>
             {
-                
+
+                b.HasQueryFilter(a=>!a.IsDelete);
                 // Each User can have many UserClaims
                 b.HasMany(e => e.Claims)
                     .WithOne(e => e.User)
@@ -67,6 +73,31 @@ namespace JattanaNursury.Data
                     .IsRequired();
 
             });
+        }
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            DeleteHandler();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        public override int SaveChanges()
+        {
+            DeleteHandler();
+            return base.SaveChanges();
+        }
+
+        private void DeleteHandler() 
+        {
+            var entities = ChangeTracker.Entries().Where(a => a.State == EntityState.Deleted);
+            foreach (var entity in entities) 
+            {
+                var prop = entity.Entity.GetType().GetProperty("IsDelete");
+                if (prop != null) 
+                {
+                    entity.State = EntityState.Modified;
+                    prop.SetValue(entity.Entity, true, null);
+                }
+            }
         }
     }
 }
