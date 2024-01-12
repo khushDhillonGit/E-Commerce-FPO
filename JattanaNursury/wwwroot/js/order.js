@@ -31,17 +31,12 @@ $(document).ready(function () {
         templateResult: formatResults
     });
 });
-// var table = $('<table>').attr('width', '100%').addClass('table table-bordered');
-// table.append($('<thead>').append($('<th>').text("Name"), $('<th>').text("Price"), $('<th>').text("Quantity")));
-// table.append($(''));
-// $('.select2-results').append(table);
 
 function formatResults(data) {
 
     if (data.loading)
         return data.text;
 
-    // table.append($('<tbody>').append($('<tr>').append($('<td>').text(data.text), $('<td>').text(data.price), $('<td>').text(data.quantity))));
     var container = $(
         `    <table class="table table-bordered" style="margin:0;" width="100%">
                 <thead>

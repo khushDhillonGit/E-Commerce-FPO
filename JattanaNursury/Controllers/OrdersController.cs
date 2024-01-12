@@ -104,11 +104,16 @@ namespace JattanaNursury.Controllers
                     {
                         order.Price = await AddProductOrdersReturnTotalPriceAsync(order, saleOrder);
                         SetDiscountAndPrice(order, saleOrder);
+                        if (order.BillPrice < saleOrder.PaidByCustomer) 
+                        {
+                            throw new Exception("Customer paid more than Bill price");
+                        }
                     }
                     catch (Exception ex)
                     {
                         return BadRequest(error: ex.Message);
                     }
+
 
                     if (order.BillPrice == saleOrder.PaidByCustomer)
                     {
@@ -126,7 +131,7 @@ namespace JattanaNursury.Controllers
 
                     return Json(postBack);
                 }
-                return BadRequest(error: "Please fill correct information");
+                return BadRequest(error: ModelState.Values.SelectMany(a=>a.Errors)?.FirstOrDefault()?.ErrorMessage);
             }
             catch (Exception ex) 
             {
