@@ -1,0 +1,38 @@
+﻿.m-form {
+    background-color: var(--p-color);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255,255,255,0.1);
+    box-shadow: 0 0 40px rgba(8,7,16,0.6);
+    padding: 2rem 2rem;
+}
+
+.m-form * {
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    outline: none;
+    border: none;
+}
+
+.m-form .input {
+    display: block;
+    width: 100%;
+    background-color: rgba(255,255,255,0.07);
+    border-radius: 3px;
+    padding: 0.4rem 0.8rem;
+    margin-top: 8px;
+    font-weight: 300;
+}
+
+::placeholder {
+    color: #e5e5e5;
+}
+
+.login-card {
+    max-width: 800px;
+}
+
+.login-btn {
+    background-color: #e3c595;
+    color: var(--b-color);
+}
