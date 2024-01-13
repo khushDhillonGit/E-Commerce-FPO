@@ -31,7 +31,7 @@
                             <li class="home-attri">
                                 <i class="fa fa-bars"></i>
                                 @{
-                                    var date = item.CreatedDate.ToString("MMM dd yyyy");
+                                    var date = item.CreatedDate.LocalDateTime.ToString("MMM dd yyyy");
                                                                                                 <span>@date</span>
                                 }
                             </li>
