@@ -7,4 +7,10 @@
 
 @section Scripts{
     <script src="~/js/unpaidOrder.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        var model = @Json.Serialize(Model);
+        $(function () {
+            window.initialize(model);
+        })
+    </script>
 }
