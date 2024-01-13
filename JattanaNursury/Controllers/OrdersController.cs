@@ -159,7 +159,7 @@ namespace JattanaNursury.Controllers
                 {
                     throw new InvalidDataException("Quantity is invalid");
                 }
-                var productOrder = new ProductOrder { ProductId = product.Id, Quantity = item.Quantity, TotalPrice = product.UnitPrice * item.Quantity };
+                var productOrder = new ProductOrder { ProductId = product.Id, Quantity = item.Quantity, TotalPrice = product.SellingPrice * item.Quantity };
                 result += productOrder.TotalPrice;
                 order.ProductOrders?.Add(productOrder);
                 product.Quantity -= item.Quantity;
