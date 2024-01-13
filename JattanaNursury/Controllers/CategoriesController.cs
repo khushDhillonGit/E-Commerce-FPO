@@ -63,7 +63,7 @@ namespace JattanaNursury.Controllers
             if (ModelState.IsValid)
             {
                 category.Id = Guid.NewGuid();
-                category.CreatedDate = DateTime.UtcNow;    
+                category.CreatedDate = DateTimeOffset.UtcNow;    
                 _context.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

@@ -69,7 +69,7 @@ namespace JattanaNursury.Controllers
             if (ModelState.IsValid)
             {       
                 product.Id = Guid.NewGuid();
-                product.CreatedDate = DateTime.UtcNow;
+                product.CreatedDate = DateTimeOffset.UtcNow;
                 if (Image != null) 
                 {   
                     try

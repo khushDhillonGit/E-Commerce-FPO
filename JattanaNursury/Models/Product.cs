@@ -15,7 +15,7 @@ namespace JattanaNursury.Models
         public string? ImageUrl { get; set; }
         public string? SKU { get; set; }
         public decimal Quantity { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public DateTimeOffset CreatedDate { get; set; }
         public Guid CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
         public virtual Category? Category { get; set; }

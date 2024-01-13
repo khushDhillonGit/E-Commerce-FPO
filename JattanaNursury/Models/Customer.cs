@@ -15,7 +15,7 @@ namespace JattanaNursury.Models
         public string? PhoneNumber { get; set; }
         public string? EmailAddress { get; set; }
         public string? FullAddress { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public DateTimeOffset CreatedDate { get; set; }
         public bool IsDelete { get; set; }
     }
 }

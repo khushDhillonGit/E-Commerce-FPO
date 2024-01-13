@@ -10,7 +10,7 @@ namespace JattanaNursury.Models
         [Required]
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public DateTimeOffset CreatedDate { get; set; }
         public virtual ICollection<Product>? Products { get; set; }
         public bool IsDelete { get; set; }
     }

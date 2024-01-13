@@ -98,7 +98,7 @@ namespace JattanaNursury.Controllers
                 {
                     var customerId = AddCustomer(saleOrder);
 
-                    var order = new Order { CustomerId = customerId, OrderDate = DateTime.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee, PaidByCustomer = saleOrder.PaidByCustomer };
+                    var order = new Order { CustomerId = customerId, OrderDate = DateTimeOffset.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee, PaidByCustomer = saleOrder.PaidByCustomer };
 
                     try
                     {
@@ -143,7 +143,7 @@ namespace JattanaNursury.Controllers
         {
             var mapper = new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<OrderViewModel, Customer>()));
             var customer = mapper.Map<OrderViewModel, Customer>(saleOrder);
-            customer.CreatedDate = DateTime.UtcNow;
+            customer.CreatedDate = DateTimeOffset.UtcNow;
             _context.Customers.Add(customer);
             return customer.Id;
         }

@@ -28,7 +28,7 @@ namespace JattanaNursury.Models
 
         public decimal PaidByCustomer { get; set; }
 
-        public DateTime OrderDate { get; set; }
+        public DateTimeOffset OrderDate { get; set; }
 
         public Guid CustomerId { get; set; }
         [ForeignKey(nameof(CustomerId))]
