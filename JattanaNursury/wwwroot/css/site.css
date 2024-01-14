@@ -21,7 +21,7 @@ html {
 
 body {
   margin-bottom: 60px;
-  background-color: var(--s-color);
+  /*background-color: var(--s-color);*/
 }
 
 header {
@@ -85,7 +85,7 @@ footer {
 }
 
 .home {
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 20.75%);
+    box-shadow: 0 24px 48px rgb(14 63 14 / 29%);
     border-radius: 12px;
     overflow: hidden;
     transition: all 0.4s;
