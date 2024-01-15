@@ -26,7 +26,7 @@ namespace JattanaNursury.Controllers
         public IActionResult Error(int code,string? message) 
         {
             ViewData["Message"] = "One of our function is dead, Sorry for inconviniance";
-
+            _logger.LogError("Error: " + message + "\nDate: " + DateTimeOffset.Now.ToString());
             if (message != null)
             {
                 ViewData["Message"] = message;

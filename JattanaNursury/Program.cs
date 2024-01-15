@@ -7,14 +7,19 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Proxies;
-using Microsoft.Extensions.DependencyInjection;
-using System.Text.Json;
+using Serilog;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
+//setup serilog
+builder.Logging.ClearProviders();
+builder.Host.UseSerilog((ctx, cfg)=> cfg.ReadFrom.Configuration(ctx.Configuration));
+
 // Add services to the container.
 var connectionString = builder.Configuration["DefaultConnection"];
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     { var sqlBuilder = new SqlConnectionStringBuilder(connectionString);
         options.UseSqlServer(sqlBuilder.ConnectionString); options.UseLazyLoadingProxies(); });
@@ -28,40 +33,64 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+try
 {
-    app.UseMigrationsEndPoint();
+    Log.Logger.Information("Application Starting Up");
+    var app = builder.Build();
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseMigrationsEndPoint();
+    }
+    else
+    {
+        app.UseExceptionHandler("/Home/Error?code=500");
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+    }
+
+
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
+
+    app.UseRouting();
+
+    //using (var scope = app.Services.CreateScope()) 
+    //{
+    //    await SeedDatabase.Initialize(scope.ServiceProvider);
+    //}
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.Use(async (context, next) =>
+    {
+        try
+        {
+            await next(context);
+        }
+        catch (Exception ex)
+        {
+            //Log exception
+        }
+    });
+    app.UseStatusCodePagesWithRedirects("/Home/Error?code={0}");
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+
+    app.MapRazorPages();
+
+    app.Run();
+
 }
-else
+catch (Exception ex)
 {
-    app.UseExceptionHandler("/Home/Error?code=500");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    Log.Fatal(ex, "Fatal: Application failed to start");
+    throw;
+}
+finally 
+{
+    Log.CloseAndFlush();
 }
 
-
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-//using (var scope = app.Services.CreateScope()) 
-//{
-//    await SeedDatabase.Initialize(scope.ServiceProvider);
-//}
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.UseStatusCodePagesWithRedirects("/Home/Error?code={0}");
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.MapRazorPages();
-
-app.Run();
