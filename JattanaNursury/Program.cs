@@ -13,8 +13,8 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 //setup serilog
-builder.Logging.ClearProviders();
-builder.Host.UseSerilog((ctx, cfg)=> cfg.ReadFrom.Configuration(ctx.Configuration));
+Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
+builder.Host.UseSerilog();
 
 // Add services to the container.
 var connectionString = builder.Configuration["DefaultConnection"];
@@ -35,7 +35,7 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 try
 {
-    Log.Logger.Information("Application Starting Up");
+    Log.Information("Application Starting Up");
     var app = builder.Build();
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
@@ -52,6 +52,9 @@ try
 
     app.UseHttpsRedirection();
     app.UseStaticFiles();
+
+    //All requests will be logged
+    app.UseSerilogRequestLogging();
 
     app.UseRouting();
 
