@@ -22,5 +22,16 @@ namespace JattanaNursury.Controllers
         {
             return View();
         }
+
+        public IActionResult Error(int code,string? message) 
+        {
+            ViewData["Message"] = "One of our function is dead, Sorry for inconviniance";
+
+            if (message != null)
+            {
+                ViewData["Message"] = message;
+            }
+            return View();
+        }
     }
 }
