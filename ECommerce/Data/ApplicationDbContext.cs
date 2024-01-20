@@ -12,6 +12,11 @@ namespace ECommerce.Data
         public virtual DbSet<Order> Orders { get; set; }  
         public virtual DbSet<Product> Products { get; set; }  
         public virtual DbSet<ProductOrder> ProductOrders { get; set; }  
+        public virtual DbSet<BusinessCategory> BusinessCategories { get; set; }  
+        public virtual DbSet<BusinessEmployee> BusinessEmployees { get; set; }  
+        public virtual DbSet<Business> Businesses { get; set; }  
+        public virtual DbSet<Address> Addresses { get; set; }  
+
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -56,6 +61,7 @@ namespace ECommerce.Data
                     .HasForeignKey(ur => ur.UserId)
                     .IsRequired();
 
+                b.HasMany(e => e.Businesses).WithMany(e => e.Owners);
             });
 
             modelBuilder.Entity<ApplicationRole>(b =>
@@ -73,6 +79,17 @@ namespace ECommerce.Data
                     .IsRequired();
 
             });
+
+            modelBuilder.Entity<Business>(b => 
+            {
+                b.HasMany(e=>e.Orders).WithOne(e=>e.Business).HasForeignKey(e=>e.BusinessId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ProductOrder>(b =>
+            {
+                b.HasOne(e => e.Order).WithMany(e => e.ProductOrders).OnDelete(DeleteBehavior.NoAction);
+            });
+
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

@@ -25,6 +25,8 @@ namespace ECommerce.Models
         public virtual BusinessCategory BusinessCategory { get; set; }
         public virtual ICollection<Category> Categories { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<ApplicationUser> Owners { get; set; }
+        public virtual ICollection<BusinessEmployee> Employees { get; set; }
         public string? ImageUrl { get; set; }  
         public bool IsDelete { get; set; }
         public DateTimeOffset CreatedDate { get; set; }    
