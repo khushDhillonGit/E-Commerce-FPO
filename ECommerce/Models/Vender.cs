@@ -11,6 +11,9 @@ namespace ECommerce.Models
         public Guid AddressId { get; set; }
         [ForeignKey(nameof(AddressId))]
         public virtual Address Address { get; set; }
+        public Guid BusinessId { get; set; }
+        [ForeignKey(nameof(BusinessId))]
+        public virtual Business Business { get; set; }
         public string? PhoneNumber { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public bool IsDelete { get; set; }

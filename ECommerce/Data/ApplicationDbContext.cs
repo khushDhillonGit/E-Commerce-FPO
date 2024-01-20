@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ECommerce.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole,Guid,  ApplicationUserClaim, ApplicationUserRole, ApplicationUserLogin,  ApplicationRoleClaim, ApplicationUserToken>
-    {
+    { 
         public virtual DbSet<Category> Categories { get; set; }  
         public virtual DbSet<Order> Orders { get; set; }  
         public virtual DbSet<Product> Products { get; set; }  
@@ -29,7 +29,6 @@ namespace ECommerce.Data
 
             modelBuilder.Entity<Category>().HasQueryFilter(a => !a.IsDelete);
             modelBuilder.Entity<Product>().HasQueryFilter(a => !a.IsDelete);
-            modelBuilder.Entity<Customer>().HasQueryFilter(a => !a.IsDelete);
             modelBuilder.Entity<Vender>().HasQueryFilter(a => !a.IsDelete);
 
             modelBuilder.Entity<ApplicationUser>(b =>
@@ -82,6 +81,7 @@ namespace ECommerce.Data
             modelBuilder.Entity<Business>(b => 
             {
                 b.HasMany(e=>e.Orders).WithOne(e=>e.Business).HasForeignKey(e=>e.BusinessId).OnDelete(DeleteBehavior.Cascade);
+                b.HasMany(e => e.Venders).WithOne(e => e.Business).HasForeignKey(e => e.BusinessId).OnDelete(DeleteBehavior.NoAction);
             });
 
             modelBuilder.Entity<ProductOrder>(b =>

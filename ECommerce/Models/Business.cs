@@ -9,6 +9,9 @@ namespace ECommerce.Models
         public Business() 
         {
             Categories = new List<Category>();
+            Orders = new List<Order>();
+            Owners = new List<ApplicationUser>();
+            Venders = new List<Vender>();
         }
         public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
@@ -27,6 +30,7 @@ namespace ECommerce.Models
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<ApplicationUser> Owners { get; set; }
         public virtual ICollection<BusinessEmployee> Employees { get; set; }
+        public virtual ICollection<Vender> Venders { get; set; }
         public string? ImageUrl { get; set; }  
         public bool IsDelete { get; set; }
         public DateTimeOffset CreatedDate { get; set; }    
