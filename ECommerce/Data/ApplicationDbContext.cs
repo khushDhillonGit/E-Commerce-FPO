@@ -15,6 +15,7 @@ namespace ECommerce.Data
         public virtual DbSet<BusinessEmployee> BusinessEmployees { get; set; }  
         public virtual DbSet<Business> Businesses { get; set; }  
         public virtual DbSet<Address> Addresses { get; set; }  
+        public virtual DbSet<Vender> Venders { get; set; }  
 
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -81,7 +82,11 @@ namespace ECommerce.Data
             modelBuilder.Entity<Business>(b => 
             {
                 b.HasMany(e=>e.Orders).WithOne(e=>e.Business).HasForeignKey(e=>e.BusinessId).OnDelete(DeleteBehavior.Cascade);
-                b.HasMany(e => e.Venders).WithOne(e => e.Business).HasForeignKey(e => e.BusinessId).OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<Vender>(b =>
+            {
+                b.HasOne(e => e.Business).WithMany(e=>e.Venders).OnDelete(DeleteBehavior.NoAction);
             });
 
             modelBuilder.Entity<ProductOrder>(b =>
