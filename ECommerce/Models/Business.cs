@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Org.BouncyCastle.Utilities;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ECommerce.Models
@@ -18,5 +19,9 @@ namespace ECommerce.Models
         public Guid OwnerId { get; set; }
         [ForeignKey(nameof(OwnerId))]
         public ApplicationUser Owner { get; set; }
+        public Guid CategoryId { get; set; }
+        [ForeignKey(nameof(CategoryId))]
+        public Category Category { get; set; }
+        public string? ImageUrl { get; set; }  
     }
 }
