@@ -10,7 +10,7 @@ namespace ECommerce.Models
         {
             Categories = new List<Category>();
         }
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
         public string? Name { get; set; }
         [Required]
@@ -27,7 +27,9 @@ namespace ECommerce.Models
         [ForeignKey(nameof(BusinessCategoryId))]
         public BusinessCategory BusinessCategory { get; set; }
         public virtual ICollection<Category> Categories { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
         public string? ImageUrl { get; set; }  
         public bool IsDelete { get; set; }
+        public DateTimeOffset CreatedDate { get; set; }    
     }
 }
