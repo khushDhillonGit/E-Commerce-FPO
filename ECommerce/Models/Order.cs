@@ -34,5 +34,9 @@ namespace ECommerce.Models
         [ForeignKey(nameof(CustomerId))]
         public virtual Customer? Customer { get; set; }
 
+        public Guid BusinessId { get; set; }
+        [ForeignKey(nameof(BusinessId))]
+        public Business Business { get; set; }
+
     }
 }
