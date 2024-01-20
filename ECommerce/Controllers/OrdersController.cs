@@ -28,7 +28,7 @@ namespace ECommerce.Controllers
             List<OrderPaidModel> result = new();
             foreach (var order in orders)
             {
-                var model = new OrderPaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.LocalDateTime.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, CustomerName = order.Customer?.CustomerName, CustomerPhone = order.Customer?.PhoneNumber, CustomerAddress = order.Customer?.FullAddress };
+                var model = new OrderPaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.LocalDateTime.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, CustomerName = order.Customer?.CustomerName, CustomerPhone = order.Customer?.PhoneNumber };
 
                 foreach (var product in order.ProductOrders)
                 {
@@ -46,7 +46,7 @@ namespace ECommerce.Controllers
             List<OrderUnpaidModel> result = new();
             foreach (var order in orders)
             {
-                var model = new OrderUnpaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.LocalDateTime.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, PaidByCustomer = order.PaidByCustomer, CustomerName = order.Customer?.CustomerName, CustomerPhone = order.Customer?.PhoneNumber, CustomerAddress = order.Customer?.FullAddress };
+                var model = new OrderUnpaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.LocalDateTime.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, PaidByCustomer = order.PaidByCustomer, CustomerName = order.Customer?.CustomerName, CustomerPhone = order.Customer?.PhoneNumber };
 
                 foreach (var product in order.ProductOrders) 
                 {
