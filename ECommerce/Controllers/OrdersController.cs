@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 
 namespace ECommerce.Controllers
 {
-    [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin},{ApplicationRole.Employee}")]
+    [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.BusinessOwner},{ApplicationRole.Employee}")]
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -87,7 +87,7 @@ namespace ECommerce.Controllers
             {
                 if (ModelState.IsValid)
                 {
-
+                   
                     var order = new Order { OrderDate = DateTimeOffset.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee, PaidByCustomer = saleOrder.PaidByCustomer ,CustomerName = saleOrder.CustomerName, CustomerPhone = saleOrder.PhoneNumber};
 
                     try

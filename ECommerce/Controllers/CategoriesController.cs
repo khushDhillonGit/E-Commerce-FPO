@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ECommerce.Controllers
 {
-    [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin}")]
+    [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.BusinessOwner}")]
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
