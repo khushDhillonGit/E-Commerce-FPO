@@ -6,6 +6,10 @@ namespace ECommerce.Models
 {
     public class Business
     {
+        public Business() 
+        {
+            Categories = new List<Category>();
+        }
         public Guid Id { get; set; }
         [Required]
         public string? Name { get; set; }
@@ -19,9 +23,10 @@ namespace ECommerce.Models
         public Guid OwnerId { get; set; }
         [ForeignKey(nameof(OwnerId))]
         public ApplicationUser Owner { get; set; }
-        public Guid CategoryId { get; set; }
-        [ForeignKey(nameof(CategoryId))]
-        public Category Category { get; set; }
+        public Guid BusinessCategoryId { get; set; }
+        [ForeignKey(nameof(BusinessCategoryId))]
+        public BusinessCategory BusinessCategory { get; set; }
+        public virtual ICollection<Category> Categories { get; set; }
         public string? ImageUrl { get; set; }  
         public bool IsDelete { get; set; }
     }
