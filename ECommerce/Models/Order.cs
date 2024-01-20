@@ -36,7 +36,7 @@ namespace ECommerce.Models
 
         public Guid BusinessId { get; set; }
         [ForeignKey(nameof(BusinessId))]
-        public Business Business { get; set; }
+        public virtual Business Business { get; set; }
 
     }
 }

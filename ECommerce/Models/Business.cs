@@ -19,10 +19,10 @@ namespace ECommerce.Models
         public string? Phone { get; set; }
         public Guid AddressId { get; set; }
         [ForeignKey(nameof(AddressId))]
-        public Address Address { get; set; }    
+        public virtual Address Address { get; set; }    
         public Guid BusinessCategoryId { get; set; }
         [ForeignKey(nameof(BusinessCategoryId))]
-        public BusinessCategory BusinessCategory { get; set; }
+        public virtual BusinessCategory BusinessCategory { get; set; }
         public virtual ICollection<Category> Categories { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public string? ImageUrl { get; set; }  

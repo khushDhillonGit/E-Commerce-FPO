@@ -13,7 +13,7 @@ namespace ECommerce.Models
         public DateTimeOffset CreatedDate { get; set; }
         public Guid BusinessId { get; set; }
         [ForeignKey(nameof(BusinessId))]
-        public Business Business { get; set; }
+        public virtual Business Business { get; set; }
         public virtual ICollection<Product>? Products { get; set; }
         public bool IsDelete { get; set; }
     }
