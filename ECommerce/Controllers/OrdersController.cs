@@ -28,7 +28,7 @@ namespace ECommerce.Controllers
             List<OrderPaidModel> result = new();
             foreach (var order in orders)
             {
-                var model = new OrderPaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.LocalDateTime.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, CustomerName = order.Customer?.CustomerName, CustomerPhone = order.Customer?.PhoneNumber };
+                var model = new OrderPaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.LocalDateTime.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, CustomerName = order.CustomerName, CustomerPhone = order.CustomerPhone };
 
                 foreach (var product in order.ProductOrders)
                 {
@@ -46,7 +46,7 @@ namespace ECommerce.Controllers
             List<OrderUnpaidModel> result = new();
             foreach (var order in orders)
             {
-                var model = new OrderUnpaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.LocalDateTime.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, PaidByCustomer = order.PaidByCustomer, CustomerName = order.Customer?.CustomerName, CustomerPhone = order.Customer?.PhoneNumber };
+                var model = new OrderUnpaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.LocalDateTime.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, PaidByCustomer = order.PaidByCustomer, CustomerName = order.CustomerName, CustomerPhone = order.CustomerPhone};
 
                 foreach (var product in order.ProductOrders) 
                 {
@@ -87,9 +87,8 @@ namespace ECommerce.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var customerId = AddCustomer(saleOrder);
 
-                    var order = new Order { CustomerId = customerId, OrderDate = DateTimeOffset.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee, PaidByCustomer = saleOrder.PaidByCustomer };
+                    var order = new Order { OrderDate = DateTimeOffset.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee, PaidByCustomer = saleOrder.PaidByCustomer ,CustomerName = saleOrder.CustomerName, CustomerPhone = saleOrder.PhoneNumber};
 
                     try
                     {
@@ -128,15 +127,6 @@ namespace ECommerce.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
-        }
-
-        private Guid AddCustomer(OrderViewModel saleOrder) 
-        {
-            var mapper = new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<OrderViewModel, Customer>()));
-            var customer = mapper.Map<OrderViewModel, Customer>(saleOrder);
-            customer.CreatedDate = DateTimeOffset.UtcNow;
-            _context.Customers.Add(customer);
-            return customer.Id;
         }
 
         private async Task<decimal> AddProductOrdersReturnTotalPriceAsync(Order order,OrderViewModel saleOrder) 

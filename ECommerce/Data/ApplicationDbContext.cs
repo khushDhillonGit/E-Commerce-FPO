@@ -7,7 +7,6 @@ namespace ECommerce.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole,Guid,  ApplicationUserClaim, ApplicationUserRole, ApplicationUserLogin,  ApplicationRoleClaim, ApplicationUserToken>
     {
-        public virtual DbSet<Customer> Customers { get; set; }  
         public virtual DbSet<Category> Categories { get; set; }  
         public virtual DbSet<Order> Orders { get; set; }  
         public virtual DbSet<Product> Products { get; set; }  
