@@ -63,24 +63,15 @@ namespace ECommerce.Controllers
             return View();
         }
 
-        public class ProductModel
-        {
-            public Guid Id { get; set; }
-            public string? Name { get; set; }
-            public decimal SellingPrice { get; set; }
-            public decimal Quantity { get; set; }
-            public decimal TotalPrice { get; set; }
-        }
-
         [HttpGet]
         public async Task<JsonResult> GetProductsByNameAsync(string search = "")
         {
-            List<ProductModel> products = new();
+            List<ProductViewModel> products = new();
             try
             {
                 var pList = await _context.Products.Where(a => a.Name.ToLower().Contains(search.ToLower())).ToListAsync();
-                var mapper = new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<Product, ProductModel>()));
-                products = mapper.Map<List<Product>, List<ProductModel>>(pList);
+                var mapper = new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<Product, ProductViewModel>()));
+                products = mapper.Map<List<Product>, List<ProductViewModel>>(pList);
             }
             catch (Exception ex)
             {
