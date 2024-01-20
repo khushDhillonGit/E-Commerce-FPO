@@ -16,5 +16,7 @@ namespace ECommerce.Models
         public string? PostalCode { get; set; }
         [Required]
         public string? Country { get; set; }
+
+        public string FullAddress { get { return $"{UnitApt + "-" ?? ""}{StreetAddress}, {City}, {Province}, {Country}, {PostalCode}"; } }
     }
 }
