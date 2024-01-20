@@ -20,9 +20,6 @@ namespace ECommerce.Models
         public Guid AddressId { get; set; }
         [ForeignKey(nameof(AddressId))]
         public Address Address { get; set; }    
-        public Guid OwnerId { get; set; }
-        [ForeignKey(nameof(OwnerId))]
-        public ApplicationUser Owner { get; set; }
         public Guid BusinessCategoryId { get; set; }
         [ForeignKey(nameof(BusinessCategoryId))]
         public BusinessCategory BusinessCategory { get; set; }
