@@ -18,5 +18,6 @@ namespace ECommerce.Models
         public string? Country { get; set; }
 
         public string FullAddress { get { return $"{UnitApt + "-" ?? ""}{StreetAddress}, {City}, {Province}, {Country}, {PostalCode}"; } }
+        public bool IsDelete { get; set; }
     }
 }

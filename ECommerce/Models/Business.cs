@@ -23,5 +23,6 @@ namespace ECommerce.Models
         [ForeignKey(nameof(CategoryId))]
         public Category Category { get; set; }
         public string? ImageUrl { get; set; }  
+        public bool IsDelete { get; set; }
     }
 }
