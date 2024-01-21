@@ -11,7 +11,7 @@ namespace ECommerce.Models
         public virtual ICollection<ApplicationUserLogin> Logins { get; set; }
         public virtual ICollection<ApplicationUserToken> Tokens { get; set; }
         public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
-        public virtual ICollection<Business>? Businesses { get; set;}
+        public virtual ICollection<Business> Businesses { get; set;} = new List<Business>();
     }
 
     public class ApplicationRole : IdentityRole<Guid> 
