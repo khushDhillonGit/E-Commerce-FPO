@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using ECommerce.Data;
 using ECommerce.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ECommerce.Controllers
 {
+    [Authorize(Roles = $"{ApplicationRole.SuperAdmin}")]
     public class BusinessCategoriesController : BaseController
     {
         private readonly ApplicationDbContext _context;
@@ -62,6 +64,7 @@ namespace ECommerce.Controllers
             if (ModelState.IsValid)
             {
                 businessCategory.Id = Guid.NewGuid();
+                businessCategory.CreatedDate = DateTimeOffset.UtcNow;
                 _context.Add(businessCategory);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -90,7 +93,7 @@ namespace ECommerce.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Description,IsDelete,CreatedDate")] BusinessCategory businessCategory)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Description")] BusinessCategory businessCategory)
         {
             if (id != businessCategory.Id)
             {
