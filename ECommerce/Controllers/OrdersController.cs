@@ -4,6 +4,7 @@ using ECommerce.Models;
 using ECommerce.Models.Api;
 using ECommerce.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.EntityFrameworkCore;
@@ -13,11 +14,11 @@ using System.Runtime.CompilerServices;
 namespace ECommerce.Controllers
 {
     [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.BusinessOwner},{ApplicationRole.Employee}")]
-    public class OrdersController : Controller
+    public class OrdersController : BaseController 
     {
         private readonly ApplicationDbContext _context;
 
-        public OrdersController(ApplicationDbContext context)
+        public OrdersController(UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context)
         {
             _context = context;
         }
