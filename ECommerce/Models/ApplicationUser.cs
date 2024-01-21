@@ -17,7 +17,7 @@ namespace ECommerce.Models
     public class ApplicationRole : IdentityRole<Guid> 
     {
         public const string SuperAdmin = "SuperAdmin";
-        public const string BusinessOwner = "BusinessOwner";
+        public const string BusinessOwner = "Business Owner";
         public const string Customer = "Customer";
         public const string Employee = "Employee";
 

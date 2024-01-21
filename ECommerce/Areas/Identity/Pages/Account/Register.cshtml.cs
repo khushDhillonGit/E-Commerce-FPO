@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ECommerce.Areas.Identity.Pages.Account
 {
@@ -26,6 +27,7 @@ namespace ECommerce.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
@@ -33,17 +35,20 @@ namespace ECommerce.Areas.Identity.Pages.Account
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
+            RoleManager<ApplicationRole> roleManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            SelectRoles = new SelectList(new List<string> { ApplicationRole.BusinessOwner, ApplicationRole.Customer }, ApplicationRole.Customer);
         }
 
         /// <summary>
@@ -64,7 +69,8 @@ namespace ECommerce.Areas.Identity.Pages.Account
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
-
+        
+        public SelectList SelectRoles { get; set; }
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -103,8 +109,12 @@ namespace ECommerce.Areas.Identity.Pages.Account
             [Display(Name = "Full Name")]
             [StringLength(100, ErrorMessage = "{0} must be atleast {2} character long", MinimumLength = 2)]
             public string Name { get; set; }
-        }
 
+            [Required]
+            [Display(Name = "Register As")]
+            public string Role { get; set; }
+
+        }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
@@ -113,7 +123,7 @@ namespace ECommerce.Areas.Identity.Pages.Account
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
-        {
+        {            
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
@@ -126,7 +136,8 @@ namespace ECommerce.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     //assign role customer
-                    await _userManager.AddToRoleAsync(user, ApplicationRole.Customer);
+                    if (!_roleManager.Roles.Select(a => a.Name).Contains(Input.Role)) return Page();
+                    await _userManager.AddToRoleAsync(user, Input.Role);
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);

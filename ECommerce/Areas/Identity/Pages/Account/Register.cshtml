@@ -18,8 +18,13 @@
                     <div class="col-12">
                         <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                         <div>
+                            <label asp-for="Input.Role"></label>
+                            <select asp-items="Model.SelectRoles" asp-for="Input.Role" class="form-select text-black"></select>
+                            <span asp-validation-for="Input.Role" class="text-danger"></span>
+                        </div>
+                        <div>
                             <label asp-for="Input.Name">Full Name</label>
-                            <input asp-for="Input.Name" class="input" autocomplete="name" aria-required="true" placeholder="Full Name" />
+                            <input asp-for="Input.Name" class="input"  placeholder="Full Name" />
                             <span asp-validation-for="Input.Name" class="text-danger"></span>
                         </div>
                         <div class="mt-2">
