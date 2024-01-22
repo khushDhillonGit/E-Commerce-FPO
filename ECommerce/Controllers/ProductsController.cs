@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ECommerce.Data;
 using ECommerce.Models;
-using Microsoft.AspNetCore.Connections;
-using ECommerce.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using ECommerce.Services;
@@ -84,6 +78,7 @@ namespace ECommerce.Controllers
                     catch (Exception ex) 
                     {
                         //TODO:Handle Exception
+                        Log.Logger.Error(ex,"{Date}: {Message}",DateTimeOffset.UtcNow, ex.Message);
                     }
                 }   
                 _context.Add(product);
