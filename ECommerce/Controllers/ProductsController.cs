@@ -11,18 +11,20 @@ using Microsoft.AspNetCore.Connections;
 using ECommerce.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using ECommerce.Services;
+using Serilog;
 
 namespace ECommerce.Controllers
 {
     public class ProductsController : BaseController
     {
         private readonly ApplicationDbContext _context;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ImageUtility _imageUtility;
 
-        public ProductsController(IWebHostEnvironment webHostEnvironment, UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context)
+        public ProductsController(ImageUtility imageUtility,UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context)
         {
             _context = context;
-            _webHostEnvironment = webHostEnvironment;
+            _imageUtility = imageUtility;
         }
 
 
@@ -77,7 +79,7 @@ namespace ECommerce.Controllers
                 {   
                     try
                     {
-                        product.ImageUrl = await ImageUtility.SaveImageToServerAsync(_webHostEnvironment,Image, Path.Combine("images", "product"));
+                        product.ImageUrl = await _imageUtility.SaveImageToServerAsync(Image, Path.Combine("images", "product"));
                     }
                     catch (Exception ex) 
                     {
@@ -132,7 +134,15 @@ namespace ECommerce.Controllers
                 {
                     if (Image != null) 
                     {
-                        product.ImageUrl = await ImageUtility.SaveImageToServerAsync(_webHostEnvironment, Image, Path.Combine("images", "product"));
+                        try
+                        {
+                            product.ImageUrl = await _imageUtility.SaveImageToServerAsync(Image, Path.Combine("images", "product"));
+                        }
+                        catch (Exception ex)
+                        {
+                            //TODO:Handle Exception
+                            Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
+                        }
                     }
 
                     _context.Update(product);

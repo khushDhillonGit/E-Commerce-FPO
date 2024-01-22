@@ -1,8 +1,11 @@
 ﻿using ECommerce.Data;
 using ECommerce.Models;
+using ECommerce.Services;
+using ECommerce.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Controllers
@@ -11,11 +14,11 @@ namespace ECommerce.Controllers
     public class BusinessesController : BaseController
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-        public BusinessesController(UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager,context)
+        private readonly ImageUtility _imageUtility;
+        public BusinessesController(ImageUtility imageUtility, UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context)
         {
             _context = context;
-            _userManager = userManager;
+            _imageUtility = imageUtility;
         }
 
         public async Task<IActionResult> Index()
