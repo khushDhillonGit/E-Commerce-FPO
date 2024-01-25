@@ -5,6 +5,7 @@ using ECommerce.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -42,30 +43,38 @@ namespace ECommerce.Controllers
         {
             if (ModelState.IsValid)
             {
-
-                var user = await GetCurrentUserAsync();
-                if (user == null) return Unauthorized();
-
-                var Address = new Address() { StreetAddress = businessModel.StreetAddress, UnitApt = businessModel.UnitApt, City = businessModel.City, Country = businessModel.Country, PostalCode = businessModel.PostalCode, Province = businessModel.Province, CreatedDate = DateTimeOffset.UtcNow };
-
-                Business business = new Business() { Address = Address, BusinessCategoryId = businessModel.BusinessCategoryId, CreatedDate = DateTimeOffset.UtcNow, Name = businessModel.Name, Description = businessModel.Description, Phone = businessModel.Phone };
-
-                if (businessModel.Image != null)
+                try
                 {
-                    try 
+                    var user = await GetCurrentUserAsync();
+                    if (user == null) return Unauthorized();
+
+                    var Address = new Address() { StreetAddress = businessModel.StreetAddress, UnitApt = businessModel.UnitApt, City = businessModel.City, Country = businessModel.Country, PostalCode = businessModel.PostalCode, Province = businessModel.Province, CreatedDate = DateTimeOffset.UtcNow };
+
+                    Business business = new Business() { Address = Address, BusinessCategoryId = businessModel.BusinessCategoryId, CreatedDate = DateTimeOffset.UtcNow, Name = businessModel.Name, Description = businessModel.Description, Phone = businessModel.Phone };
+
+                    if (businessModel.Image != null)
                     {
-                        business.ImageUrl = await _imageUtility.SaveImageToServerAsync(businessModel.Image, Path.Combine("images", "businesses"));
+                        try
+                        {
+                            business.ImageUrl = await _imageUtility.SaveImageToServerAsync(businessModel.Image, Path.Combine("images", "businesses"));
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
+                        }
                     }
-                    catch(Exception ex) 
-                    {
-                        Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
-                    }
+
+
+                    business.Owners.Add(user);
+
+                    _context.Businesses.Add(business);
+                    await _context.SaveChangesAsync();
                 }
-
-
-                business.Owners.Add(user);
-
-
+                catch (Exception ex) 
+                {
+                    Log.Logger.Error(ex, "{Date}, Message:{Message}", DateTimeOffset.UtcNow, ex.Message);
+                    ModelState.AddModelError("ErrorMessage", "Something went wrong");
+                }
             }
             return View();
         }
