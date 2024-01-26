@@ -88,7 +88,6 @@ namespace ECommerce.Controllers
                         }
                     }
 
-
                     business.Owners.Add(user);
 
                     _context.Businesses.Add(business);
@@ -103,6 +102,15 @@ namespace ECommerce.Controllers
             }
             businessModel.Categories = GetBusinessCategoriesSelectList();
             return View(businessModel);
+        }
+
+        
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id) 
+        {
+            var business = await _context.Businesses.Include(a=>a.Address).FirstOrDefaultAsync(x => x.Id == id);
+            return View(business);
         }
 
         protected override async Task<ApplicationUser?> GetCurrentUserAsync()
