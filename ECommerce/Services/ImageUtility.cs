@@ -10,8 +10,11 @@
 
         public async Task<string> SaveImageToServerAsync(IFormFile image, string path)
         {
-            var imagePath = Path.Combine(path, Guid.NewGuid().ToString() + "_" + image.FileName);
             if (_environment == null) throw new ArgumentNullException("Root path not found");
+            var directPath = Path.Combine(_environment.WebRootPath, path);
+            if(!Directory.Exists(directPath)) 
+                Directory.CreateDirectory(directPath);
+            var imagePath = Path.Combine(path, Guid.NewGuid().ToString() + "_" + image.FileName);
             var fullPath = Path.Combine(_environment.WebRootPath, imagePath);
             using (var stream = new FileStream(fullPath, FileMode.Create))
             {
