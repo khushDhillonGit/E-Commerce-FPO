@@ -13,5 +13,8 @@ namespace ECommerce.ViewModels
         public string? Phone { get; set; }
         [Required]
         public Guid BusinessCategoryId { get; set; }
+        public AddressViewModel Address { get; set; } = new AddressViewModel();
+        public SelectList? Categories { get; set; }
+        public IFormFile? Image { get; set; }
     }
 }

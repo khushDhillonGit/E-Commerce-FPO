@@ -26,8 +26,8 @@ namespace ECommerce.Controllers
             _imageUtility = imageUtility;
             var mapperConfig = new MapperConfiguration(e=> 
             {
-                e.CreateMap<AddressViewModel,Address>();
-                e.CreateMap<BusinessViewModel,Business>();
+                e.CreateMap<AddressViewModel,Address>().ReverseMap();
+                e.CreateMap<BusinessViewModel,Business>().ReverseMap();
             });
             _mapper = new Mapper(mapperConfig);
         }
@@ -45,24 +45,16 @@ namespace ECommerce.Controllers
             return new SelectList(businessCategories, "Id", "Name", "General");
         }
 
-        public class BusinessModel
-        {
-            public BusinessViewModel Business { get; set; } = new BusinessViewModel();
-            public AddressViewModel Address { get; set; } = new AddressViewModel();
-            public SelectList? Categories { get; set; }
-            public IFormFile? Image { get; set; }
-        }
-
         [HttpGet]
         public IActionResult Create()
         {
-            var viewModel = new BusinessModel();
+            var viewModel = new BusinessViewModel();
             viewModel.Categories = GetBusinessCategoriesSelectList();
             return View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(BusinessModel businessModel)
+        public async Task<IActionResult> Create(BusinessViewModel businessModel)
         {
             if (ModelState.IsValid)
             {
@@ -71,10 +63,7 @@ namespace ECommerce.Controllers
                     var user = await GetCurrentUserAsync();
                     if (user == null) return Unauthorized();
 
-                    Address address = _mapper.Map<Address>(businessModel.Address);
-
-                    Business business = _mapper.Map<Business>(businessModel.Business);
-                    business.Address = address;    
+                    Business business = _mapper.Map<Business>(businessModel);
 
                     if (businessModel.Image != null)
                     {
@@ -110,6 +99,7 @@ namespace ECommerce.Controllers
         public async Task<IActionResult> Edit(Guid id) 
         {
             var business = await _context.Businesses.Include(a=>a.Address).FirstOrDefaultAsync(x => x.Id == id);
+            BusinessViewModel viewModel = _mapper.Map<BusinessViewModel>(business); 
             return View(business);
         }
 

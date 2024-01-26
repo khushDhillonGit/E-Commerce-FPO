@@ -8,7 +8,7 @@ namespace ECommerce.Models
     {
         public Business() 
         {
-            Categories = new List<Category>();
+            ProductCategories = new List<Category>();
             Orders = new List<Order>();
             Owners = new List<ApplicationUser>();
             Venders = new List<Vender>();
@@ -26,7 +26,7 @@ namespace ECommerce.Models
         public Guid BusinessCategoryId { get; set; }
         [ForeignKey(nameof(BusinessCategoryId))]
         public virtual BusinessCategory BusinessCategory { get; set; }
-        public virtual ICollection<Category> Categories { get; set; }
+        public virtual ICollection<Category> ProductCategories { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<ApplicationUser> Owners { get; set; }
         public virtual ICollection<BusinessEmployee> Employees { get; set; }

@@ -1,4 +1,4 @@
-﻿@model ECommerce.Controllers.BusinessesController.BusinessModel
+﻿@model ECommerce.ViewModels.BusinessViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -25,9 +25,9 @@
                 <div class="row g-4">
                     <div class="col-md-6 col-sm-12">
                         <div class="form-group">
-                            <label asp-for="Business.Name" class="control-label"></label>
-                            <input asp-for="Business.Name" class="form-control" />
-                            <span asp-validation-for="Business.Name" class="text-danger"></span>
+                            <label asp-for="Name" class="control-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
@@ -39,15 +39,15 @@
                     <div class="col-md-6 col-sm-12">
 
                         <div class="form-group">
-                            <label asp-for="Business.Description" class="control-label"></label>
-                            <input asp-for="Business.Description" class="form-control" />
-                            <span asp-validation-for="Business.Description" class="text-danger"></span>
+                            <label asp-for="Description" class="control-label"></label>
+                            <input asp-for="Description" class="form-control" />
+                            <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <div class="form-group">
-                            <label asp-for="Business.BusinessCategoryId" class="control-label">Category</label>
-                            <select asp-for="Business.BusinessCategoryId" class="form-control" asp-items="Model.Categories"></select>
+                            <label asp-for="BusinessCategoryId" class="control-label">Category</label>
+                            <select asp-for="BusinessCategoryId" class="form-control" asp-items="Model.Categories"></select>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
@@ -90,9 +90,9 @@
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <div class="form-group">
-                            <label asp-for="Business.Phone" class="control-label"></label>
-                            <input asp-for="Business.Phone" class="form-control" />
-                            <span asp-validation-for="Business.Phone" class="text-danger"></span>
+                            <label asp-for="Phone" class="control-label"></label>
+                            <input asp-for="Phone" class="form-control" />
+                            <span asp-validation-for="Phone" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
