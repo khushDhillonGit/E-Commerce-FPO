@@ -1,4 +1,4 @@
-﻿@model ECommerce.ViewModels.CreateBusinessViewModel
+﻿@model ECommerce.Controllers.BusinessesController.BusinessModel
 
 @{
     ViewData["Title"] = "Create";
@@ -25,9 +25,9 @@
                 <div class="row g-4">
                     <div class="col-md-6 col-sm-12">
                         <div class="form-group">
-                            <label asp-for="Name" class="control-label"></label>
-                            <input asp-for="Name" class="form-control" />
-                            <span asp-validation-for="Name" class="text-danger"></span>
+                            <label asp-for="Business.Name" class="control-label"></label>
+                            <input asp-for="Business.Name" class="form-control" />
+                            <span asp-validation-for="Business.Name" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
@@ -39,67 +39,67 @@
                     <div class="col-md-6 col-sm-12">
 
                         <div class="form-group">
-                            <label asp-for="Description" class="control-label"></label>
-                            <input asp-for="Description" class="form-control" />
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <label asp-for="Business.Description" class="control-label"></label>
+                            <input asp-for="Business.Description" class="form-control" />
+                            <span asp-validation-for="Business.Description" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <div class="form-group">
-                            <label asp-for="BusinessCategoryId" class="control-label">Category</label>
-                            <select asp-for="BusinessCategoryId" class="form-control" asp-items="Model.Categories"></select>
+                            <label asp-for="Business.BusinessCategoryId" class="control-label">Category</label>
+                            <select asp-for="Business.BusinessCategoryId" class="form-control" asp-items="Model.Categories"></select>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <div class="form-group">
-                            <label asp-for="UnitApt" class="control-label"></label>
-                            <input asp-for="UnitApt" class="form-control" />
-                            <span asp-validation-for="UnitApt" class="text-danger"></span>
+                            <label asp-for="Address.UnitApt" class="control-label"></label>
+                            <input asp-for="Address.UnitApt" class="form-control" />
+                            <span asp-validation-for="Address.UnitApt" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <div class="form-group">
-                            <label asp-for="StreetAddress" class="control-label"></label>
-                            <input asp-for="StreetAddress" class="form-control" />
-                            <span asp-validation-for="StreetAddress" class="text-danger"></span>
+                            <label asp-for="Address.StreetAddress" class="control-label"></label>
+                            <input asp-for="Address.StreetAddress" class="form-control" />
+                            <span asp-validation-for="Address.StreetAddress" class="text-danger"></span>
                         </div>
 
                     </div>
                     <div class="col-md-4 col-sm-12">
                         <div class="form-group">
-                            <label asp-for="City" class="control-label"></label>
-                            <input asp-for="City" class="form-control" />
-                            <span asp-validation-for="City" class="text-danger"></span>
+                            <label asp-for="Address.City" class="control-label"></label>
+                            <input asp-for="Address.City" class="form-control" />
+                            <span asp-validation-for="Address.City" class="text-danger"></span>
                         </div>
                     </div>
              
                     <div class="col-md-4 col-sm-12">
                         <div class="form-group">
-                            <label asp-for="Province" class="control-label"></label>
-                            <input asp-for="Province" class="form-control" />
-                            <span asp-validation-for="Province" class="text-danger"></span>
+                            <label asp-for="Address.Province" class="control-label"></label>
+                            <input asp-for="Address.Province" class="form-control" />
+                            <span asp-validation-for="Address.Province" class="text-danger"></span>
                         </div>
                     </div>
 
                     <div class="col-md-4 col-sm-12">
                         <div class="form-group">
-                            <label asp-for="PostalCode" class="control-label"></label>
-                            <input asp-for="PostalCode" class="form-control" />
-                            <span asp-validation-for="PostalCode" class="text-danger"></span>
+                            <label asp-for="Address.PostalCode" class="control-label"></label>
+                            <input asp-for="Address.PostalCode" class="form-control" />
+                            <span asp-validation-for="Address.PostalCode" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <div class="form-group">
-                            <label asp-for="Phone" class="control-label"></label>
-                            <input asp-for="Phone" class="form-control" />
-                            <span asp-validation-for="Phone" class="text-danger"></span>
+                            <label asp-for="Business.Phone" class="control-label"></label>
+                            <input asp-for="Business.Phone" class="form-control" />
+                            <span asp-validation-for="Business.Phone" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <div class="form-group">
-                            <label asp-for="Country" class="control-label"></label>
-                            <input asp-for="Country" class="form-control" />
-                            <span asp-validation-for="Country" class="text-danger"></span>
+                            <label asp-for="Address.Country" class="control-label"></label>
+                            <input asp-for="Address.Country" class="form-control" />
+                            <span asp-validation-for="Address.Country" class="text-danger"></span>
                         </div>
                     </div>
                 </div>

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using AutoMapper;
 
 namespace ECommerce.Controllers
 {
@@ -17,10 +18,18 @@ namespace ECommerce.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ImageUtility _imageUtility;
+        private readonly Mapper _mapper;
+
         public BusinessesController(ImageUtility imageUtility, UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context)
         {
             _context = context;
             _imageUtility = imageUtility;
+            var mapperConfig = new MapperConfiguration(e=> 
+            {
+                e.CreateMap<AddressViewModel,Address>();
+                e.CreateMap<BusinessViewModel,Business>();
+            });
+            _mapper = new Mapper(mapperConfig);
         }
 
         public async Task<IActionResult> Index()
@@ -36,16 +45,24 @@ namespace ECommerce.Controllers
             return new SelectList(businessCategories, "Id", "Name", "General");
         }
 
+        public class BusinessModel
+        {
+            public BusinessViewModel Business { get; set; } = new BusinessViewModel();
+            public AddressViewModel Address { get; set; } = new AddressViewModel();
+            public SelectList? Categories { get; set; }
+            public IFormFile? Image { get; set; }
+        }
+
         [HttpGet]
         public IActionResult Create()
         {
-            var viewModel = new CreateBusinessViewModel();
+            var viewModel = new BusinessModel();
             viewModel.Categories = GetBusinessCategoriesSelectList();
             return View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateBusinessViewModel businessModel)
+        public async Task<IActionResult> Create(BusinessModel businessModel)
         {
             if (ModelState.IsValid)
             {
@@ -54,9 +71,10 @@ namespace ECommerce.Controllers
                     var user = await GetCurrentUserAsync();
                     if (user == null) return Unauthorized();
 
-                    var Address = new Address() { StreetAddress = businessModel.StreetAddress, UnitApt = businessModel.UnitApt, City = businessModel.City, Country = businessModel.Country, PostalCode = businessModel.PostalCode, Province = businessModel.Province, CreatedDate = DateTimeOffset.UtcNow };
+                    Address address = _mapper.Map<Address>(businessModel.Address);
 
-                    Business business = new Business() { Address = Address, BusinessCategoryId = businessModel.BusinessCategoryId, CreatedDate = DateTimeOffset.UtcNow, Name = businessModel.Name, Description = businessModel.Description, Phone = businessModel.Phone };
+                    Business business = _mapper.Map<Business>(businessModel.Business);
+                    business.Address = address;    
 
                     if (businessModel.Image != null)
                     {
