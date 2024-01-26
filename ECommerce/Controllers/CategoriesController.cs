@@ -8,18 +8,21 @@ using Microsoft.EntityFrameworkCore;
 using ECommerce.Data;
 using ECommerce.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce.Controllers
 {
-    [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.Admin}")]
-    public class CategoriesController : Controller
+    [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.BusinessOwner}")]
+    public class CategoriesController : BaseController
     {
         private readonly ApplicationDbContext _context;
 
-        public CategoriesController(ApplicationDbContext context)
+        public CategoriesController(UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context)
         {
             _context = context;
         }
+
+
 
         // GET: Categories
         public async Task<IActionResult> Index()

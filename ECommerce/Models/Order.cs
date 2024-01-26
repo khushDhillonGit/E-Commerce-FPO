@@ -18,6 +18,8 @@ namespace ECommerce.Models
         public string OrderNumber { get; set; }
         [Required]
         public string? EmployeeId { get; set; }
+        public string? CustomerName { get; set; }
+        public string? CustomerPhone { get; set; }
 
         public decimal Price { get ; set ; }
         public decimal Discount { get; set; }
@@ -29,10 +31,9 @@ namespace ECommerce.Models
         public decimal PaidByCustomer { get; set; }
 
         public DateTimeOffset OrderDate { get; set; }
-
-        public Guid CustomerId { get; set; }
-        [ForeignKey(nameof(CustomerId))]
-        public virtual Customer? Customer { get; set; }
+        public Guid BusinessId { get; set; }
+        [ForeignKey(nameof(BusinessId))]
+        public virtual Business Business { get; set; }
 
     }
 }

@@ -4,7 +4,7 @@ namespace ECommerce.Models
 {
     public class Address
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
         public string? StreetAddress { get; set; }
         public string? UnitApt { get; set; }
@@ -16,7 +16,9 @@ namespace ECommerce.Models
         public string? PostalCode { get; set; }
         [Required]
         public string? Country { get; set; }
-
+        [Required]
+        public DateTimeOffset CreatedDate { get; set; }
         public string FullAddress { get { return $"{UnitApt + "-" ?? ""}{StreetAddress}, {City}, {Province}, {Country}, {PostalCode}"; } }
+        public bool IsDelete { get; set; }
     }
 }

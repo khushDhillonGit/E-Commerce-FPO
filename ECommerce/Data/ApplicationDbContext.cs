@@ -6,12 +6,17 @@ using Microsoft.EntityFrameworkCore;
 namespace ECommerce.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole,Guid,  ApplicationUserClaim, ApplicationUserRole, ApplicationUserLogin,  ApplicationRoleClaim, ApplicationUserToken>
-    {
-        public virtual DbSet<Customer> Customers { get; set; }  
+    { 
         public virtual DbSet<Category> Categories { get; set; }  
         public virtual DbSet<Order> Orders { get; set; }  
         public virtual DbSet<Product> Products { get; set; }  
         public virtual DbSet<ProductOrder> ProductOrders { get; set; }  
+        public virtual DbSet<BusinessCategory> BusinessCategories { get; set; }  
+        public virtual DbSet<BusinessEmployee> BusinessEmployees { get; set; }  
+        public virtual DbSet<Business> Businesses { get; set; }  
+        public virtual DbSet<Address> Addresses { get; set; }  
+        public virtual DbSet<Vender> Venders { get; set; }  
+
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -25,7 +30,6 @@ namespace ECommerce.Data
 
             modelBuilder.Entity<Category>().HasQueryFilter(a => !a.IsDelete);
             modelBuilder.Entity<Product>().HasQueryFilter(a => !a.IsDelete);
-            modelBuilder.Entity<Customer>().HasQueryFilter(a => !a.IsDelete);
             modelBuilder.Entity<Vender>().HasQueryFilter(a => !a.IsDelete);
 
             modelBuilder.Entity<ApplicationUser>(b =>
@@ -56,6 +60,7 @@ namespace ECommerce.Data
                     .HasForeignKey(ur => ur.UserId)
                     .IsRequired();
 
+                b.HasMany(e => e.Businesses).WithMany(e => e.Owners);
             });
 
             modelBuilder.Entity<ApplicationRole>(b =>
@@ -73,6 +78,22 @@ namespace ECommerce.Data
                     .IsRequired();
 
             });
+
+            modelBuilder.Entity<Business>(b => 
+            {
+                b.HasMany(e=>e.Orders).WithOne(e=>e.Business).HasForeignKey(e=>e.BusinessId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Vender>(b =>
+            {
+                b.HasOne(e => e.Business).WithMany(e=>e.Venders).OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<ProductOrder>(b =>
+            {
+                b.HasOne(e => e.Order).WithMany(e => e.ProductOrders).OnDelete(DeleteBehavior.NoAction);
+            });
+
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

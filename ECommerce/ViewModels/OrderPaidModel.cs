@@ -12,7 +12,6 @@
 
         public string? CustomerName { get; set; }
         public string? CustomerPhone { get; set; }
-        public string? CustomerAddress { get; set; }
 
         public List<OrderProductsModel>  Products { get; set; } = new List<OrderProductsModel>();
     }
