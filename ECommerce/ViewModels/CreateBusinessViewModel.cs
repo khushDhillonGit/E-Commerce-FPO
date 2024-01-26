@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace ECommerce.ViewModels
 {
@@ -24,5 +25,6 @@ namespace ECommerce.ViewModels
         public string? PostalCode { get; set; }
         [Required]
         public string? Country { get; set; }
+        public SelectList? Categories { get; set; }
     }
 }

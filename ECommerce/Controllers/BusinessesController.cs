@@ -30,12 +30,18 @@ namespace ECommerce.Controllers
             return View(user.Businesses);
         }
 
+        private SelectList GetBusinessCategoriesSelectList() 
+        {
+            var businessCategories = _context.BusinessCategories.Select(a => new { Id = a.Id, Name = a.Name }).ToList();
+            return new SelectList(businessCategories, "Id", "Name", "General");
+        }
+
         [HttpGet]
         public IActionResult Create()
         {
-            var businessCategories = _context.BusinessCategories.Select(a => new { Id = a.Id, Name = a.Name }).ToList();
-            ViewData["Categories"] = new SelectList(businessCategories, "Id", "Name", "General");
-            return View();
+            var viewModel = new CreateBusinessViewModel();
+            viewModel.Categories = GetBusinessCategoriesSelectList();
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -73,10 +79,12 @@ namespace ECommerce.Controllers
                 catch (Exception ex) 
                 {
                     Log.Logger.Error(ex, "{Date}, Message:{Message}", DateTimeOffset.UtcNow, ex.Message);
-                    ModelState.AddModelError("ErrorMessage", "Something went wrong");
+                    ModelState.AddModelError("ErrorMessage", "Something went wrong, Please contact administrator");
                 }
+                return RedirectToAction(nameof(Create));
             }
-            return View();
+            businessModel.Categories = GetBusinessCategoriesSelectList();
+            return View(businessModel);
         }
 
         protected override async Task<ApplicationUser?> GetCurrentUserAsync()
