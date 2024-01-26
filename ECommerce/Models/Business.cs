@@ -33,6 +33,6 @@ namespace ECommerce.Models
         public virtual ICollection<Vender> Venders { get; set; }
         public string? ImageUrl { get; set; }  
         public bool IsDelete { get; set; }
-        public DateTimeOffset CreatedDate { get; set; }    
+        public DateTimeOffset CreatedDate { get; set; } = DateTimeOffset.UtcNow;
     }
 }

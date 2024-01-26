@@ -17,7 +17,7 @@ namespace ECommerce.Models
         [Required]
         public string? Country { get; set; }
         [Required]
-        public DateTimeOffset CreatedDate { get; set; }
+        public DateTimeOffset CreatedDate { get; set; } = DateTimeOffset.UtcNow;
         public string FullAddress { get { return $"{UnitApt + "-" ?? ""}{StreetAddress}, {City}, {Province}, {Country}, {PostalCode}"; } }
         public bool IsDelete { get; set; }
     }
