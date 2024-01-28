@@ -28,10 +28,6 @@ header {
     height:10vh;
 }
 
-main {
-    height: 82vh;
-}
-
 footer {
     height: 8vh;
 }
@@ -53,9 +49,6 @@ footer {
     margin-bottom: 8px;
 }
 
-#home-cards {
-    gap: 20px;
-}
 
 .home-attri {
     font-size: 18px;
@@ -80,9 +73,6 @@ footer {
     height: 100%;
 }
 
-#home-cards {
-    gap: 20px;
-}
 
 .home {
     box-shadow: 0 24px 48px rgb(14 63 14 / 29%);

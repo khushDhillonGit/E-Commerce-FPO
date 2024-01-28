@@ -1,0 +1,106 @@
+﻿@model IEnumerable<ECommerce.ViewModels.BusinessViewModel>
+@{
+    ViewData["Title"] = "Index";
+}
+
+@section Styles
+{
+    <style>
+        .div-img
+        {
+            height:280px; 
+        }
+    </style>
+}
+
+<div class="row">
+    <div class="col-12">
+        <h2 class="text-center">
+            Your Businesses
+        </h2>
+    </div>
+    @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin") || User.IsInRole("Business Owner"))
+    {
+        <div class="col-12 d-flex justify-content-end">
+            <a class="btn primary-btn" asp-action="Create" asp-controller="Businesses">Add New</a>
+        </div>
+    }
+    <div class="col-12 mt-4">
+
+        <div id="home-cards" class="row">
+            @foreach (var item in Model)
+            {
+                <div class="p-3 col-sm-12 col-md-6">
+                    <div class="home">
+                        <div class="div-img">
+                            <img src="~/@Html.DisplayFor(modelItem => item.ImageUrl)" alt="Business Image">
+                        </div>
+                        <div class="home-content">
+                            <p class="home-title">@Html.DisplayFor(modelItem => item.Name)</p>
+                            <ul class="home-list">
+                                <li class="home-attri">
+                                    <i class="fa fa-comment"></i>
+                                    <span>@Html.DisplayFor(modelItem => item.Description)</span>
+                                </li>
+                                <li class="home-attri">
+                                    <i class="fa fa-bars"></i>
+                                    <span>@Html.DisplayFor(modelItem => item.Address.Address)</span>
+                                </li>
+                                <li class="home-attri">
+                                    <i class="fa fa-warehouse"></i>
+                                    <span>Employees: @Html.DisplayFor(modelItem => item.TotalEmployees)</span>
+                                </li>
+                                <li class="home-attri">
+                                    <i class="fa fa-money-bill"></i>
+                                    <span>Products: @Html.DisplayFor(modelItem => item.TotalProducts)</span>
+                                </li>
+                                <li class="home-attri">
+                                    <i class="fa fa-user"></i>
+                                    <span>Orders: @Html.DisplayFor(modelItem => item.TotalOrders)</span>
+                                </li>
+                            </ul>
+                            <div class="row justify-content-around mt-3">
+
+                                <a class="col-3 btn link-card secondary-btn" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                <a class="col-3 btn link-card red-btn" data-bs-toggle="modal" onclick="deleteBtnClicked(this)" data-id="@item.Id" data-bs-target="#deleteModel">
+                                    Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModel" tabindex="-1" aria-labelledby="deleteModelLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModelLabel">Delete Product</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this product?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <a class="col-3 btn link-card red-btn" style="width:10rem;" onclick="deleteItem()">Yes I am sure!</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+                {
+    <script src="~/js/general.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        const url = "@Url.Action("Delete", "Businesses")";
+        $(function () {
+            window.initialize(url);
+        });
+    </script>
+}
