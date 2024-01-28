@@ -39,14 +39,14 @@ namespace ECommerce.Controllers
             if (user == null) return Unauthorized();
 
             List<BusinessViewModel> businesses = new List<BusinessViewModel>();
-            foreach (var business in user.Businesses) 
+            foreach (var business in user.Businesses)
             {
                 BusinessViewModel vm = _mapper.Map<BusinessViewModel>(business);
-                
-                var bussinessData = _context.Businesses.Include(a => a.ProductCategories).ThenInclude(a => a.Products).Include(a => a.Orders).Include(a=>a.Employees).Select(a=> new 
-                { 
+
+                var bussinessData = _context.Businesses.Include(a => a.ProductCategories).ThenInclude(a => a.Products).Include(a => a.Orders).Include(a => a.Employees).Select(a => new
+                {
                     a.Id,
-                    TotalProducts = a.ProductCategories.SelectMany(a=>a.Products).Count(),
+                    TotalProducts = a.ProductCategories.SelectMany(a => a.Products).Count(),
                     TotalOrders = a.Orders.Count(),
                     TotalCategories = a.ProductCategories.Count(),
                     TotalEmployees = a.Employees.Count(),
@@ -88,17 +88,20 @@ namespace ECommerce.Controllers
                     if (user == null) return Unauthorized();
 
                     Business business = _mapper.Map<Business>(businessModel);
-
-                    if (businessModel.Image != null)
+                    try
                     {
-                        try
+                        if (businessModel.Image != null)
                         {
                             business.ImageUrl = await _imageUtility.SaveImageToServerAsync(businessModel.Image, imageSavePath);
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
+                            business.ImageUrl = Path.Combine("images", "default", "default-business.png");
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
                     }
 
                     business.Owners.Add(user);
@@ -168,22 +171,22 @@ namespace ECommerce.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(Guid? id) 
+        public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null) 
+            if (id == null)
             {
                 return NotFound();
             }
 
-            Business? business = await _context.Businesses.Include(a=>a.ProductCategories).ThenInclude(a=>a.Products).Include(a=>a.Employees).Include(a=>a.Address).Include(a=>a.Orders).FirstOrDefaultAsync(a => a.Id == id);
+            Business? business = await _context.Businesses.Include(a => a.ProductCategories).ThenInclude(a => a.Products).Include(a => a.Employees).Include(a => a.Address).Include(a => a.Orders).FirstOrDefaultAsync(a => a.Id == id);
 
-            if (business == null) 
+            if (business == null)
             {
                 return NotFound();
             }
 
             _context.Orders.RemoveRange(business.Orders);
-            _context.Products.RemoveRange(business.ProductCategories.SelectMany(a=>a.Products));
+            _context.Products.RemoveRange(business.ProductCategories.SelectMany(a => a.Products));
             _context.Categories.RemoveRange(business.ProductCategories);
             _context.BusinessEmployees.RemoveRange(business.Employees);
             _context.Addresses.Remove(business.Address);
@@ -197,7 +200,7 @@ namespace ECommerce.Controllers
             var userName = this.HttpContext?.User?.Identity?.Name;
             if (userName != null)
             {
-                return await _context.Users.Include(a => a.Businesses).ThenInclude(a=>a.Address).FirstOrDefaultAsync(a => a.UserName == userName);
+                return await _context.Users.Include(a => a.Businesses).ThenInclude(a => a.Address).FirstOrDefaultAsync(a => a.UserName == userName);
             }
             return null;
         }

@@ -67,17 +67,18 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
 
-    app.Use(async (context, next) =>
-    {
-        try
-        {
-            await next(context);
-        }
-        catch (Exception ex)
-        {
-            //Log exception
-        }
-    });
+    //app.Use(async (context, next) =>
+    //{
+    //    try
+    //    {
+    //        await next(context);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        //Log exception
+    //        Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
+    //    }
+    //});
     app.UseStatusCodePagesWithRedirects("/Home/Error?code={0}");
     app.MapControllerRoute(
         name: "default",
