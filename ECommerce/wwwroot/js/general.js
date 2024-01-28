@@ -16,7 +16,7 @@ function deleteItem() {
     if (deletedId) {
         $.post(_postDeleteUrl, { id: deletedId }, function (res) {
             if (res.success) {
-                window.location = res.url;
+                window.location = res.redirectUrl;
             }
         }).fail(function (res) {
             alert("Error while deleting, Contact IT");

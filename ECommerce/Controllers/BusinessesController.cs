@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using AutoMapper;
+using ECommerce.Models.Api;
 
 namespace ECommerce.Controllers
 {
@@ -177,23 +178,30 @@ namespace ECommerce.Controllers
             {
                 return NotFound();
             }
-
-            Business? business = await _context.Businesses.Include(a => a.ProductCategories).ThenInclude(a => a.Products).Include(a => a.Employees).Include(a => a.Address).Include(a => a.Orders).FirstOrDefaultAsync(a => a.Id == id);
-
-            if (business == null)
+            try
             {
-                return NotFound();
+                Business? business = await _context.Businesses.Include(a => a.ProductCategories).ThenInclude(a => a.Products).Include(a => a.Employees).Include(a => a.Address).Include(a => a.Orders).FirstOrDefaultAsync(a => a.Id == id);
+
+                if (business == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Orders.RemoveRange(business.Orders);
+                _context.Products.RemoveRange(business.ProductCategories.SelectMany(a => a.Products));
+                _context.Categories.RemoveRange(business.ProductCategories);
+                _context.BusinessEmployees.RemoveRange(business.Employees);
+                _context.Addresses.Remove(business.Address ?? new Address());
+                _context.Businesses.Remove(business);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
+                return BadRequest();
             }
 
-            _context.Orders.RemoveRange(business.Orders);
-            _context.Products.RemoveRange(business.ProductCategories.SelectMany(a => a.Products));
-            _context.Categories.RemoveRange(business.ProductCategories);
-            _context.BusinessEmployees.RemoveRange(business.Employees);
-            _context.Addresses.Remove(business.Address);
-            _context.Businesses.Remove(business);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            return Ok(new PostBackModel { Success = true, RedirectUrl = "/Businesses/index" });
         }
         protected override async Task<ApplicationUser?> GetCurrentUserAsync()
         {

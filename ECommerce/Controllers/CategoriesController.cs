@@ -9,6 +9,7 @@ using ECommerce.Data;
 using ECommerce.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using ECommerce.Models.Api;
 
 namespace ECommerce.Controllers
 {
@@ -146,7 +147,7 @@ namespace ECommerce.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return Ok(new { success= true, url = "/categories/index" });
+            return Ok(new PostBackModel{ Success = true, RedirectUrl = "/categories/index" });
         }
 
         private bool CategoryExists(Guid id)
