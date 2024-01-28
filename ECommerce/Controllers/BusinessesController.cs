@@ -19,15 +19,16 @@ namespace ECommerce.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ImageUtility _imageUtility;
         private readonly Mapper _mapper;
+        private readonly string imageSavePath = Path.Combine("images", "businesses");
 
         public BusinessesController(ImageUtility imageUtility, UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context)
         {
             _context = context;
             _imageUtility = imageUtility;
-            var mapperConfig = new MapperConfiguration(e=> 
+            var mapperConfig = new MapperConfiguration(e =>
             {
-                e.CreateMap<AddressViewModel,Address>().ReverseMap();
-                e.CreateMap<BusinessViewModel,Business>().ReverseMap();
+                e.CreateMap<AddressViewModel, Address>().ReverseMap();
+                e.CreateMap<BusinessViewModel, Business>().ReverseMap();
             });
             _mapper = new Mapper(mapperConfig);
         }
@@ -36,12 +37,35 @@ namespace ECommerce.Controllers
         {
             var user = await GetCurrentUserAsync();
             if (user == null) return Unauthorized();
-            return View(user.Businesses);
+
+            List<BusinessViewModel> businesses = new List<BusinessViewModel>();
+            foreach (var business in user.Businesses) 
+            {
+                BusinessViewModel vm = _mapper.Map<BusinessViewModel>(business);
+                
+                var bussinessData = _context.Businesses.Include(a => a.ProductCategories).ThenInclude(a => a.Products).Include(a => a.Orders).Include(a=>a.Employees).Select(a=> new 
+                { 
+                    a.Id,
+                    TotalProducts = a.ProductCategories.SelectMany(a=>a.Products).Count(),
+                    TotalOrders = a.Orders.Count(),
+                    TotalCategories = a.ProductCategories.Count(),
+                    TotalEmployees = a.Employees.Count(),
+                }).FirstOrDefault(a => a.Id == business.Id);
+
+                vm.TotalProducts = bussinessData.TotalProducts;
+                vm.TotalOrders = bussinessData.TotalOrders;
+                vm.TotalProducts = bussinessData.TotalCategories;
+                vm.TotalProducts = bussinessData.TotalEmployees;
+
+                businesses.Add(vm);
+            }
+
+            return View(businesses);
         }
 
-        private SelectList GetBusinessCategoriesSelectList() 
+        private SelectList GetBusinessCategoriesSelectList()
         {
-            var businessCategories = _context.BusinessCategories.Select(a => new { Id = a.Id, Name = a.Name }).ToList();
+            var businessCategories = _context.BusinessCategories.Select(a => new { a.Id, a.Name }).ToList();
             return new SelectList(businessCategories, "Id", "Name", "General");
         }
 
@@ -69,7 +93,7 @@ namespace ECommerce.Controllers
                     {
                         try
                         {
-                            business.ImageUrl = await _imageUtility.SaveImageToServerAsync(businessModel.Image, Path.Combine("images", "businesses"));
+                            business.ImageUrl = await _imageUtility.SaveImageToServerAsync(businessModel.Image, imageSavePath);
                         }
                         catch (Exception ex)
                         {
@@ -78,11 +102,10 @@ namespace ECommerce.Controllers
                     }
 
                     business.Owners.Add(user);
-
                     _context.Businesses.Add(business);
                     await _context.SaveChangesAsync();
                 }
-                catch (Exception ex) 
+                catch (Exception ex)
                 {
                     Log.Logger.Error(ex, "{Date}, Message:{Message}", DateTimeOffset.UtcNow, ex.Message);
                     ModelState.AddModelError("ErrorMessage", "Something went wrong, Please contact administrator");
@@ -93,26 +116,90 @@ namespace ECommerce.Controllers
             return View(businessModel);
         }
 
-        
+
 
         [HttpGet]
-        public async Task<IActionResult> Edit(Guid id) 
+        public async Task<IActionResult> Edit(Guid id)
         {
-            var business = await _context.Businesses.Include(a=>a.Address).FirstOrDefaultAsync(x => x.Id == id);
-            BusinessViewModel viewModel = _mapper.Map<BusinessViewModel>(business); 
+            var business = await _context.Businesses.Include(a => a.Address).FirstOrDefaultAsync(x => x.Id == id);
+            BusinessViewModel viewModel = _mapper.Map<BusinessViewModel>(business);
             return View(business);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Edit(Guid id, BusinessViewModel businessModel)
+        {
+            if (id != businessModel.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var business = await _context.Businesses.Include(a => a.Address).FirstOrDefaultAsync(a => a.Id == id);
+                    business = _mapper.Map<Business>(businessModel);
+
+                    if (businessModel.Image != null)
+                    {
+                        try
+                        {
+                            business.ImageUrl = await _imageUtility.SaveImageToServerAsync(businessModel.Image, imageSavePath);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
+                        }
+                    }
+                    _context.Businesses.Update(business);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    Log.Logger.Error(ex, "{Date}, Message:{Message}", DateTimeOffset.UtcNow, ex.Message);
+                    ModelState.AddModelError("ErrorMessage", "Something went wrong, Please contact administrator");
+                }
+            }
+
+            businessModel.Categories = GetBusinessCategoriesSelectList();
+            return View(businessModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid? id) 
+        {
+            if (id == null) 
+            {
+                return NotFound();
+            }
+
+            Business? business = await _context.Businesses.Include(a=>a.ProductCategories).ThenInclude(a=>a.Products).Include(a=>a.Employees).Include(a=>a.Address).Include(a=>a.Orders).FirstOrDefaultAsync(a => a.Id == id);
+
+            if (business == null) 
+            {
+                return NotFound();
+            }
+
+            _context.Orders.RemoveRange(business.Orders);
+            _context.Products.RemoveRange(business.ProductCategories.SelectMany(a=>a.Products));
+            _context.Categories.RemoveRange(business.ProductCategories);
+            _context.BusinessEmployees.RemoveRange(business.Employees);
+            _context.Addresses.Remove(business.Address);
+            _context.Businesses.Remove(business);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
         protected override async Task<ApplicationUser?> GetCurrentUserAsync()
         {
             var userName = this.HttpContext?.User?.Identity?.Name;
             if (userName != null)
             {
-                return await _context.Users.Include(a => a.Businesses).FirstOrDefaultAsync(a => a.UserName == userName);
+                return await _context.Users.Include(a => a.Businesses).ThenInclude(a=>a.Address).FirstOrDefaultAsync(a => a.UserName == userName);
             }
             return null;
         }
-
-
     }
 }
