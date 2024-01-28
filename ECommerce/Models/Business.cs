@@ -12,6 +12,7 @@ namespace ECommerce.Models
             Orders = new List<Order>();
             Owners = new List<ApplicationUser>();
             Venders = new List<Vender>();
+            Employees = new List<BusinessEmployee>();
         }
         public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
@@ -22,11 +23,11 @@ namespace ECommerce.Models
         public string? Phone { get; set; }
         public Guid AddressId { get; set; }
         [ForeignKey(nameof(AddressId))]
-        public virtual Address Address { get; set; }    
+        public virtual Address? Address { get; set; }    
         public Guid BusinessCategoryId { get; set; }
         [ForeignKey(nameof(BusinessCategoryId))]
-        public virtual BusinessCategory BusinessCategory { get; set; }
-        public virtual ICollection<Category> ProductCategories { get; set; }
+        public virtual BusinessCategory? BusinessCategory { get; set; }
+        public virtual ICollection<Category> ProductCategories { get; set; } = new List<Category>();
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<ApplicationUser> Owners { get; set; }
         public virtual ICollection<BusinessEmployee> Employees { get; set; }

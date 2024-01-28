@@ -15,5 +15,18 @@ namespace ECommerce.ViewModels
         public string? PostalCode { get; set; }
         [Required]
         public string? Country { get; set; }
+
+        public string Address 
+        {
+            get 
+            {
+                string address = $"{StreetAddress}, {City}, {Province}, {Country}, {PostalCode}";
+                if (UnitApt != null) 
+                {
+                    return $"{UnitApt} - {address}";
+                }
+                return address ;
+            }
+        }
     }
 }

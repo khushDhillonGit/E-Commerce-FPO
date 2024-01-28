@@ -5,6 +5,10 @@ namespace ECommerce.Models
 {
     public class Category
     {
+        public Category() 
+        {
+            Products = new List<Product>();
+        }
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
@@ -13,8 +17,8 @@ namespace ECommerce.Models
         public DateTimeOffset CreatedDate { get; set; }
         public Guid BusinessId { get; set; }
         [ForeignKey(nameof(BusinessId))]
-        public virtual Business Business { get; set; }
-        public virtual ICollection<Product>? Products { get; set; }
+        public virtual Business? Business { get; set; }
+        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
         public bool IsDelete { get; set; }
     }
 }
