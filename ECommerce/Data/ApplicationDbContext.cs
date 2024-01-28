@@ -81,11 +81,13 @@ namespace ECommerce.Data
 
             modelBuilder.Entity<Business>(b => 
             {
+                b.HasQueryFilter(a => !a.IsDelete);
                 b.HasMany(e=>e.Orders).WithOne(e=>e.Business).HasForeignKey(e=>e.BusinessId).OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Vender>(b =>
             {
+                b.HasQueryFilter(a => !a.IsDelete);
                 b.HasOne(e => e.Business).WithMany(e=>e.Venders).OnDelete(DeleteBehavior.NoAction);
             });
 
