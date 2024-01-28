@@ -127,11 +127,12 @@ namespace ECommerce.Controllers
         {
             var business = await _context.Businesses.Include(a => a.Address).FirstOrDefaultAsync(x => x.Id == id);
             BusinessViewModel viewModel = _mapper.Map<BusinessViewModel>(business);
-            return View(business);
+            viewModel.Categories = GetBusinessCategoriesSelectList();
+            return View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Guid id, BusinessViewModel businessModel)
+        public async Task<IActionResult> Edit(Guid id,BusinessViewModel businessModel)
         {
             if (id != businessModel.Id)
             {
@@ -142,9 +143,9 @@ namespace ECommerce.Controllers
             {
                 try
                 {
-                    var business = await _context.Businesses.Include(a => a.Address).FirstOrDefaultAsync(a => a.Id == id);
-                    business = _mapper.Map<Business>(businessModel);
-
+                    var business = await _context.Businesses.Include(a => a.Address).FirstOrDefaultAsync(a => a.Id == businessModel.Id);
+                    if(business == null) return NotFound();
+                    _mapper.Map<BusinessViewModel ,Business>(businessModel,business);
                     if (businessModel.Image != null)
                     {
                         try
