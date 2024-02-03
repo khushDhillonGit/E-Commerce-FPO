@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using AutoMapper;
 using ECommerce.Models.Api;
+using System.Runtime.CompilerServices;
 
 namespace ECommerce.Controllers
 {
@@ -39,6 +40,8 @@ namespace ECommerce.Controllers
             var user = await GetCurrentUserAsync();
             if (user == null) return Unauthorized();
 
+            CurrentBusinessId = null;
+
             List<BusinessViewModel> businesses = new List<BusinessViewModel>();
             foreach (var business in user.Businesses)
             {
@@ -63,6 +66,20 @@ namespace ECommerce.Controllers
 
             return View(businesses);
         }
+        
+        public async Task<IActionResult> CurrentBusiness(Guid bId) 
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null) return NotFound();
+            //if user in employee check if it belongs to this business
+            if(await IsEmployee(user) && user.BusinessEmployee?.BusinessId != bId) return Unauthorized();
+            //this case would be business owner have this business
+            if(user.Businesses.FirstOrDefault(a=>a.Id == bId) == null) return Unauthorized();
+            // store current bId
+            CurrentBusinessId = bId;
+            return View();
+        }
+
 
         private SelectList GetBusinessCategoriesSelectList()
         {
