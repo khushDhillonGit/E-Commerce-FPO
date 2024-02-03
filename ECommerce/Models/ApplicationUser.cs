@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Castle.Components.DictionaryAdapter;
+using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce.Models
 {
@@ -12,6 +13,7 @@ namespace ECommerce.Models
         public virtual ICollection<ApplicationUserToken> Tokens { get; set; }
         public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
         public virtual ICollection<Business> Businesses { get; set;} = new List<Business>();
+        public virtual BusinessEmployee? BusinessEmployee { get; set; }
     }
 
     public class ApplicationRole : IdentityRole<Guid> 
