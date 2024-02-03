@@ -209,7 +209,7 @@ namespace ECommerce.Controllers
             var userName = this.HttpContext?.User?.Identity?.Name;
             if (userName != null)
             {
-                return await _context.Users.Include(a => a.Businesses).ThenInclude(a => a.Address).FirstOrDefaultAsync(a => a.UserName == userName);
+                return await _context.Users.Include(a => a.Businesses).ThenInclude(a => a.Address).Include(a=>a.BusinessEmployee).FirstOrDefaultAsync(a => a.UserName == userName);
             }
             return null;
         }
