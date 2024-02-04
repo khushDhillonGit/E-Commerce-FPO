@@ -1,6 +1,8 @@
+using ECommerce.Controllers;
 using ECommerce.Data;
 using ECommerce.Models;
 using ECommerce.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -33,6 +35,7 @@ builder.Services.AddTransient<ImageUtility>();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddSession();
 
 try
 {
@@ -50,7 +53,7 @@ try
         app.UseHsts();
     }
 
-
+    app.UseSession();
     app.UseHttpsRedirection();
     app.UseStaticFiles();
 

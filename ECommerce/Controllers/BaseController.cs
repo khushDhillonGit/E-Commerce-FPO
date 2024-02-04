@@ -3,6 +3,9 @@ using ECommerce.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Security.Claims;
+using System.Text;
 
 namespace ECommerce.Controllers
 {
@@ -43,19 +46,17 @@ namespace ECommerce.Controllers
             return await _userManager.IsInRoleAsync(user, ApplicationRole.Employee);
         }
 
-        protected Guid? CurrentBusinessId
+        protected Guid CurrentBusinessId
         {
             get
             {
-                if (HttpContext.Items.TryGetValue(nameof(CurrentBusinessId), out object? val) && val != null)
-                {
-                    return (Guid)val;
-                }
-                return null;
+                string? businessId = HttpContext.Session.GetString(Constants.CurrentBusinessId);
+                if (businessId == null) return Guid.Empty;
+                return Guid.Parse(businessId);
             }
             set
             {
-                HttpContext.Items[nameof(CurrentBusinessId)] = value;
+                HttpContext.Session.SetString(Constants.CurrentBusinessId, JsonConvert.SerializeObject(value));
             }
         }
     }
