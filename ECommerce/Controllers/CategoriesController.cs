@@ -29,7 +29,7 @@ namespace ECommerce.Controllers
         public async Task<IActionResult> Index()
         {
               return _context.Categories != null ? 
-                          View(await _context.Categories.ToListAsync()) :
+                          View(await _context.Categories.Where(a=>a.BusinessId == CurrentBusinessId).ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.Categories'  is null.");
         }
 
@@ -68,6 +68,7 @@ namespace ECommerce.Controllers
             {
                 category.Id = Guid.NewGuid();
                 category.CreatedDate = DateTimeOffset.UtcNow;    
+                category.BusinessId = CurrentBusinessId;
                 _context.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

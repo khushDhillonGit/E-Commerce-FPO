@@ -21,11 +21,17 @@ namespace ECommerce.Controllers
             _imageUtility = imageUtility;
         }
 
-
-
         // GET: Products
         public async Task<IActionResult> Index()
         {
+            var user = await GetCurrentUserAsync();
+            if (user != null && IsBusinessOwner(user)) 
+            {
+                if(CurrentBusinessId == Guid.Empty) return RedirectToAction("Index","Businesses");
+
+                var products = await _context.Categories.Include(a=>a.Products).Where(a=>a.BusinessId == CurrentBusinessId).SelectMany(a=>a.Products).ToListAsync();
+                return View(products);
+            }
             var applicationDbContext = _context.Products.Include(p => p.Category);
             return View(await applicationDbContext.ToListAsync());
         }
@@ -53,7 +59,7 @@ namespace ECommerce.Controllers
         [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.BusinessOwner}")]
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewData["CategoryId"] = new SelectList(_context.Categories.Where(a=>a.BusinessId == CurrentBusinessId), "Id", "Name");
             return View();
         }
 

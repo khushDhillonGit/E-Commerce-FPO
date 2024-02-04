@@ -24,12 +24,12 @@ namespace ECommerce.Controllers
             CurrentBusinessId = Guid.Empty;
             if (user == null) return View();
             
-            if (await IsBusinessOwner(user)) 
+            if (IsBusinessOwner(user)) 
             {
                 return RedirectToAction("Index", "Businesses");
             }
 
-            if (await IsEmployee(user)) 
+            if (IsEmployee(user)) 
             {
                 var bId = _context.BusinessEmployees.FirstOrDefault(a=>a.Id == user.Id)?.BusinessId;
                 if(bId == null) return NotFound();
