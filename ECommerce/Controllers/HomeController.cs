@@ -9,21 +9,24 @@ namespace ECommerce.Controllers
     public class HomeController : BaseController
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<HomeController> _logger;
         public HomeController(ILogger<HomeController> logger,UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context)
         {
             _logger = logger;
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
             var user = await GetCurrentUserAsync();
-            if (user == null) return NotFound();
-
+            CurrentBusinessId = Guid.Empty;
+            if (user == null) return View();
+            
             if (await IsBusinessOwner(user)) 
             {
-                return RedirectToAction("Index","Businesses");
+                return RedirectToAction("Index", "Businesses");
             }
 
             if (await IsEmployee(user)) 
@@ -31,7 +34,6 @@ namespace ECommerce.Controllers
                 var bId = _context.BusinessEmployees.FirstOrDefault(a=>a.Id == user.Id)?.BusinessId;
                 if(bId == null) return NotFound();
                 return RedirectToAction("CurrentBusiness", "Businesses", new { businessId = bId });
-
             }
             return View();
         }

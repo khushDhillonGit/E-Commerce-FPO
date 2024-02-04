@@ -40,7 +40,7 @@ namespace ECommerce.Controllers
             var user = await GetCurrentUserAsync();
             if (user == null) return Unauthorized();
 
-            CurrentBusinessId = null;
+            CurrentBusinessId = Guid.Empty;
 
             List<BusinessViewModel> businesses = new List<BusinessViewModel>();
             foreach (var business in user.Businesses)
