@@ -29,7 +29,7 @@
 
         <div id="home-cards" class="row">
             @foreach (var item in Model)
-            {
+            {<a asp-controller="Businesses" asp-action="CurrentBusiness" asp-route-bId="@item.Id">
                 <div class="p-3 col-sm-12 col-md-6">
                     <div class="home">
                         <div class="div-img">
@@ -69,6 +69,7 @@
                         </div>
                     </div>
                 </div>
+                </a>
             }
 
         </div>
