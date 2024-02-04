@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<ECommerce.Models.Product>
 @{
+    Layout = "~/Views/Shared/_BusinessLayout.cshtml";
     ViewData["Title"] = "Index";
 }
 
@@ -12,47 +13,49 @@
     @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
     {
         <div class="col-12 d-flex justify-content-end">
-            <a class="btn primary-btn" asp-action="Create" asp-controller="Products" >Add New</a>
+            <a class="btn primary-btn" asp-action="Create" asp-controller="Products">Add New</a>
         </div>
     }
     <div class="col-12 mt-4">
         <div id="home-cards" class="row">
             @foreach (var item in Model)
             {
-                <div class="home col-sm-12 col-md-3">
-                    <div class="div-img">
-                        <img src="~/@Html.DisplayFor(modelItem => item.ImageUrl)" alt="Product Image">
-                    </div>
-                    <div class="home-content">
-                        <p class="home-title">@Html.DisplayFor(modelItem => item.Name)</p>
-                        <ul class="home-list">
-                            <li class="home-attri">
-                                <i class="fa fa-comment"></i>
-                                <span>@Html.DisplayFor(modelItem => item.Description)</span>
-                            </li>
-                            <li class="home-attri">
-                                <i class="fa fa-bars"></i>
-                                <span>@Html.DisplayFor(modelItem => item.Category.Name)</span>
-                            </li>
-                            <li class="home-attri">
-                                <i class="fa fa-warehouse"></i>
-                                <span>@Html.DisplayFor(modelItem => item.Quantity)</span>
-                            </li>
-                            <li class="home-attri">
-                                <i class="fa fa-money-bill"></i>
-                                <span>Price: @Html.DisplayFor(modelItem => item.UnitPrice)/ Unit</span>
-                            </li>
-                            <li class="home-attri">
-                                <i class="fa fa-user"></i>
-                                <span>Selling Price: @Html.DisplayFor(modelItem => item.SellingPrice)</span>
-                            </li>
-                        </ul>
-                        <div class="row justify-content-around mt-3">
+                <div class="col-sm-12 col-md-3 p-2">
+                    <div class="home">
+                        <div class="div-img">
+                            <img src="~/@Html.DisplayFor(modelItem => item.ImageUrl)" alt="Product Image">
+                        </div>
+                        <div class="home-content">
+                            <p class="home-title">@Html.DisplayFor(modelItem => item.Name)</p>
+                            <ul class="home-list">
+                                <li class="home-attri">
+                                    <i class="fa fa-comment"></i>
+                                    <span>@Html.DisplayFor(modelItem => item.Description)</span>
+                                </li>
+                                <li class="home-attri">
+                                    <i class="fa fa-bars"></i>
+                                    <span>@Html.DisplayFor(modelItem => item.Category.Name)</span>
+                                </li>
+                                <li class="home-attri">
+                                    <i class="fa fa-warehouse"></i>
+                                    <span>@Html.DisplayFor(modelItem => item.Quantity)</span>
+                                </li>
+                                <li class="home-attri">
+                                    <i class="fa fa-money-bill"></i>
+                                    <span>Price: @Html.DisplayFor(modelItem => item.UnitPrice)/ Unit</span>
+                                </li>
+                                <li class="home-attri">
+                                    <i class="fa fa-user"></i>
+                                    <span>Selling Price: @Html.DisplayFor(modelItem => item.SellingPrice)</span>
+                                </li>
+                            </ul>
+                            <div class="row justify-content-around mt-3">
 
-                            <a class="col-3 btn link-card secondary-btn" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                            <a class="col-3 btn link-card red-btn" data-bs-toggle="modal" onclick="deleteBtnClicked(this)" data-id="@item.Id" data-bs-target="#deleteModel">
-                                Delete
-                            </a>
+                                <a class="col-3 btn link-card secondary-btn" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                <a class="col-3 btn link-card red-btn" data-bs-toggle="modal" onclick="deleteBtnClicked(this)" data-id="@item.Id" data-bs-target="#deleteModel">
+                                    Delete
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -70,7 +73,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                 Are you sure you want to delete this product?
+                Are you sure you want to delete this product?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
@@ -84,7 +87,7 @@
 {
     <script src="~/js/general.js" asp-append-version="true"></script>
     <script type="text/javascript">
-        const url = "@Url.Action("Delete","Products")";
+        const url = "@Url.Action("Delete", "Products")";
         $(function () {
             window.initialize(url);
         });

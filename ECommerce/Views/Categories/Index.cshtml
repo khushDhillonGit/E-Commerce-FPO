@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<ECommerce.Models.Category>
 
 @{
+    Layout = "~/Views/Shared/_BusinessLayout.cshtml";
     ViewData["Title"] = "Index";
 }
 
@@ -13,34 +14,36 @@
     @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
     {
         <div class="col-12 d-flex justify-content-end">
-            <a class="btn primary-btn" asp-action="Create" asp-controller="Categories" >Add New</a>
+            <a class="btn primary-btn" asp-action="Create" asp-controller="Categories">Add New</a>
         </div>
     }
     <div class="col-12 mt-4">
         <div id="home-cards" class="row">
             @foreach (var item in Model)
             {
-                <div class="home col-sm-12 col-md-3">
-                    <div class="home-content">
-                        <p class="home-title">@Html.DisplayFor(modelItem => item.Name)</p>
-                        <ul class="home-list">
-                            <li class="home-attri">
-                                <i class="fa fa-comment"></i>
-                                <span>@Html.DisplayFor(modelItem => item.Description)</span>
-                            </li>
-                            <li class="home-attri">
-                                <i class="fa fa-bars"></i>
-                                @{
-                                    var date = item.CreatedDate.LocalDateTime.ToString("MMM dd yyyy");
-                                                                                                <span>@date</span>
-                                }
-                            </li>
-                        </ul>
-                        <div class="row justify-content-around mt-3">
-                            <a class="col-3 btn link-card secondary-btn" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                            <a class="col-3 btn link-card red-btn" data-bs-toggle="modal" onclick="deleteBtnClicked(this)" data-id="@item.Id" data-bs-target="#deleteModel">
-                                Delete
-                            </a>
+                <div class="col-sm-12 col-md-3">
+                    <div class="home">
+                        <div class="home-content">
+                            <p class="home-title">@Html.DisplayFor(modelItem => item.Name)</p>
+                            <ul class="home-list">
+                                <li class="home-attri">
+                                    <i class="fa fa-comment"></i>
+                                    <span>@Html.DisplayFor(modelItem => item.Description)</span>
+                                </li>
+                                <li class="home-attri">
+                                    <i class="fa fa-bars"></i>
+                                    @{
+                                        var date = item.CreatedDate.LocalDateTime.ToString("MMM dd yyyy");
+                                        <span>@date</span>
+                                    }
+                                </li>
+                            </ul>
+                            <div class="row justify-content-around mt-3">
+                                <a class="col-3 btn link-card secondary-btn" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                <a class="col-3 btn link-card red-btn" data-bs-toggle="modal" onclick="deleteBtnClicked(this)" data-id="@item.Id" data-bs-target="#deleteModel">
+                                    Delete
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -72,7 +75,7 @@
 {
     <script src="~/js/general.js" asp-append-version="true"></script>
     <script type="text/javascript">
-        const url = "@Url.Action("Delete","Categories")";
+        const url = "@Url.Action("Delete", "Categories")";
         $(function () {
             window.initialize(url);
         });
