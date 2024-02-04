@@ -1,5 +1,9 @@
 ﻿@model IEnumerable<ECommerce.ViewModels.OrderPaidModel>
 
+@{
+    Layout = "~/Views/Shared/_BusinessLayout.cshtml";
+    ViewData["Title"] = "Paid Orders";
+}
 @section Styles
     {
     <link href="~/css/order.css" rel="stylesheet" asp-append-version="true" />

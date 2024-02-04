@@ -1,4 +1,10 @@
 ﻿@model IEnumerable<ECommerce.ViewModels.OrderUnpaidModel>
+
+@{
+    Layout = "~/Views/Shared/_BusinessLayout.cshtml";
+    ViewData["Title"] = "Unpaid Orders";
+}
+
 @section Styles
     {
     <link href="~/css/order.css" rel="stylesheet" asp-append-version="true" />

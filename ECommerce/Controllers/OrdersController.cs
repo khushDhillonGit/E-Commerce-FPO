@@ -23,9 +23,12 @@ namespace ECommerce.Controllers
             _context = context;
         }
 
-        public IActionResult PaidOrders() 
+        public async Task<IActionResult> PaidOrders() 
         {
-            var orders = _context.Orders.AsEnumerable().Where(a=>a.FullyPaid);
+            var user = await GetCurrentUserAsync();
+            if (user == null || !(IsAuthorisedForBusiness(user,CurrentBusinessId))) { return RedirectToAction("Index", "Home"); }
+
+            var orders = _context.Orders.Include(a=>a.ProductOrders).Where(a=>a.FullyPaid && a.BusinessId == CurrentBusinessId);
             List<OrderPaidModel> result = new();
             foreach (var order in orders)
             {
@@ -41,9 +44,12 @@ namespace ECommerce.Controllers
             return View(result);
         }
 
-        public IActionResult UnpaidOrders()
+        public async Task<IActionResult> UnpaidOrders()
         {
-            var orders = _context.Orders.Where(a => !a.FullyPaid);
+            var user = await GetCurrentUserAsync();
+            if (user == null || !(IsAuthorisedForBusiness(user, CurrentBusinessId))) { return RedirectToAction("Index", "Home"); }
+
+            var orders = _context.Orders.Include(a=>a.ProductOrders).Where(a => a.BusinessId == CurrentBusinessId && !a.FullyPaid);
             List<OrderUnpaidModel> result = new();
             foreach (var order in orders)
             {
@@ -70,7 +76,7 @@ namespace ECommerce.Controllers
             List<ProductViewModel> products = new();
             try
             {
-                var pList = await _context.Products.Where(a => a.Name.ToLower().Contains(search.ToLower())).ToListAsync();
+                var pList = await _context.Products.Include(a=>a.Category).Where(a => a.Category.BusinessId == CurrentBusinessId && a.Name.ToLower().Contains(search.ToLower())).ToListAsync();
                 var mapper = new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<Product, ProductViewModel>()));
                 products = mapper.Map<List<Product>, List<ProductViewModel>>(pList);
             }
@@ -86,10 +92,13 @@ namespace ECommerce.Controllers
         {
             try
             {
+                var user = await GetCurrentUserAsync(); 
+                if(user == null || !IsAuthorisedForBusiness(user,CurrentBusinessId)) return RedirectToAction("Index","Home");
+
                 if (ModelState.IsValid)
                 {
                    
-                    var order = new Order { OrderDate = DateTimeOffset.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee, PaidByCustomer = saleOrder.PaidByCustomer ,CustomerName = saleOrder.CustomerName, CustomerPhone = saleOrder.PhoneNumber};
+                    var order = new Order { OrderDate = DateTimeOffset.UtcNow, Discount = saleOrder.Discount, EmployeeId = saleOrder.Employee, PaidByCustomer = saleOrder.PaidByCustomer ,CustomerName = saleOrder.CustomerName, CustomerPhone = saleOrder.PhoneNumber,BusinessId = CurrentBusinessId};
 
                     try
                     {

@@ -18,7 +18,7 @@ namespace ECommerce.Models
         public DateTimeOffset CreatedDate { get; set; }
         public Guid CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
-        public virtual Category? Category { get; set; }
+        public virtual Category Category { get; set; } = null!;
         public bool IsDelete { get; set; }
     }
 }
