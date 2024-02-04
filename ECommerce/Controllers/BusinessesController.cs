@@ -12,6 +12,7 @@ using Serilog;
 using AutoMapper;
 using ECommerce.Models.Api;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 
 namespace ECommerce.Controllers
 {
@@ -38,10 +39,6 @@ namespace ECommerce.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await GetCurrentUserAsync();
-            if (user == null) return Unauthorized();
-
-            CurrentBusinessId = Guid.Empty;
-
             List<BusinessViewModel> businesses = new List<BusinessViewModel>();
             foreach (var business in user.Businesses)
             {
@@ -66,18 +63,27 @@ namespace ECommerce.Controllers
 
             return View(businesses);
         }
-        
-        public async Task<IActionResult> CurrentBusiness(Guid bId) 
+
+        public async Task<IActionResult> CurrentBusiness(Guid bId)
         {
             var user = await GetCurrentUserAsync();
-            if (user == null) return NotFound();
-            //if user in employee check if it belongs to this business
-            if(await IsEmployee(user) && user.BusinessEmployee?.BusinessId != bId) return Unauthorized();
-            //this case would be business owner have this business
-            if(user.Businesses.FirstOrDefault(a=>a.Id == bId) == null) return Unauthorized();
+            if(bId == Guid.Empty) bId = CurrentBusinessId;
+            if (user == null || !IsAuthorisedForBusiness(user, bId)) return Unauthorized();
             // store current bId
             CurrentBusinessId = bId;
-            return View();
+
+            var business = _context.Businesses.Include(a => a.ProductCategories).ThenInclude(a => a.Products).Include(a => a.Orders).Include(a => a.Employees).FirstOrDefault(a => a.Id == CurrentBusinessId);
+            if(business == null) return NotFound();
+            CurrentBusinessName = business.Name ?? string.Empty;
+
+            BusinessViewModel vm = _mapper.Map<BusinessViewModel>(business);
+
+            vm.TotalProducts = business.ProductCategories.SelectMany(a => a.Products).Count();
+            vm.TotalOrders = business.Orders.Count;
+            vm.TotalCategories = business.ProductCategories.Count;
+            vm.TotalEmployees = business.Employees.Count;
+
+            return View(vm);
         }
 
 
@@ -149,7 +155,7 @@ namespace ECommerce.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Guid id,BusinessViewModel businessModel)
+        public async Task<IActionResult> Edit(Guid id, BusinessViewModel businessModel)
         {
             if (id != businessModel.Id)
             {
@@ -161,8 +167,8 @@ namespace ECommerce.Controllers
                 try
                 {
                     var business = await _context.Businesses.Include(a => a.Address).FirstOrDefaultAsync(a => a.Id == businessModel.Id);
-                    if(business == null) return NotFound();
-                    _mapper.Map<BusinessViewModel ,Business>(businessModel,business);
+                    if (business == null) return NotFound();
+                    _mapper.Map<BusinessViewModel, Business>(businessModel, business);
                     if (businessModel.Image != null)
                     {
                         try
@@ -221,12 +227,15 @@ namespace ECommerce.Controllers
 
             return Ok(new PostBackModel { Success = true, RedirectUrl = "/Businesses/index" });
         }
+
+    
+
         protected override async Task<ApplicationUser?> GetCurrentUserAsync()
         {
             var userName = this.HttpContext?.User?.Identity?.Name;
             if (userName != null)
             {
-                return await _context.Users.Include(a => a.Businesses).ThenInclude(a => a.Address).Include(a=>a.BusinessEmployee).FirstOrDefaultAsync(a => a.UserName == userName);
+                return await _context.Users.Include(a => a.Businesses).ThenInclude(a => a.Address).Include(a => a.BusinessEmployee).FirstOrDefaultAsync(a => a.UserName == userName);
             }
             return null;
         }

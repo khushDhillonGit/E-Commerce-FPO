@@ -2,6 +2,7 @@
 using ECommerce.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Security.Claims;
@@ -18,6 +19,11 @@ namespace ECommerce.Controllers
             _userManager = userManager;
             _context = context;
         }
+        public override void OnActionExecuted(ActionExecutedContext filter) 
+        {
+            ViewData[Constants.CurrentBusinessName] = CurrentBusinessName;
+            base.OnActionExecuted(filter);
+        }
 
         protected virtual async Task<ApplicationUser?> GetCurrentUserAsync()
         {
@@ -29,21 +35,30 @@ namespace ECommerce.Controllers
             return null;
         }
 
-        protected async Task<bool> IsBusinessOwner(ApplicationUser user)
+        protected bool IsBusinessOwner(ApplicationUser user)
         {
             if (user == null || user.Id == Guid.Empty) return false;
-            return await _userManager.IsInRoleAsync(user, ApplicationRole.BusinessOwner);
+            return Task.Run(async () => await _userManager.IsInRoleAsync(user, ApplicationRole.BusinessOwner)).Result;
         }
 
-        protected async Task<bool> IsCustomer(ApplicationUser user)
+        protected bool IsCustomer(ApplicationUser user)
         {
             if (user == null || user.Id == Guid.Empty) return false;
-            return await _userManager.IsInRoleAsync(user, ApplicationRole.Customer);
+            return Task.Run(async () => await _userManager.IsInRoleAsync(user, ApplicationRole.Customer)).Result;
         }
-        protected async Task<bool> IsEmployee(ApplicationUser user)
+        protected bool IsEmployee(ApplicationUser user)
         {
             if (user == null || user.Id == Guid.Empty) return false;
-            return await _userManager.IsInRoleAsync(user, ApplicationRole.Employee);
+            return Task.Run(async () => await _userManager.IsInRoleAsync(user, ApplicationRole.Employee)).Result;
+        }
+        protected bool IsAuthorisedForBusiness(ApplicationUser user, Guid bId)
+        {
+            //if user in employee check if it belongs to this business
+            if (IsEmployee(user) && user.BusinessEmployee?.BusinessId != bId) return false;
+            //this case would be business owner have this business
+            if (user.Businesses.FirstOrDefault(a => a.Id == bId) == null) return false;
+            return true;
+
         }
 
         protected Guid CurrentBusinessId
@@ -56,7 +71,20 @@ namespace ECommerce.Controllers
             }
             set
             {
-                HttpContext.Session.SetString(Constants.CurrentBusinessId, JsonConvert.SerializeObject(value));
+                HttpContext.Session.SetString(Constants.CurrentBusinessId, value.ToString());
+            }
+        }
+
+        public string CurrentBusinessName {
+            get
+            {
+                string? name = HttpContext.Session.GetString(Constants.CurrentBusinessName);
+                if (name == null) return string.Empty;
+                return name;
+            }
+            set
+            {
+                HttpContext.Session.SetString(Constants.CurrentBusinessName, value.ToString());
             }
         }
     }
