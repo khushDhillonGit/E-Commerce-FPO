@@ -31,9 +31,9 @@ namespace ECommerce.Controllers
 
             if (IsEmployee(user)) 
             {
-                var bId = _context.BusinessEmployees.FirstOrDefault(a=>a.Id == user.Id)?.BusinessId;
+                var bId = _context.BusinessEmployees.FirstOrDefault(a=>a.EmployeeId == user.Id)?.BusinessId;
                 if(bId == null) return NotFound();
-                return RedirectToAction("CurrentBusiness", "Businesses", new { businessId = bId });
+                return RedirectToAction("CurrentBusiness", "Businesses", new { bId });
             }
             return View();
         }
