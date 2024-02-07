@@ -324,7 +324,7 @@ namespace ECommerce.Migrations
 
                     b.HasIndex("BusinessCategoryId");
 
-                    b.ToTable("Businesses");
+                    b.ToTable("BusinessesList");
                 });
 
             modelBuilder.Entity("ECommerce.Models.BusinessCategory", b =>

@@ -82,7 +82,7 @@ namespace ECommerce.Migrations
                 name: "FK_Venders_Businesses_BusinessId",
                 table: "Venders",
                 column: "BusinessId",
-                principalTable: "Businesses",
+                principalTable: "BusinessesList",
                 principalColumn: "Id");
         }
 
