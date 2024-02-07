@@ -16,7 +16,7 @@ namespace ECommerce.ViewModels
         [Required]
         public string? Country { get; set; }
 
-        public string Address 
+        public string FullAddress 
         {
             get 
             {
