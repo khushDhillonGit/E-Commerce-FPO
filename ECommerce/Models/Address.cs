@@ -4,7 +4,7 @@ namespace ECommerce.Models
 {
     public class Address
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; } 
         [Required]
         public string? StreetAddress { get; set; }
         public string? UnitApt { get; set; }

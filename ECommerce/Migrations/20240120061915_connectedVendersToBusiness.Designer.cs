@@ -39,7 +39,7 @@ namespace ECommerce.Migrations
                     b.ToTable("ApplicationUserBusiness");
                 });
 
-            modelBuilder.Entity("ECommerce.Models.Address", b =>
+            modelBuilder.Entity("ECommerce.Models.FullAddress", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -631,7 +631,7 @@ namespace ECommerce.Migrations
 
             modelBuilder.Entity("ECommerce.Models.Business", b =>
                 {
-                    b.HasOne("ECommerce.Models.Address", "Address")
+                    b.HasOne("ECommerce.Models.FullAddress", "FullAddress")
                         .WithMany()
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -643,7 +643,7 @@ namespace ECommerce.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Address");
+                    b.Navigation("FullAddress");
 
                     b.Navigation("BusinessCategory");
                 });
@@ -721,7 +721,7 @@ namespace ECommerce.Migrations
 
             modelBuilder.Entity("ECommerce.Models.Vender", b =>
                 {
-                    b.HasOne("ECommerce.Models.Address", "Address")
+                    b.HasOne("ECommerce.Models.FullAddress", "FullAddress")
                         .WithMany()
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -733,7 +733,7 @@ namespace ECommerce.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Address");
+                    b.Navigation("FullAddress");
 
                     b.Navigation("Business");
                 });

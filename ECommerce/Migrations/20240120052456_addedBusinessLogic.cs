@@ -14,7 +14,7 @@ namespace ECommerce.Migrations
                 table: "ProductOrders");
 
             migrationBuilder.DropColumn(
-                name: "Address",
+                name: "FullAddress",
                 table: "Vender");
 
             migrationBuilder.AddColumn<Guid>(
@@ -282,7 +282,7 @@ namespace ECommerce.Migrations
                 table: "Categories");
 
             migrationBuilder.AddColumn<string>(
-                name: "Address",
+                name: "FullAddress",
                 table: "Vender",
                 type: "nvarchar(max)",
                 nullable: true);

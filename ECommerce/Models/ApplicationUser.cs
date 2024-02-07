@@ -1,13 +1,23 @@
 ﻿using Castle.Components.DictionaryAdapter;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ECommerce.Models
 {
     public class ApplicationUser: IdentityUser<Guid>
     {
-
+        public ApplicationUser() 
+        {
+            Logins = new List<ApplicationUserLogin>();
+            Tokens = new List<ApplicationUserToken>();
+            UserRoles = new List<ApplicationUserRole>();
+            Claims = new List<ApplicationUserClaim>();
+        }
         public string? Name { get; set; }
         public bool IsDelete { get; set; }
+        public Guid? AddressId { get; set; }
+        [ForeignKey(nameof(AddressId))]
+        public virtual Address? Address { get; set; }
         public virtual ICollection<ApplicationUserClaim> Claims { get; set; }
         public virtual ICollection<ApplicationUserLogin> Logins { get; set; }
         public virtual ICollection<ApplicationUserToken> Tokens { get; set; }

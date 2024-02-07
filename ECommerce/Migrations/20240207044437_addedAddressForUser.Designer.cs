@@ -12,17 +12,72 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerce.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240111032753_addedIsDeleteToModels")]
-    partial class addedIsDeleteToModels
+    [Migration("20240207044437_addedAddressForUser")]
+    partial class addedAddressForUser
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.23")
+                .HasAnnotation("ProductVersion", "6.0.26")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("ApplicationUserBusiness", b =>
+                {
+                    b.Property<Guid>("BusinessesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("OwnersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("BusinessesId", "OwnersId");
+
+                    b.HasIndex("OwnersId");
+
+                    b.ToTable("ApplicationUserBusiness");
+                });
+
+            modelBuilder.Entity("ECommerce.Models.FullAddress", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StreetAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UnitApt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Addresses");
+                });
 
             modelBuilder.Entity("ECommerce.Models.ApplicationRole", b =>
                 {
@@ -85,6 +140,9 @@ namespace ECommerce.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("AddressId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -136,6 +194,8 @@ namespace ECommerce.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -227,14 +287,106 @@ namespace ECommerce.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ECommerce.Models.Business", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AddressId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BusinessCategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("BusinessCategoryId");
+
+                    b.ToTable("Businesses");
+                });
+
+            modelBuilder.Entity("ECommerce.Models.BusinessCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BusinessCategories");
+                });
+
+            modelBuilder.Entity("ECommerce.Models.BusinessEmployee", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusinessId");
+
+                    b.HasIndex("EmployeeId")
+                        .IsUnique();
+
+                    b.ToTable("BusinessEmployees");
+                });
+
             modelBuilder.Entity("ECommerce.Models.Category", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -248,38 +400,9 @@ namespace ECommerce.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BusinessId");
+
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("ECommerce.Models.Customer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmailAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("ECommerce.Models.Order", b =>
@@ -291,8 +414,14 @@ namespace ECommerce.Migrations
                     b.Property<decimal>("BillPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<Guid>("BusinessId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerPhone")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Discount")
                         .HasColumnType("decimal(18,2)");
@@ -304,8 +433,8 @@ namespace ECommerce.Migrations
                     b.Property<bool>("FullyPaid")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("OrderDate")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("OrderNumber")
                         .IsRequired()
@@ -319,7 +448,7 @@ namespace ECommerce.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("BusinessId");
 
                     b.ToTable("Orders");
                 });
@@ -333,8 +462,8 @@ namespace ECommerce.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -401,11 +530,14 @@ namespace ECommerce.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("FullAddress")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("AddressId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
@@ -418,7 +550,26 @@ namespace ECommerce.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Vender");
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("BusinessId");
+
+                    b.ToTable("Venders");
+                });
+
+            modelBuilder.Entity("ApplicationUserBusiness", b =>
+                {
+                    b.HasOne("ECommerce.Models.Business", null)
+                        .WithMany()
+                        .HasForeignKey("BusinessesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("OwnersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ECommerce.Models.ApplicationRoleClaim", b =>
@@ -430,6 +581,15 @@ namespace ECommerce.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("ECommerce.Models.ApplicationUser", b =>
+                {
+                    b.HasOne("ECommerce.Models.FullAddress", "FullAddress")
+                        .WithMany()
+                        .HasForeignKey("AddressId");
+
+                    b.Navigation("FullAddress");
                 });
 
             modelBuilder.Entity("ECommerce.Models.ApplicationUserClaim", b =>
@@ -484,15 +644,64 @@ namespace ECommerce.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ECommerce.Models.Order", b =>
+            modelBuilder.Entity("ECommerce.Models.Business", b =>
                 {
-                    b.HasOne("ECommerce.Models.Customer", "Customer")
+                    b.HasOne("ECommerce.Models.FullAddress", "FullAddress")
                         .WithMany()
-                        .HasForeignKey("CustomerId")
+                        .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.HasOne("ECommerce.Models.BusinessCategory", "BusinessCategory")
+                        .WithMany()
+                        .HasForeignKey("BusinessCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FullAddress");
+
+                    b.Navigation("BusinessCategory");
+                });
+
+            modelBuilder.Entity("ECommerce.Models.BusinessEmployee", b =>
+                {
+                    b.HasOne("ECommerce.Models.Business", "Business")
+                        .WithMany("Employees")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.Models.ApplicationUser", "Employee")
+                        .WithOne("BusinessEmployee")
+                        .HasForeignKey("ECommerce.Models.BusinessEmployee", "EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Business");
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("ECommerce.Models.Category", b =>
+                {
+                    b.HasOne("ECommerce.Models.Business", "Business")
+                        .WithMany("ProductCategories")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Business");
+                });
+
+            modelBuilder.Entity("ECommerce.Models.Order", b =>
+                {
+                    b.HasOne("ECommerce.Models.Business", "Business")
+                        .WithMany("Orders")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Business");
                 });
 
             modelBuilder.Entity("ECommerce.Models.Product", b =>
@@ -511,7 +720,7 @@ namespace ECommerce.Migrations
                     b.HasOne("ECommerce.Models.Order", "Order")
                         .WithMany("ProductOrders")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("ECommerce.Models.Product", "Product")
@@ -525,6 +734,25 @@ namespace ECommerce.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("ECommerce.Models.Vender", b =>
+                {
+                    b.HasOne("ECommerce.Models.FullAddress", "FullAddress")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerce.Models.Business", "Business")
+                        .WithMany("Venders")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("FullAddress");
+
+                    b.Navigation("Business");
+                });
+
             modelBuilder.Entity("ECommerce.Models.ApplicationRole", b =>
                 {
                     b.Navigation("RoleClaims");
@@ -534,6 +762,8 @@ namespace ECommerce.Migrations
 
             modelBuilder.Entity("ECommerce.Models.ApplicationUser", b =>
                 {
+                    b.Navigation("BusinessEmployee");
+
                     b.Navigation("Claims");
 
                     b.Navigation("Logins");
@@ -541,6 +771,17 @@ namespace ECommerce.Migrations
                     b.Navigation("Tokens");
 
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("ECommerce.Models.Business", b =>
+                {
+                    b.Navigation("Employees");
+
+                    b.Navigation("Orders");
+
+                    b.Navigation("ProductCategories");
+
+                    b.Navigation("Venders");
                 });
 
             modelBuilder.Entity("ECommerce.Models.Category", b =>
