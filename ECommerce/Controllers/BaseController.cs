@@ -54,10 +54,10 @@ namespace ECommerce.Controllers
         protected bool IsAuthorisedForBusiness(ApplicationUser user, Guid bId)
         {
             //if user in employee check if it belongs to this business
-            if (IsEmployee(user) && user.BusinessEmployee?.BusinessId != bId) return false;
+            if (IsEmployee(user) && user.BusinessEmployee?.BusinessId == bId) return true;
             //this case would be business owner have this business
-            if (user.Businesses.FirstOrDefault(a => a.Id == bId) == null) return false;
-            return true;
+            if (user.Businesses.FirstOrDefault(a => a.Id == bId) != null) return true;
+            return false;
 
         }
 
