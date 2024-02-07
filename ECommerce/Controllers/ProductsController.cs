@@ -15,7 +15,7 @@ namespace ECommerce.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ImageUtility _imageUtility;
 
-        public ProductsController(ImageUtility imageUtility,UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context)
+        public ProductsController(ImageUtility imageUtility, UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context)
         {
             _context = context;
             _imageUtility = imageUtility;
@@ -25,16 +25,32 @@ namespace ECommerce.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await GetCurrentUserAsync();
-            if (user != null && IsBusinessOwner(user)) 
+            if (user != null && IsBusinessOwner(user))
             {
-                if(CurrentBusinessId == Guid.Empty) return RedirectToAction("Index","Businesses");
+                if (CurrentBusinessId == Guid.Empty) return RedirectToAction("Index", "Businesses");
 
-                var products = await _context.Categories.Include(a=>a.Products).Where(a=>a.BusinessId == CurrentBusinessId).SelectMany(a=>a.Products).ToListAsync();
+                var products = await _context.Categories.Include(a => a.Products).Where(a => a.BusinessId == CurrentBusinessId).SelectMany(a => a.Products).ToListAsync();
                 return View(products);
             }
             var applicationDbContext = _context.Products.Include(p => p.Category);
             return View(await applicationDbContext.ToListAsync());
         }
+
+        //[Authorize(Roles = $"{ApplicationRole.SuperAdmin}")]
+        //public async Task<IActionResult> AllProducts()
+        //{
+        //    var products = await _context.Products.Include(a => a.Category).ThenInclude(a => a.Business).Select(a => new
+        //    {
+        //        a.Name,
+        //        a.SellingPrice,
+        //        a.UnitPrice,
+        //        a.Quantity,
+        //        CategoryName = a.Category.Name,
+        //        BusinessName = a.Category.Business.Name
+        //    }).ToListAsync();
+
+        //    return View(products);
+        //}
 
         // GET: Products/Details/5
         public async Task<IActionResult> Details(Guid? id)
@@ -59,34 +75,34 @@ namespace ECommerce.Controllers
         [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.BusinessOwner}")]
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories.Where(a=>a.BusinessId == CurrentBusinessId), "Id", "Name");
+            ViewData["CategoryId"] = new SelectList(_context.Categories.Where(a => a.BusinessId == CurrentBusinessId), "Id", "Name");
             return View();
         }
 
         // POST: Products/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]  
+        [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.BusinessOwner}")]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,UnitPrice,SellingPrice,SKU,Quantity,CategoryId")] Product product, IFormFile? Image)
-        {           
+        {
             if (ModelState.IsValid)
-            {       
+            {
                 product.Id = Guid.NewGuid();
                 product.CreatedDate = DateTimeOffset.UtcNow;
-                if (Image != null) 
-                {   
+                if (Image != null)
+                {
                     try
                     {
                         product.ImageUrl = await _imageUtility.SaveImageToServerAsync(Image, Path.Combine("images", "product"));
                     }
-                    catch (Exception ex) 
+                    catch (Exception ex)
                     {
                         //TODO:Handle Exception
-                        Log.Logger.Error(ex,"{Date}: {Message}",DateTimeOffset.UtcNow, ex.Message);
+                        Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
                     }
-                }   
+                }
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -133,7 +149,7 @@ namespace ECommerce.Controllers
             {
                 try
                 {
-                    if (Image != null) 
+                    if (Image != null)
                     {
                         try
                         {
@@ -181,14 +197,14 @@ namespace ECommerce.Controllers
             {
                 _context.Products.Remove(product);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProductExists(Guid id)
         {
-          return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

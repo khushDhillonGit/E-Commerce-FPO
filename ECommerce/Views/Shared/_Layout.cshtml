@@ -40,22 +40,22 @@
                         @if (User.IsInRole("SuperAdmin") && (User.Identity?.IsAuthenticated ?? false))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Products" asp-action="Index">All Products</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Products" asp-action="AllProducts">All Products</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Categories" asp-action="Index">All Categories</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Categories" asp-action="AllCategories">All Categories</a>
                             </li>
                             <li class="nav-item ">
-                                <a class="nav-link text-white" asp-controller="Orders" asp-action="Create">All Businesses</a>
+                                <a class="nav-link text-white" asp-controller="Employees" asp-action="AllEmployees">All Employees</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Orders</a>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a class="dropdown-item" asp-controller="Orders" asp-action="PaidOrders">Full Paid</a>
+                                        <a class="dropdown-item" asp-controller="Orders" asp-action="AllPaidOrders">All Full Paid</a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" asp-controller="Orders" asp-action="UnpaidOrders">Pending Payment</a>
+                                        <a class="dropdown-item" asp-controller="Orders" asp-action="AllUnpaidOrders">All Pending Payment</a>
 
                                     </li>
                                 </ul>
