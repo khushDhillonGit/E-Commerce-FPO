@@ -16,7 +16,7 @@ using System.Security.Cryptography;
 
 namespace ECommerce.Controllers
 {
-    [Authorize(Roles = $"{ApplicationRole.BusinessOwner},{ApplicationRole.SuperAdmin}")]
+    [Authorize(Roles = $"{ApplicationRole.BusinessOwner},{ApplicationRole.SuperAdmin},{ApplicationRole.Employee}")]
     public class BusinessesController : BaseController
     {
         private readonly ApplicationDbContext _context;
