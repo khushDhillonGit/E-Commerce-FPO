@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace ECommerce.ViewModels
 {
@@ -12,5 +13,8 @@ namespace ECommerce.ViewModels
         [Required]
         [Phone]
         public string? PhoneNumber { get; set; }
+        [Required]
+        public Guid BusinessId { get; set; }
+        public SelectList? BusinessesList { get; set; }
     }
 }

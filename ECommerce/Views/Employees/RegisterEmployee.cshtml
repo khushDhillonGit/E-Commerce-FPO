@@ -102,6 +102,14 @@
                         </div>
                     </div>
 
+                    <div class="col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label asp-for="BusinessId" class="control-label"></label>
+                            <select asp-for="BusinessId" asp-items="@Model.BusinessesList" class="form-select"></select>
+                            <span asp-validation-for="BusinessId" class="text-danger"></span>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="row mt-4 btn-row pt-3">
                     <div class="col-12">

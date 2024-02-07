@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Text.Encodings.Web;
 using Serilog;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace ECommerce.Controllers
 {
@@ -46,62 +49,59 @@ namespace ECommerce.Controllers
         }
 
         [HttpGet]
-        public IActionResult RegisterEmployee()
+        public async Task<IActionResult> RegisterEmployeeAsync()
         {
-            return View(new EmployeeRegisterViewModel());
+            EmployeeRegisterViewModel viewModel = new EmployeeRegisterViewModel();
+            viewModel.BusinessesList = await GetCurrentUserBusinessesSelectListAsync();
+            return View(viewModel);
+        }
+
+        private async Task<SelectList?> GetCurrentUserBusinessesSelectListAsync()
+        {
+            var user = await GetCurrentUserAsync();
+            return user == null ? throw new UnauthorizedAccessException() : new SelectList(user.Businesses, "Id", "Name", CurrentBusinessId);
         }
 
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmailAsync(string userId, string code)
         {
-            if(userId == null || code == null) return BadRequest();
+            if (userId == null || code == null) return BadRequest();
             var user = await _userManager.FindByIdAsync(userId);
-            if(user == null) return Unauthorized();
+            if (user == null) return Unauthorized();
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ConfirmEmailAsync(user, code);
-            if(result.Succeeded) 
+            if (result.Succeeded)
             {
-                return RedirectToAction(nameof(ResetPasswordAsync), new { userId });
+                return RedirectToAction(nameof(ResetPassword), new { userId });
             }
             return BadRequest();
         }
 
-        public class ResetPasswordViewModel
-        {
-            public Guid UserId { get; set; }
-            [Required]
-            [Compare(nameof(ConfirmPassword))]
-            public string NewPassword { get; set; }
-            [Required]
-            public string ConfirmPassword { get; set; }
-            [Required]
-            public string Code { get; set; } 
-        }
-
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult ResetPassword(Guid userId,string code)
+        public IActionResult ResetPassword(Guid userId)
         {
-            return View(new ResetPasswordViewModel() { UserId = userId,Code = code});
+            if(userId == Guid.Empty) return BadRequest();
+            return View(new ResetPasswordViewModel() { UserId = userId });
         }
 
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> ResetPasswordAsync(ResetPasswordViewModel viewModel)
         {
-            if (ModelState.IsValid) 
+            if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByIdAsync(viewModel.UserId.ToString());
-                if(user == null) return BadRequest();
-                viewModel.Code =  Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(viewModel.Code));
-                var result = await _userManager.ResetPasswordAsync(user, viewModel.Code ,viewModel.NewPassword);
-                if (result.Succeeded) 
+                if (user == null) return BadRequest();
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var result = await _userManager.ResetPasswordAsync(user, token, viewModel.NewPassword);
+                if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: true);
                     return RedirectToAction("Index", "Home");
                 }
             }
-            ModelState.AddModelError("ErrorMessage","Error resetting password please contact IT");
+            ModelState.AddModelError("ErrorMessage", "Error resetting password please contact IT");
             return View(viewModel);
         }
 
@@ -112,13 +112,16 @@ namespace ECommerce.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    ApplicationUser user = _mapper.Map<EmployeeRegisterViewModel,ApplicationUser>(registerViewModel);
+                    ApplicationUser user = _mapper.Map<EmployeeRegisterViewModel, ApplicationUser>(registerViewModel);
                     await _userManager.SetUserNameAsync(user, registerViewModel.Email);
                     await _userManager.SetEmailAsync(user, registerViewModel.Email);
 
+                    BusinessEmployee businessEmployee = new BusinessEmployee() { EmployeeId = user.Id, BusinessId = registerViewModel.BusinessId };
+                    user.BusinessEmployee = businessEmployee;
+
                     string? password = _configuration["DefaultEmployeePassword"];
                     password ??= "Password!123";
-                    var result = await _userManager.CreateAsync(user,password);
+                    var result = await _userManager.CreateAsync(user, password);
 
                     if (result.Succeeded)
                     {
@@ -138,9 +141,19 @@ namespace ECommerce.Controllers
                 Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
                 ModelState.AddModelError("ErrorMessage", "Something went wrong, Please contact IT team");
             }
+
+            registerViewModel.BusinessesList = await GetCurrentUserBusinessesSelectListAsync();
             return View(registerViewModel);
         }
-
+        protected override async Task<ApplicationUser?> GetCurrentUserAsync()
+        {
+            var userName = this.HttpContext?.User?.Identity?.Name;
+            if (userName != null)
+            {
+                return await _context.Users.Include(a => a.Businesses).ThenInclude(a => a.Address).Include(a => a.BusinessEmployee).FirstOrDefaultAsync(a => a.UserName == userName);
+            }
+            return null;
+        }
 
     }
 }
