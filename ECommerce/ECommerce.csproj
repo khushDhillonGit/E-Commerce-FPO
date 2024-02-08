@@ -30,7 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\images\default\" />
     <Folder Include="wwwroot\images\product\" />
   </ItemGroup>
 

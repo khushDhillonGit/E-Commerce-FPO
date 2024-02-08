@@ -15,6 +15,7 @@ namespace ECommerce.Models
         }
         public string? Name { get; set; }
         public bool IsDelete { get; set; }
+        public string? ImageUrl { get; set; }
         public Guid? AddressId { get; set; }
         [ForeignKey(nameof(AddressId))]
         public virtual Address? Address { get; set; }
