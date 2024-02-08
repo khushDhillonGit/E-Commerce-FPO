@@ -111,6 +111,7 @@ namespace ECommerce.Controllers
         [HttpPost]
         public async Task<IActionResult> ResetPasswordAsync(ResetPasswordViewModel viewModel)
         {
+            string message = "Error resetting password please contact IT";
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByIdAsync(viewModel.UserId.ToString());
@@ -122,8 +123,9 @@ namespace ECommerce.Controllers
                     await _signInManager.SignInAsync(user, isPersistent: true);
                     return RedirectToAction("Index", "Home");
                 }
+                message = result.Errors.Single().Description;
             }
-            ModelState.AddModelError("ErrorMessage", "Error resetting password please contact IT");
+            ModelState.AddModelError("ErrorMessage", message);
             return View(viewModel);
         }
 
