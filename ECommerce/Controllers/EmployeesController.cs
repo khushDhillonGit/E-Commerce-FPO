@@ -16,6 +16,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using ECommerce.Services;
 
 namespace ECommerce.Controllers
 {
@@ -28,7 +29,8 @@ namespace ECommerce.Controllers
         private readonly Mapper _mapper;
         private readonly IEmailSender _emailSender;
         private readonly IConfiguration _configuration;
-        public EmployeesController(UserManager<ApplicationUser> userManager, ApplicationDbContext context, IEmailSender emailSender, SignInManager<ApplicationUser> signInManager, IConfiguration configuration) : base(userManager, context)
+        private readonly ImageUtility _imageUtility;
+        public EmployeesController(UserManager<ApplicationUser> userManager, ApplicationDbContext context, IEmailSender emailSender, SignInManager<ApplicationUser> signInManager, IConfiguration configuration, ImageUtility imageUtility) : base(userManager, context)
         {
             _context = context;
             _userManager = userManager;
@@ -41,11 +43,31 @@ namespace ECommerce.Controllers
             _emailSender = emailSender;
             _signInManager = signInManager;
             _configuration = configuration;
+            _imageUtility = imageUtility;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var business = await GetCurrentUserBusinessAsync();
+            if (business == null) return NotFound();
+
+            List<EmployeeRegisterViewModel> viewModel = new List<EmployeeRegisterViewModel>();
+
+            try
+            {
+                foreach (var employee in business.Employees.Select(a => a.Employee))
+                {
+                    var employeeRegister = _mapper.Map<EmployeeRegisterViewModel>(employee);
+                    employeeRegister.BusinessesName = CurrentBusinessName;
+                    viewModel.Add(employeeRegister);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
+                return BadRequest();
+            }
+            return View(viewModel);
         }
 
         [HttpGet]
@@ -81,7 +103,7 @@ namespace ECommerce.Controllers
         [HttpGet]
         public IActionResult ResetPassword(Guid userId)
         {
-            if(userId == Guid.Empty) return BadRequest();
+            if (userId == Guid.Empty) return BadRequest();
             return View(new ResetPasswordViewModel() { UserId = userId });
         }
 
@@ -106,7 +128,7 @@ namespace ECommerce.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterEmployeeAsync(EmployeeRegisterViewModel registerViewModel)
+        public async Task<IActionResult> RegisterEmployeeAsync(EmployeeRegisterViewModel registerViewModel, IFormFile? image)
         {
             try
             {
@@ -116,6 +138,14 @@ namespace ECommerce.Controllers
                     await _userManager.SetUserNameAsync(user, registerViewModel.Email);
                     await _userManager.SetEmailAsync(user, registerViewModel.Email);
 
+                    if (image != null)
+                    {
+                        user.ImageUrl = await _imageUtility.SaveImageToServerAsync(image, "users");
+                    }
+                    else 
+                    {
+                        user.ImageUrl = Path.Combine("images", "default", "default-user-image.png");
+                    }
                     BusinessEmployee businessEmployee = new BusinessEmployee() { EmployeeId = user.Id, BusinessId = registerViewModel.BusinessId };
                     user.BusinessEmployee = businessEmployee;
 
@@ -126,6 +156,8 @@ namespace ECommerce.Controllers
                     if (result.Succeeded)
                     {
                         await _userManager.AddToRoleAsync(user, ApplicationRole.Employee);
+
+
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                         var callBackUrl = Url.Action("ConfirmEmail", "Employees", new { userId = user.Id, code = code }, Request.Scheme);
@@ -145,12 +177,19 @@ namespace ECommerce.Controllers
             registerViewModel.BusinessesList = await GetCurrentUserBusinessesSelectListAsync();
             return View(registerViewModel);
         }
+
+        private async Task<Business?> GetCurrentUserBusinessAsync()
+        {
+            if (CurrentBusinessId == Guid.Empty) return null;
+
+            return await _context.Businesses.Include(a => a.Employees).ThenInclude(a => a.Employee).ThenInclude(a => a.Address).Include(a => a.Address).FirstOrDefaultAsync(a => a.Id == CurrentBusinessId);
+        }
         protected override async Task<ApplicationUser?> GetCurrentUserAsync()
         {
             var userName = this.HttpContext?.User?.Identity?.Name;
             if (userName != null)
             {
-                return await _context.Users.Include(a => a.Businesses).ThenInclude(a => a.Address).Include(a => a.BusinessEmployee).FirstOrDefaultAsync(a => a.UserName == userName);
+                return await _context.Users.Include(a => a.Address).Include(a => a.Businesses).ThenInclude(a => a.Employees).ThenInclude(a => a.Employee).ThenInclude(a => a.Address).Include(a => a.BusinessEmployee).Include(a => a.Businesses).ThenInclude(a => a.Address).FirstOrDefaultAsync(a => a.UserName == userName);
             }
             return null;
         }

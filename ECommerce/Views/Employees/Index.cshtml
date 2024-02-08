@@ -1,5 +1,91 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<ECommerce.ViewModels.EmployeeRegisterViewModel>
 @{
+    Layout = "~/Views/Shared/_BusinessLayout.cshtml";
+    ViewData["Title"] = "Index";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h2 class="text-center">
+            All Products
+        </h2>
+    </div>
+    
+        <div class="col-12 d-flex justify-content-end">
+            <a class="btn primary-btn" asp-action="RegisterEmployee" asp-controller="Employees">Add New</a>
+        </div>
+
+    <div class="col-12 mt-4">
+        <div id="home-cards" class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-sm-12 col-md-3 p-2">
+                    <div class="home">
+                        <div class="div-img">
+                            <img src="~/@Html.DisplayFor(modelItem => item.ImageUrl)" alt="Product Image">
+                        </div>
+                        <div class="home-content">
+                            <p class="home-title">@Html.DisplayFor(modelItem => item.Name)</p>
+                            <ul class="home-list">
+                             
+                                <li class="home-attri">
+                                    <i class="fa fa-bars"></i>
+                                    <span>@Html.DisplayFor(modelItem => item.BusinessesName)</span>
+                                </li>
+                                <li class="home-attri">
+                                    <i class="fa fa-warehouse"></i>
+                                    <span>@Html.DisplayFor(modelItem => item.FullAddress)</span>
+                                </li>
+                                <li class="home-attri">
+                                    <i class="fa fa-money-bill"></i>
+                                    <span>@Html.DisplayFor(modelItem => item.Email)</span>
+                                </li>
+                                <li class="home-attri">
+                                    <i class="fa fa-user"></i>
+                                    <span>@Html.DisplayFor(modelItem => item.PhoneNumber)</span>
+                                </li>
+                            </ul>
+                            <div class="row justify-content-around mt-3">
+
+                                <a class="col-3 btn link-card secondary-btn" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                <a class="col-3 btn link-card red-btn" data-bs-toggle="modal" onclick="deleteBtnClicked(this)" data-id="@item.Id" data-bs-target="#deleteModel">
+                                    Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModel" tabindex="-1" aria-labelledby="deleteModelLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModelLabel">Remove Employee</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to remove this employee?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <a class="col-3 btn link-card red-btn" style="width:10rem;" onclick="deleteItem()">Yes I am sure!</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/js/general.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        const url = "@Url.Action("Delete", "Employees")";
+        $(function () {
+            window.initialize(url);
+        });
+    </script>
 }

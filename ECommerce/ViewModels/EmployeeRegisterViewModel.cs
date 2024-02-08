@@ -5,6 +5,7 @@ namespace ECommerce.ViewModels
 {
     public class EmployeeRegisterViewModel : AddressViewModel
     {
+        public Guid Id { get; set; }
         [Required]
         public string? Name { get; set; }
         [Required]
@@ -16,5 +17,7 @@ namespace ECommerce.ViewModels
         [Required]
         public Guid BusinessId { get; set; }
         public SelectList? BusinessesList { get; set; }
+        public string? BusinessesName { get; set;}
+        public string? ImageUrl { get; set; }
     }
 }
