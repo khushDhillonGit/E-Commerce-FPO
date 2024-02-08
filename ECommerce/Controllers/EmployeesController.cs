@@ -19,6 +19,7 @@ using System.Net;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using ECommerce.Models.Api;
 
 namespace ECommerce.Controllers
 {
@@ -253,6 +254,35 @@ namespace ECommerce.Controllers
             if(business.EmployeeIds.Contains(empId)) return true;
             return false;
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            try
+            {
+                ApplicationUser? employee = await _context.Users.FirstOrDefaultAsync(a => a.Id == id);
+
+                if (employee == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Users.Remove(employee);    
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
+                return BadRequest();
+            }
+
+            return Ok(new PostBackModel { Success = true, RedirectUrl = "/Employees/index" });
+        }
+
 
         private async Task<Business?> GetCurrentUserBusinessAsync()
         {
