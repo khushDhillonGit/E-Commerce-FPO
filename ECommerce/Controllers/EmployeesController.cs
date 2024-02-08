@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Net;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ECommerce.Controllers
 {
@@ -31,6 +32,7 @@ namespace ECommerce.Controllers
         private readonly IEmailSender _emailSender;
         private readonly IConfiguration _configuration;
         private readonly ImageUtility _imageUtility;
+        private const string ImageFolder = "users";
         public EmployeesController(UserManager<ApplicationUser> userManager, ApplicationDbContext context, IEmailSender emailSender, SignInManager<ApplicationUser> signInManager, IConfiguration configuration, ImageUtility imageUtility) : base(userManager, context)
         {
             _context = context;
@@ -38,10 +40,10 @@ namespace ECommerce.Controllers
             _mapper = new Mapper(new MapperConfiguration(a =>
             {
                 a.CreateMap<ApplicationUser, EmployeeRegisterViewModel>().IncludeMembers(a => a.Address,a=>a.BusinessEmployee).ReverseMap();
-                a.CreateMap<Address, EmployeeRegisterViewModel>().ReverseMap();
-                a.CreateMap<BusinessEmployee, EmployeeRegisterViewModel>().ReverseMap();
-
+                a.CreateMap<Address, EmployeeRegisterViewModel>().ForMember(a=>a.Id,b=>b.Ignore()).ReverseMap().ForMember(a=>a.Id,b=>b.Ignore());
+                a.CreateMap<BusinessEmployee, EmployeeRegisterViewModel>().ForMember(a => a.Id, b => b.Ignore()).ReverseMap().ForMember(a => a.Id, b => b.Ignore());
             }));
+
             _emailSender = emailSender;
             _signInManager = signInManager;
             _configuration = configuration;
@@ -144,7 +146,7 @@ namespace ECommerce.Controllers
 
                     if (image != null)
                     {
-                        user.ImageUrl = await _imageUtility.SaveImageToServerAsync(image, "users");
+                        user.ImageUrl = await _imageUtility.SaveImageToServerAsync(image, ImageFolder);
                     }
                     else 
                     {
@@ -187,19 +189,63 @@ namespace ECommerce.Controllers
         {
             //check if id is not passed
             if (id == Guid.Empty) return NotFound();
-            //try get the employee from id
-            var employee = await _context.Users.Include(a=>a.Address).Include(a=>a.BusinessEmployee).FirstOrDefaultAsync(a => a.Id == id);
-            //check if we have an employee with this id
-            if (employee == null) return NotFound();
-            //check if employee belongs to current business
-            if (!(await EmployeeBelongsToCurrentBusiness(id))) return Unauthorized();
-            //map view model
-            var viewModel = _mapper.Map<EmployeeRegisterViewModel>(employee);
-            //fill list of businesses
+            try
+            {
+                //try get the employee from id
+                var employee = await _context.Users.Include(a => a.Address).Include(a => a.BusinessEmployee).FirstOrDefaultAsync(a => a.Id == id);
+                //check if we have an employee with this id
+                if (employee == null) return NotFound();
+                //check if employee belongs to current business
+                if (!(await EmployeeBelongsToCurrentBusiness(id))) return Unauthorized();
+                //map view model
+                var viewModel = _mapper.Map<EmployeeRegisterViewModel>(employee);
+                //fill list of businesses
+                viewModel.BusinessesList = await GetCurrentUserBusinessesSelectListAsync();
+                //return view
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
+            }
+            return BadRequest();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditAsync(Guid id, EmployeeRegisterViewModel viewModel,IFormFile? image) 
+        {
+            if (id != viewModel.Id) return NotFound();
+
+            if (ModelState.IsValid) 
+            {
+                try 
+                {
+                    var employee = await _context.Users.Include(a => a.Address).Include(a => a.BusinessEmployee).FirstOrDefaultAsync(a => a.Id == id);
+                    if (employee == null) return NotFound();
+                    if (image != null)
+                    {
+                        viewModel.ImageUrl = await _imageUtility.SaveImageToServerAsync(image, ImageFolder);
+                    }
+                    else 
+                    {
+                        viewModel.ImageUrl = employee.ImageUrl;
+                    }
+                    
+                    _mapper.Map<EmployeeRegisterViewModel,ApplicationUser>(viewModel,employee);
+                    _context.Update(employee);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                } 
+                catch (Exception ex) 
+                {
+                    ModelState.AddModelError("ErrorMessage","Something went wrong, please contact IT");
+                    Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
+                }
+            }
             viewModel.BusinessesList = await GetCurrentUserBusinessesSelectListAsync();
-            //return view
             return View(viewModel);
         }
+
         private async Task<bool> EmployeeBelongsToCurrentBusiness(Guid empId) 
         {
             var business = await _context.Businesses.Include(a => a.Employees).ThenInclude(a => a.Employee).Select(a => new { a.Id,EmployeeIds = a.Employees.Select(a => a.EmployeeId) }).FirstOrDefaultAsync(a => a.Id == CurrentBusinessId);

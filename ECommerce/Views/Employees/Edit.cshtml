@@ -24,6 +24,7 @@
         </div>
         <div class="col-md-8 col-sm-12 right-container p-5">
             <form asp-action="Edit" class="create-form" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Email" value="@Model.Email"/>
                 <div class="row g-4">
                     <div class="col-md-6 col-sm-12">
                         <div class="form-group">
@@ -39,21 +40,11 @@
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
-
                         <div class="form-group">
                             <label asp-for="PhoneNumber" class="control-label"></label>
                             <input asp-for="PhoneNumber" class="form-control" />
                             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                         </div>
-
-                    </div>
-                    <div class="col-md-6 col-sm-12">
-                        <div class="form-group">
-                            <label asp-for="Email" class="control-label"></label>
-                            <input asp-for="Email" class="form-control" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
-
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <div class="form-group">
@@ -68,9 +59,8 @@
                             <input asp-for="StreetAddress" class="form-control" />
                             <span asp-validation-for="StreetAddress" class="text-danger"></span>
                         </div>
-
                     </div>
-                    <div class="col-md-4 col-sm-12">
+                    <div class="col-md-6 col-sm-12">
                         <div class="form-group">
                             <label asp-for="City" class="control-label"></label>
                             <input asp-for="City" class="form-control" />
@@ -78,7 +68,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4 col-sm-12">
+                    <div class="col-md-6 col-sm-12">
                         <div class="form-group">
                             <label asp-for="Province" class="control-label"></label>
                             <input asp-for="Province" class="form-control" />
@@ -86,7 +76,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4 col-sm-12">
+                    <div class="col-md-6 col-sm-12">
                         <div class="form-group">
                             <label asp-for="PostalCode" class="control-label"></label>
                             <input asp-for="PostalCode" class="form-control" />
