@@ -21,7 +21,7 @@ namespace ECommerce.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await GetCurrentUserAsync();
-            CurrentBusinessId = Guid.Empty;
+         
             if (user == null) return View();
             
             if (IsBusinessOwner(user)) 
