@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using ECommerce.Services;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace ECommerce.Controllers
 {
@@ -36,8 +37,9 @@ namespace ECommerce.Controllers
             _userManager = userManager;
             _mapper = new Mapper(new MapperConfiguration(a =>
             {
-                a.CreateMap<ApplicationUser, EmployeeRegisterViewModel>().IncludeMembers(a => a.Address).ReverseMap();
+                a.CreateMap<ApplicationUser, EmployeeRegisterViewModel>().IncludeMembers(a => a.Address,a=>a.BusinessEmployee).ReverseMap();
                 a.CreateMap<Address, EmployeeRegisterViewModel>().ReverseMap();
+                a.CreateMap<BusinessEmployee, EmployeeRegisterViewModel>().ReverseMap();
 
             }));
             _emailSender = emailSender;
@@ -178,6 +180,32 @@ namespace ECommerce.Controllers
 
             registerViewModel.BusinessesList = await GetCurrentUserBusinessesSelectListAsync();
             return View(registerViewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditAsync(Guid id) 
+        {
+            //check if id is not passed
+            if (id == Guid.Empty) return NotFound();
+            //try get the employee from id
+            var employee = await _context.Users.Include(a=>a.Address).Include(a=>a.BusinessEmployee).FirstOrDefaultAsync(a => a.Id == id);
+            //check if we have an employee with this id
+            if (employee == null) return NotFound();
+            //check if employee belongs to current business
+            if (!(await EmployeeBelongsToCurrentBusiness(id))) return Unauthorized();
+            //map view model
+            var viewModel = _mapper.Map<EmployeeRegisterViewModel>(employee);
+            //fill list of businesses
+            viewModel.BusinessesList = await GetCurrentUserBusinessesSelectListAsync();
+            //return view
+            return View(viewModel);
+        }
+        private async Task<bool> EmployeeBelongsToCurrentBusiness(Guid empId) 
+        {
+            var business = await _context.Businesses.Include(a => a.Employees).ThenInclude(a => a.Employee).Select(a => new { a.Id,EmployeeIds = a.Employees.Select(a => a.EmployeeId) }).FirstOrDefaultAsync(a => a.Id == CurrentBusinessId);
+            if (business == null) return false;
+            if(business.EmployeeIds.Contains(empId)) return true;
+            return false;
         }
 
         private async Task<Business?> GetCurrentUserBusinessAsync()
