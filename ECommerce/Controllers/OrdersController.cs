@@ -22,6 +22,44 @@ namespace ECommerce.Controllers
         {
             _context = context;
         }
+        
+        public async Task<IActionResult> AllPaidOrdersAsync() 
+        {
+            var user = await GetCurrentUserWithOrdersAsync();
+            if(user == null) return Unauthorized();
+            List<OrderPaidModel> result = new();
+            foreach (var order in user.Businesses.SelectMany(a=>a.Orders))
+            {
+                var model = new OrderPaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.LocalDateTime.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, CustomerName = order.CustomerName, CustomerPhone = order.CustomerPhone };
+
+                foreach (var product in order.ProductOrders)
+                {
+                    model.Products.Add(new OrderProductsModel { ProductId = product.ProductId, Name = product.Product?.Name, Quantity = product.Quantity, TotalPrice = product.TotalPrice, SellingPrice = product.Product?.SellingPrice, UnitPrice = product.Product?.UnitPrice });
+                }
+
+                result.Add(model);
+            }
+            return View(nameof(PaidOrders),result);
+        }
+
+        public async Task<IActionResult> AllUnpaidOrdersAsync()
+        {
+            var user = await GetCurrentUserWithOrdersAsync();
+            if (user == null) return Unauthorized();
+            List<OrderUnpaidModel> result = new();
+            foreach (var order in user.Businesses.SelectMany(a=>a.Orders))
+            {
+                var model = new OrderUnpaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.LocalDateTime.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, PaidByCustomer = order.PaidByCustomer, CustomerName = order.CustomerName, CustomerPhone = order.CustomerPhone };
+
+                foreach (var product in order.ProductOrders)
+                {
+                    model.Products.Add(new OrderProductsModel { ProductId = product.ProductId, Name = product.Product?.Name, Quantity = product.Quantity, TotalPrice = product.TotalPrice, SellingPrice = product.Product?.SellingPrice, UnitPrice = product.Product?.UnitPrice });
+                }
+
+                result.Add(model);
+            }
+            return View(nameof(UnpaidOrders), result);
+        }
 
         public async Task<IActionResult> PaidOrders() 
         {
@@ -172,6 +210,15 @@ namespace ECommerce.Controllers
             order.OrderNumber = (totalOrders + 1001).ToString();
         }
 
+        private async Task<ApplicationUser?> GetCurrentUserWithOrdersAsync()
+        {
+            var userName = this.HttpContext?.User?.Identity?.Name;
+            if (userName != null)
+            {
+                return await _context.Users.Include(a => a.Businesses).ThenInclude(a => a.Orders).ThenInclude(a=>a.ProductOrders).Include(a=>a.Businesses).ThenInclude(a=>a.Address).FirstOrDefaultAsync(a => a.UserName == userName);
+            }
+            return null;
+        }
 
     }
 }
