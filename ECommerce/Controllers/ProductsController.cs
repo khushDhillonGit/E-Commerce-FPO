@@ -28,14 +28,13 @@ namespace ECommerce.Controllers
             if (user != null && IsBusinessOwner(user))
             {
                 if (CurrentBusinessId == Guid.Empty) return RedirectToAction("Index", "Businesses");
-
-                var products = await _context.Categories.Include(a => a.Products).Where(a => a.BusinessId == CurrentBusinessId).SelectMany(a => a.Products).ToListAsync();
+                var products = await _context.Products.Include(a=>a.Category).Where(a=>a.Category.BusinessId == CurrentBusinessId).ToListAsync();
                 return View(products);
             }
             var applicationDbContext = _context.Products.Include(p => p.Category);
             return View(await applicationDbContext.ToListAsync());
         }
-
+        //TODO: create function to show all products of all businesses
         //[Authorize(Roles = $"{ApplicationRole.SuperAdmin}")]
         //public async Task<IActionResult> AllProducts()
         //{

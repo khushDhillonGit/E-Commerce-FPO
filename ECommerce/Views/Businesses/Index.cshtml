@@ -31,13 +31,15 @@
             @foreach (var item in Model)
             {
                 <div class="p-3 col-sm-12 col-md-6">
-                    <a asp-controller="Businesses" asp-action="CurrentBusiness" asp-route-bId="@item.Id">
+                  
                     <div class="home">
                         <div class="div-img">
                             <img src="~/@Html.DisplayFor(modelItem => item.ImageUrl)" alt="Business Image">
                         </div>
                         <div class="home-content">
+                              <a asp-controller="Businesses" asp-action="CurrentBusiness" asp-route-bId="@item.Id">
                             <p class="home-title">@Html.DisplayFor(modelItem => item.Name)</p>
+                            </a>
                             <ul class="home-list">
                                 <li class="home-attri">
                                     <i class="fa fa-comment"></i>
@@ -69,7 +71,7 @@
                             </div>
                         </div>
                     </div>
-                </a>
+              
                 </div>
             }
 

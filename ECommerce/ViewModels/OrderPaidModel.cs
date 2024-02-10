@@ -9,7 +9,7 @@
         public decimal BillPrice { get; set; }
         public string? Employee { get; set; }
         public string? OrderNumber { get; set; }
-
+        public string? BusinessName { get; set; }
         public string? CustomerName { get; set; }
         public string? CustomerPhone { get; set; }
 
