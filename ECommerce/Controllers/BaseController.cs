@@ -19,6 +19,7 @@ namespace ECommerce.Controllers
             _userManager = userManager;
             _context = context;
         }
+
         public override void OnActionExecuted(ActionExecutedContext filter) 
         {
             ViewData[Constants.CurrentBusinessName] = CurrentBusinessName;
@@ -71,6 +72,7 @@ namespace ECommerce.Controllers
             }
             set
             {
+                CurrentBusinessName = _context.Businesses.FirstOrDefault(a=>a.Id == value)?.Name ?? "";
                 HttpContext.Session.SetString(Constants.CurrentBusinessId, value.ToString());
             }
         }
