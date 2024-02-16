@@ -28,13 +28,27 @@ namespace ECommerce.Controllers
             }));
         }
 
-        public async Task<IActionResult> ProductsOnSale()
+        public async Task<IActionResult> ProductsOnSale(string? search)
         {
-            var products = await _context.Products.Include(a => a.Category).ThenInclude(a => a.Business).ToListAsync();
-            List<ProductOnSaleViewModel> vm = new List<ProductOnSaleViewModel>();
-            foreach (var product in products) 
+            List<Product> products = new List<Product>();
+            if (string.IsNullOrWhiteSpace(search))
             {
-                vm.Add(new ProductOnSaleViewModel() {Id = product.Id,Name = product.Name,Description = product.Description, BusinessName = product.Category?.Business?.Name,CategoryName = product.Category?.Name,ImageUrl = product.ImageUrl});
+                products = await _context.Products.Include(a => a.Category).ThenInclude(a => a.Business).ToListAsync();
+            }
+            else 
+            {
+               products = await _context.Products.Include(a => a.Category).ThenInclude(a => a.Business).Where(a =>
+               a.Name.Contains(search) ||
+               a.Description.Contains(search) ||
+               a.Category.Name.Contains(search) ||
+               a.Category.Business.Name.Contains(search)).ToListAsync();
+               
+                ViewBag.Search = search;    
+            }
+            List<ProductOnSaleViewModel> vm = new List<ProductOnSaleViewModel>();
+            foreach (var product in products)
+            {
+                vm.Add(new ProductOnSaleViewModel() { Id = product.Id, Name = product.Name, Description = product.Description, BusinessName = product.Category?.Business?.Name, CategoryName = product.Category?.Name, ImageUrl = product.ImageUrl });
             }
             return View(vm);
         }

@@ -4,22 +4,34 @@
     ViewData["Title"] = "Index";
 }
 
-<div class="row">
+@section Styles {
+    <style>
+        .home:hover {
+            transform: none;
+        }
+    </style>
+}
+
+<div class="row gap-4">
     <div class="col-12">
-        <div class="row">
-            <div class="col-sm-12 col-md-8">
-                <inp
-                    ut />
-            </div>
-            <div class="col-sm-12 col-md-4"></div>
-        </div>
+        <h2 class="text-center">Explore our Products</h2>
     </div>
+    <div class="col-12">
+        <form asp-action="ProductsOnSale" asp-controller="Products">
+            <div class="d-flex w-75 gap-2 m-auto">
+                <input type="text" class="form-control" name="search" placeholder="Product, Shop Name, Description, Type ..." value="@ViewBag.Search" />
+                <button type="submit" class="btn btn-danger">Search</button>
+            </div>
+        </form>
+    </div>
+
+
 
     <div class="col-12 mt-4">
         <div id="home-cards" class="row">
             @foreach (var item in Model)
             {
-                <div class="col-sm-12 col-md-3 p-2">
+                <div class="col-12 col-md-4 col-lg-3 p-2">
                     <div class="home">
                         <div class="div-img">
                             <img src="~/@Html.DisplayFor(modelItem => item.ImageUrl)" alt="Product Image">
@@ -42,8 +54,8 @@
                             </ul>
                             <div class="row justify-content-around mt-3">
 
-                               <a class="btn btn-success">Add to Cart</a>
-                              
+                                <a class="btn btn-success w-75">Add to Cart</a>
+
                             </div>
                         </div>
                     </div>
