@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using ECommerce.Services;
 using Serilog;
+using ECommerce.Models.Api;
+using AutoMapper;
+using ECommerce.ViewModels;
 
 namespace ECommerce.Controllers
 {
@@ -14,42 +17,66 @@ namespace ECommerce.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ImageUtility _imageUtility;
-
+        private readonly Mapper _mapper;
         public ProductsController(ImageUtility imageUtility, UserManager<ApplicationUser> userManager, ApplicationDbContext context) : base(userManager, context)
         {
             _context = context;
             _imageUtility = imageUtility;
+            _mapper = new Mapper(new MapperConfiguration(e =>
+            {
+                e.CreateMap<Product, ProductViewModel>().ReverseMap();
+            }));
         }
 
+        public async Task<IActionResult> ProductsOnSale()
+        {
+            var products = await _context.Products.Include(a => a.Category).ThenInclude(a => a.Business).ToListAsync();
+            List<ProductOnSaleViewModel> vm = new List<ProductOnSaleViewModel>();
+            foreach (var product in products) 
+            {
+                vm.Add(new ProductOnSaleViewModel() {Id = product.Id,Name = product.Name,Description = product.Description, BusinessName = product.Category?.Business?.Name,CategoryName = product.Category?.Name,ImageUrl = product.ImageUrl});
+            }
+            return View(vm);
+        }
+        [Authorize(Roles = $"{ApplicationRole.BusinessOwner},{ApplicationRole.SuperAdmin},{ApplicationRole.Employee}")]
         // GET: Products
         public async Task<IActionResult> Index()
         {
             var user = await GetCurrentUserAsync();
+            List<Product> products = new List<Product>();
             if (user != null && IsBusinessOwner(user))
             {
                 if (CurrentBusinessId == Guid.Empty) return RedirectToAction("Index", "Businesses");
-                var products = await _context.Products.Include(a=>a.Category).Where(a=>a.Category.BusinessId == CurrentBusinessId).ToListAsync();
-                return View(products);
+                products = await _context.Products.Include(a => a.Category).ThenInclude(a => a.Business).Where(a => a.Category.BusinessId == CurrentBusinessId).ToListAsync();
             }
-            var applicationDbContext = _context.Products.Include(p => p.Category);
-            return View(await applicationDbContext.ToListAsync());
-        }
-        //TODO: create function to show all products of all businesses
-        //[Authorize(Roles = $"{ApplicationRole.SuperAdmin}")]
-        //public async Task<IActionResult> AllProducts()
-        //{
-        //    var products = await _context.Products.Include(a => a.Category).ThenInclude(a => a.Business).Select(a => new
-        //    {
-        //        a.Name,
-        //        a.SellingPrice,
-        //        a.UnitPrice,
-        //        a.Quantity,
-        //        CategoryName = a.Category.Name,
-        //        BusinessName = a.Category.Business.Name
-        //    }).ToListAsync();
 
-        //    return View(products);
-        //}
+            List<ProductViewModel> viewModel = new List<ProductViewModel>();
+            foreach (var product in products)
+            {
+                ProductViewModel model = _mapper.Map<ProductViewModel>(product);
+                model.BusinessName = product.Category?.Business?.Name ?? "";
+                model.CategoryName = product.Category?.Name ?? "";
+                viewModel.Add(model);
+            }
+            return View(viewModel);
+        }
+
+        [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.BusinessOwner}")]
+        public async Task<IActionResult> AllProducts()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null) return Unauthorized();
+            var products = await _context.Products.Include(a => a.Category).ThenInclude(a => a.Business).ThenInclude(a => a.Owners).Where(a => a.Category.Business.Owners.Select(a => a.Id).Contains(user.Id)).ToListAsync();
+            List<ProductViewModel> viewModel = new List<ProductViewModel>();
+            foreach (var product in products)
+            {
+                ProductViewModel model = _mapper.Map<ProductViewModel>(product);
+                model.BusinessName = product.Category.Business.Name ?? "";
+                viewModel.Add(model);
+            }
+            ViewData["Layout"] = "~/Views/Shared/_Layout.cshtml";
+            return View(nameof(Index), viewModel);
+        }
 
         // GET: Products/Details/5
         public async Task<IActionResult> Details(Guid? id)
@@ -121,13 +148,13 @@ namespace ECommerce.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products.Include(a => a.Category).ThenInclude(a => a.Business).FirstOrDefaultAsync(a => a.Id == id);
             if (product == null)
             {
                 return NotFound();
             }
-
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
+            CurrentBusinessId = product.Category.BusinessId;
+            ViewData["CategoryId"] = new SelectList(_context.Categories.Where(a => a.BusinessId == product.Category.Business.Id), "Id", "Name", product.CategoryId);
             return View(product);
         }
 
@@ -198,7 +225,7 @@ namespace ECommerce.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Ok(new PostBackModel { Success = true, RedirectUrl = "/Products/index" });
         }
 
         private bool ProductExists(Guid id)

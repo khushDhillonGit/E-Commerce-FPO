@@ -1,6 +1,6 @@
-﻿@model IEnumerable<ECommerce.Models.Product>
+﻿@model IEnumerable<ECommerce.ViewModels.ProductViewModel>
 @{
-    Layout = "~/Views/Shared/_BusinessLayout.cshtml";
+    Layout =  ViewBag.Layout ?? "~/Views/Shared/_BusinessLayout.cshtml";
     ViewData["Title"] = "Index";
 }
 
@@ -34,7 +34,11 @@
                                 </li>
                                 <li class="home-attri">
                                     <i class="fa fa-bars"></i>
-                                    <span>@Html.DisplayFor(modelItem => item.Category.Name)</span>
+                                    <span>@Html.DisplayFor(modelItem => item.CategoryName)</span>
+                                </li>
+                                <li class="home-attri">
+                                    <i class="fa fa-bars"></i>
+                                    <span>@Html.DisplayFor(modelItem => item.BusinessName)</span>
                                 </li>
                                 <li class="home-attri">
                                     <i class="fa fa-warehouse"></i>
