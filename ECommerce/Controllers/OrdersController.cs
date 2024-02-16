@@ -111,12 +111,12 @@ namespace ECommerce.Controllers
         [HttpGet]
         public async Task<JsonResult> GetProductsByNameAsync(string search = "")
         {
-            List<ProductViewModel> products = new();
+            List<GetProductViewModel> products = new();
             try
             {
                 var pList = await _context.Products.Include(a=>a.Category).Where(a => a.Category.BusinessId == CurrentBusinessId && a.Name.ToLower().Contains(search.ToLower())).ToListAsync();
-                var mapper = new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<Product, ProductViewModel>()));
-                products = mapper.Map<List<Product>, List<ProductViewModel>>(pList);
+                var mapper = new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<Product, GetProductViewModel>()));
+                products = mapper.Map<List<Product>, List<GetProductViewModel>>(pList);
             }
             catch (Exception ex)
             {

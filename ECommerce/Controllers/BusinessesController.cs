@@ -74,7 +74,6 @@ namespace ECommerce.Controllers
 
             var business = _context.Businesses.Include(a => a.ProductCategories).ThenInclude(a => a.Products).Include(a => a.Orders).Include(a => a.Employees).FirstOrDefault(a => a.Id == CurrentBusinessId);
             if(business == null) return NotFound();
-            CurrentBusinessName = business.Name ?? string.Empty;
 
             BusinessViewModel vm = _mapper.Map<BusinessViewModel>(business);
 
