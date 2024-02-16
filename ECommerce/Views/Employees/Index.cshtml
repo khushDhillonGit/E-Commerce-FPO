@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<ECommerce.ViewModels.EmployeeRegisterViewModel>
 @{
-    Layout = "~/Views/Shared/_BusinessLayout.cshtml";
+    Layout = ViewBag.Layout ?? "~/Views/Shared/_BusinessLayout.cshtml";
     ViewData["Title"] = "Index";
 }
 

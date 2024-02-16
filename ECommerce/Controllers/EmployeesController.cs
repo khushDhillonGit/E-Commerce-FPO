@@ -75,6 +75,32 @@ namespace ECommerce.Controllers
             return View(viewModel);
         }
 
+        public async Task<IActionResult> AllEmployeesAsync()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null) return Unauthorized();
+
+            List<EmployeeRegisterViewModel> viewModel = new List<EmployeeRegisterViewModel>();
+
+            try
+            {
+                var allEmployees = _context.Businesses.Include(a => a.Employees).ThenInclude(a => a.Employee).ThenInclude(a => a.Address).Include(a=>a.Owners). Where(a=>a.Owners.Select(a=>a.Id).Contains(user.Id)).SelectMany(a=>a.Employees.Select(a=>a.Employee)).ToList();
+                foreach (var employee in allEmployees)
+                {
+                    var employeeRegister = _mapper.Map<EmployeeRegisterViewModel>(employee);
+                    employeeRegister.BusinessesName = CurrentBusinessName;
+                    viewModel.Add(employeeRegister);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
+                return BadRequest();
+            }
+            ViewData["Layout"] = "~/Views/Shared/_Layout.cshtml";
+            return View(nameof(Index),viewModel);
+        }
+
         [HttpGet]
         public async Task<IActionResult> RegisterEmployeeAsync()
         {
@@ -142,6 +168,7 @@ namespace ECommerce.Controllers
                 if (ModelState.IsValid)
                 {
                     ApplicationUser user = _mapper.Map<EmployeeRegisterViewModel, ApplicationUser>(registerViewModel);
+                    user.BusinessEmployee = null;
                     await _userManager.SetUserNameAsync(user, registerViewModel.Email);
                     await _userManager.SetEmailAsync(user, registerViewModel.Email);
 
