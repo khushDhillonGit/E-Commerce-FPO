@@ -5,11 +5,17 @@ namespace ECommerce.Models
 {
     public class Product
     {
+        public Product() 
+        {
+            Category = new Category();
+            Name = string.Empty;
+            Description = string.Empty; 
+        }
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
-        public string? Name { get; set; }
-        public string? Description { get; set; }
+        public string Name { get; set; } 
+        public string Description { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal SellingPrice { get; set; }
         public string? ImageUrl { get; set; }
@@ -18,7 +24,7 @@ namespace ECommerce.Models
         public DateTimeOffset CreatedDate { get; set; }
         public Guid CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
-        public virtual Category Category { get; set; } = null!;
+        public virtual Category Category { get; set; } 
         public bool IsDelete { get; set; }
     }
 }
