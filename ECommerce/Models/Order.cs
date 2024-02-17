@@ -9,6 +9,7 @@ namespace ECommerce.Models
         public Order()
         {
             ProductOrders = new List<ProductOrder>();
+            OrderNumber = string.Empty;
         }
 
         [Key]
@@ -33,7 +34,7 @@ namespace ECommerce.Models
         public DateTimeOffset OrderDate { get; set; }
         public Guid BusinessId { get; set; }
         [ForeignKey(nameof(BusinessId))]
-        public virtual Business Business { get; set; }
+        public virtual Business? Business { get; set; }
 
     }
 }
