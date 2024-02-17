@@ -1,5 +1,37 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model ECommerce.ViewModels.ProductOnSaleViewModel
+
 @{
+    ViewData["Title"] = "Product Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+
+<div class="container">
+    <h1 class="text-primary text-center fs-1">@Model.Name</h1>
+    <div class="row g-5">
+        <div class="col-md-6 col-sm-12">
+            <img class="img-full" src="~/@Html.DisplayFor(a=>a.ImageUrl)" />
+        </div>
+        <div class="col-md-12 col-lg-6">
+            <div class="d-flex flex-column justify-content-evenly h-100">
+                <h3 class="text-primary">@Model.Description</h3>
+                <div>
+                    <ul class="home-list">
+                        <li class="home-attri">
+                            <i class="fa fa-comment"></i>
+                            <span>@Html.DisplayFor(a => a.CategoryName)</span>
+                        </li>
+                        <li class="home-attri">
+                            <i class="fa fa-bars"></i>
+                            <span>@Html.DisplayFor(a => a.BusinessName)</span>
+                        </li>
+                        <li class="home-attri">
+                            <i class="fa fa-warehouse"></i>
+                            <span>Employees: @Html.DisplayFor(modelItem => modelItem.Price)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
