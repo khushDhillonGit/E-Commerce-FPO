@@ -8,12 +8,14 @@ namespace ECommerce.Models
         public Category() 
         {
             Products = new List<Product>();
+            Name = string.Empty;
+            Description = string.Empty;
         }
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
-        public string? Name { get; set; }
-        public string? Description { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public Guid BusinessId { get; set; }
         [ForeignKey(nameof(BusinessId))]
