@@ -7,7 +7,6 @@ namespace ECommerce.Models
     {
         public Product() 
         {
-            Category = new Category();
             Name = string.Empty;
             Description = string.Empty; 
         }
@@ -24,7 +23,7 @@ namespace ECommerce.Models
         public DateTimeOffset CreatedDate { get; set; }
         public Guid CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
-        public virtual Category Category { get; set; } 
+        public virtual Category? Category { get; set; } 
         public bool IsDelete { get; set; }
     }
 }
