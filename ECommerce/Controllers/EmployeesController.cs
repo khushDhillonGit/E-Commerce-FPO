@@ -194,7 +194,8 @@ namespace ECommerce.Controllers
 
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                        var callBackUrl = Url.Action("ConfirmEmail", "Employees", new { userId = user.Id, code = code }, Request.Scheme);
+                        var callBackUrl = Url.Action("ConfirmEmail", "Employees", new { userId = user.Id, code }, Request.Scheme);
+                        if(callBackUrl == null) return BadRequest();
                         await _emailSender.SendEmailAsync(user.Email, $"Welcome to {CurrentBusinessName} employee program",
                             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callBackUrl)}'>clicking here</a>.");
 

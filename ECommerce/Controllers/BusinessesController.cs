@@ -39,6 +39,7 @@ namespace ECommerce.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await GetCurrentUserAsync();
+            if(user == null) return NotFound();
             List<BusinessViewModel> businesses = new List<BusinessViewModel>();
             foreach (var business in user.Businesses)
             {
@@ -53,11 +54,15 @@ namespace ECommerce.Controllers
                     TotalEmployees = a.Employees.Count(),
                 }).FirstOrDefault(a => a.Id == business.Id);
 
-                vm.TotalProducts = bussinessData.TotalProducts;
-                vm.TotalOrders = bussinessData.TotalOrders;
-                vm.TotalProducts = bussinessData.TotalCategories;
-                vm.TotalProducts = bussinessData.TotalEmployees;
+                if (bussinessData != null)
+                {
 
+                    vm.TotalProducts = bussinessData.TotalProducts;
+                    vm.TotalOrders = bussinessData.TotalOrders;
+                    vm.TotalProducts = bussinessData.TotalCategories;
+                    vm.TotalProducts = bussinessData.TotalEmployees;
+
+                }
                 businesses.Add(vm);
             }
 

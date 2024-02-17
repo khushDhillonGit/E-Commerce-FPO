@@ -28,7 +28,7 @@ namespace ECommerce.Models
         [ForeignKey(nameof(BusinessCategoryId))]
         public virtual BusinessCategory? BusinessCategory { get; set; }
         public virtual ICollection<Category> ProductCategories { get; set; } = new List<Category>();
-        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
         public virtual ICollection<ApplicationUser> Owners { get; set; }
         public virtual ICollection<BusinessEmployee> Employees { get; set; }
         public virtual ICollection<Vender> Venders { get; set; }

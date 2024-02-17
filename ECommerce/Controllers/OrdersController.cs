@@ -114,7 +114,7 @@ namespace ECommerce.Controllers
             List<GetProductViewModel> products = new();
             try
             {
-                var pList = await _context.Products.Include(a=>a.Category).Where(a => a.Category.BusinessId == CurrentBusinessId && a.Name.ToLower().Contains(search.ToLower())).ToListAsync();
+                var pList = await _context.Products.Include(a=>a.Category).Where(a => a.Category != null && a.Category.BusinessId == CurrentBusinessId && a.Name.ToLower().Contains(search.ToLower())).ToListAsync();
                 var mapper = new Mapper(new MapperConfiguration(cfg => cfg.CreateMap<Product, GetProductViewModel>()));
                 products = mapper.Map<List<Product>, List<GetProductViewModel>>(pList);
             }

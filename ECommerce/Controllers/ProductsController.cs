@@ -242,7 +242,7 @@ namespace ECommerce.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ProductDetails(Guid id) 
+        public IActionResult ProductDetails(Guid id) 
         {
             var product = _context.Products.Include(a=>a.Category).ThenInclude(a=>a.Business).FirstOrDefault(a=>a.Id == id)?.AsProductOnSaleVM();
             if(product == null) return NotFound();
