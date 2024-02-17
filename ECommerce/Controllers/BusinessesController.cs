@@ -68,7 +68,7 @@ namespace ECommerce.Controllers
         {
             var user = await GetCurrentUserAsync();
             if(bId == Guid.Empty) bId = CurrentBusinessId;
-            if (user == null || !IsAuthorisedForBusiness(user, bId)) return Unauthorized();
+            if (user == null || !IsAuthorisedForBusiness(user.Id, bId)) return Unauthorized();
             // store current bId
             CurrentBusinessId = bId;
 

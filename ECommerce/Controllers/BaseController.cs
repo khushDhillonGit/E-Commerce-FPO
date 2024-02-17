@@ -52,14 +52,19 @@ namespace ECommerce.Controllers
             if (user == null || user.Id == Guid.Empty) return false;
             return Task.Run(async () => await _userManager.IsInRoleAsync(user, ApplicationRole.Employee)).Result;
         }
-        protected bool IsAuthorisedForBusiness(ApplicationUser user, Guid bId)
+        public bool IsEmployeeById(Guid id)
         {
-            //if user in employee check if it belongs to this business
-            if (IsEmployee(user) && user.BusinessEmployee?.BusinessId == bId) return true;
-            //this case would be business owner have this business
-            if (user.Businesses.FirstOrDefault(a => a.Id == bId) != null) return true;
-            return false;
+            if (id == Guid.Empty) return false;
+            var userRoles = _context.UserRoles.Include(a => a.Role).Where(a => a.UserId == id).Select(a=>a.Role.Name);
+            return userRoles.Contains(ApplicationRole.Employee);
+        }
+        protected bool IsAuthorisedForBusiness(Guid userId, Guid bId)
+        {
+            var data = _context.Users.Include(a=>a.Businesses).Include(a=>a.BusinessEmployee).Select(a=>new { UserId = a.Id,BusinessIds = a.Businesses.Select(a => a.Id), EmpBusinessId = (a.BusinessEmployee == null ?  Guid.Empty : a.BusinessEmployee.BusinessId) }).FirstOrDefault(a=>a.UserId == userId);
 
+            if(data == null) return false;
+            if (data.EmpBusinessId == bId || data.BusinessIds.Contains(bId)) return true;
+            return false;
         }
 
         protected Guid CurrentBusinessId

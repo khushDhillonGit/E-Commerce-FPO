@@ -64,7 +64,7 @@ namespace ECommerce.Controllers
         public async Task<IActionResult> PaidOrders() 
         {
             var user = await GetCurrentUserAsync();
-            if (user == null || !(IsAuthorisedForBusiness(user,CurrentBusinessId))) { return RedirectToAction("Index", "Home"); }
+            if (user == null || !(IsAuthorisedForBusiness(user.Id,CurrentBusinessId))) { return RedirectToAction("Index", "Home"); }
 
             var orders = _context.Orders.Include(a=>a.ProductOrders).Where(a=>a.FullyPaid && a.BusinessId == CurrentBusinessId);
             List<OrderPaidModel> result = new();
@@ -85,7 +85,7 @@ namespace ECommerce.Controllers
         public async Task<IActionResult> UnpaidOrders()
         {
             var user = await GetCurrentUserAsync();
-            if (user == null || !(IsAuthorisedForBusiness(user, CurrentBusinessId))) { return RedirectToAction("Index", "Home"); }
+            if (user == null || !(IsAuthorisedForBusiness(user.Id, CurrentBusinessId))) { return RedirectToAction("Index", "Home"); }
 
             var orders = _context.Orders.Include(a=>a.ProductOrders).Where(a => a.BusinessId == CurrentBusinessId && !a.FullyPaid);
             List<OrderUnpaidModel> result = new();
@@ -131,7 +131,7 @@ namespace ECommerce.Controllers
             try
             {
                 var user = await GetCurrentUserAsync(); 
-                if(user == null || !IsAuthorisedForBusiness(user,CurrentBusinessId)) return RedirectToAction("Index","Home");
+                if(user == null || !IsAuthorisedForBusiness(user.Id,CurrentBusinessId)) return RedirectToAction("Index","Home");
 
                 if (ModelState.IsValid)
                 {

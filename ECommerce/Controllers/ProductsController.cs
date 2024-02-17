@@ -10,6 +10,8 @@ using Serilog;
 using ECommerce.Models.Api;
 using AutoMapper;
 using ECommerce.ViewModels;
+using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
+using ECommerce.Extensions;
 
 namespace ECommerce.Controllers
 {
@@ -45,11 +47,8 @@ namespace ECommerce.Controllers
                
                 ViewBag.Search = search;    
             }
-            List<ProductOnSaleViewModel> vm = new List<ProductOnSaleViewModel>();
-            foreach (var product in products)
-            {
-                vm.Add(new ProductOnSaleViewModel() { Id = product.Id, Name = product.Name, Description = product.Description, BusinessName = product.Category?.Business?.Name, CategoryName = product.Category?.Name, ImageUrl = product.ImageUrl });
-            }
+            List<ProductOnSaleViewModel> vm = products.Select(a=>a.AsProductOnSaleVM()).ToList();
+
             return View(vm);
         }
         [Authorize(Roles = $"{ApplicationRole.BusinessOwner},{ApplicationRole.SuperAdmin},{ApplicationRole.Employee}")]
