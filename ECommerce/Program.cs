@@ -24,7 +24,7 @@ var connectionString = builder.Configuration["DefaultConnection"];
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     { var sqlBuilder = new SqlConnectionStringBuilder(connectionString);
-        options.UseSqlServer(sqlBuilder.ConnectionString); options.UseLazyLoadingProxies(); });
+        options.UseSqlServer(sqlBuilder.ConnectionString); });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
