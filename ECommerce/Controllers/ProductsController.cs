@@ -242,6 +242,15 @@ namespace ECommerce.Controllers
             return Ok(new PostBackModel { Success = true, RedirectUrl = "/Products/index" });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ProductDetails(Guid id) 
+        {
+            var product = _context.Products.Include(a=>a.Category).ThenInclude(a=>a.Business).FirstOrDefault(a=>a.Id == id)?.AsProductOnSaleVM();
+            if(product == null) return NotFound();
+            return View(product); 
+        }
+
+
         private bool ProductExists(Guid id)
         {
             return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
