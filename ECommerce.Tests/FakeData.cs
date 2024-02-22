@@ -1,8 +1,13 @@
-﻿using ECommerce.Models;
+﻿using ECommerce.Data;
+using ECommerce.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using Microsoft.EntityFrameworkCore.InMemory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,5 +55,11 @@ namespace ECommerce.Tests
             return userManager;
         }
 
+        public static DbContextOptions<ApplicationDbContext> GetDbContextOptions()
+        {
+            var service = new ServiceCollection().AddEntityFrameworkInMemoryDatabase().BuildServiceProvider();
+            var builder = new DbContextOptionsBuilder<ApplicationDbContext>().UseInMemoryDatabase("MyTestDatabase").UseInternalServiceProvider(service);
+            return builder.Options;
+        }
     }
 }
