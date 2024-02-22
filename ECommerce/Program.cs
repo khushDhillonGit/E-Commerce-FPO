@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Security.Cryptography.X509Certificates;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -90,7 +91,6 @@ try
     app.MapRazorPages();
 
     app.Run();
-
 }
 catch (Exception ex)
 {
@@ -101,4 +101,5 @@ finally
 {
     Log.CloseAndFlush();
 }
+public partial class Program { }
 
