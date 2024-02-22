@@ -40,14 +40,10 @@ namespace ECommerce.Integration.Tests
                 });
 
 
-
                 services.AddDbContext<ApplicationDbContext>((ct, options) => { 
                     var cn = ct.GetRequiredService<DbConnection>();
                     options.UseSqlite(cn);
                 });
-
-                using var scope = services.BuildServiceProvider().CreateScope();
-                var db = scope.ServiceProvider.GetService<ApplicationDbContext>() ?? throw new Exception();
           
             });
         }
