@@ -4,6 +4,7 @@ using ECommerce.Integration.Tests.Helpers;
 using ECommerce.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -116,7 +117,7 @@ namespace ECommerce.Integration.Tests
             var controller = new BusinessCategoriesController(_userManager, null!);
 
             //Act
-            var result = await controller.Edit(null);
+            var result = await controller.Details(null);
 
             //Assert
             Assert.IsType<NotFoundResult>(result);
@@ -133,7 +134,7 @@ namespace ECommerce.Integration.Tests
             var controller = new BusinessCategoriesController(_userManager, _context);
 
             //Act
-            var result = await controller.Edit(It.IsAny<Guid>());
+            var result = await controller.Details(It.IsAny<Guid>());
 
             //Assert
             Assert.IsType<NotFoundResult>(result);
@@ -153,7 +154,7 @@ namespace ECommerce.Integration.Tests
             var controller = new BusinessCategoriesController(_userManager, _context);
 
             //Act
-            var result = await controller.Edit(bc.Id);
+            var result = await controller.Details(bc.Id);
 
             //Assert
             var vr = Assert.IsType<ViewResult>(result);
@@ -165,6 +166,218 @@ namespace ECommerce.Integration.Tests
         }
 
 
+        [Fact]
+        public async Task Edit_Get_IdIsNull_ReturnsNotFound()
+        {
+            //Arrange
+            var controller = new BusinessCategoriesController(_userManager, null!);
+
+            //Act
+            var result = await controller.Edit(null);
+
+            //Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+
+        [Fact]
+        public async Task Edit_Get_CategoryDoesnExist_ReturnsNotFound()
+        {
+            //Arrange
+            using var scope = _factory.Services.CreateScope();
+            var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            _context.Database.EnsureCreated();
+            var controller = new BusinessCategoriesController(_userManager, _context);
+
+            //Act
+            var result = await controller.Edit(It.IsAny<Guid>());
+
+            //Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+
+        [Fact]
+        public async Task Edit_Get_CategoryExists_ReturnsViewWithCategory()
+        {
+            //Arrange
+            using var scope = _factory.Services.CreateScope();
+            var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            _context.Database.EnsureCreated();
+            var bc = new BusinessCategory() { Id = Guid.NewGuid(), Name = "Test Details", Description = "Test Details" };
+            _context.BusinessCategories.Add(bc);
+            await _context.SaveChangesAsync();
+            var controller = new BusinessCategoriesController(_userManager, _context);
+
+            //Act
+            var result = await controller.Edit(bc.Id);
+
+            //Assert
+            var vr = Assert.IsType<ViewResult>(result);
+            Assert.NotNull(vr.Model);
+            Assert.Equal(bc.Id, ((BusinessCategory)vr.Model).Id);
+
+            //Cleanup
+            await _context.Database.ExecuteSqlRawAsync("Delete from BusinessCategories;");
+        }
+
+        [Fact]
+        public async Task Edit_Post_IdAndModelIdAreDifferent_ReturnsNotFound()
+        {
+            //Arrange
+            using var scope = _factory.Services.CreateScope();
+            var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            _context.Database.EnsureCreated();
+            var bc = new BusinessCategory() { Id = Guid.NewGuid(), Name = "Test Details", Description = "Test Details" };
+            _context.BusinessCategories.Add(bc);
+            await _context.SaveChangesAsync();
+
+            var controller = new BusinessCategoriesController(_userManager, _context);
+
+            //Act
+            var result = await controller.Edit(It.IsAny<Guid>(),bc);
+
+            //Assert
+            Assert.IsType<NotFoundResult>(result);
+
+            //Cleanup
+            await _context.Database.ExecuteSqlRawAsync("Delete from BusinessCategories;");
+        }
+
+
+        [Fact]
+        public async Task Edit_Post_ModelIsInvalid_ReturnsViewWithModel()
+        {
+            //Arrange
+            using var scope = _factory.Services.CreateScope();
+            var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            _context.Database.EnsureCreated();
+            var bc = new BusinessCategory() { Id = Guid.NewGuid(), Name = "Test Details", Description = "Test Details" };
+            _context.BusinessCategories.Add(bc);
+            await _context.SaveChangesAsync();
+
+            var controller = new BusinessCategoriesController(_userManager, _context);
+            controller.ModelState.AddModelError("Name", "Name is required");
+
+            //Act
+            var result = await controller.Edit(bc.Id, bc);
+
+            //Assert
+            var vr = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<BusinessCategory>(vr.Model);
+            Assert.Equal(bc.Id, model.Id);
+
+            //Cleanup
+            await _context.Database.ExecuteSqlRawAsync("Delete from BusinessCategories;");
+        }
+
+        [Fact]
+        public async Task Edit_Post_ModelValid_UpdatesCategory()
+        {
+            //Arrange
+            using var scope = _factory.Services.CreateScope();
+            var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            _context.Database.EnsureCreated();
+            var bc = new BusinessCategory() { Id = Guid.NewGuid(), Name = "Test Details", Description = "Test Details" };
+            _context.BusinessCategories.Add(bc);
+            await _context.SaveChangesAsync();
+
+            var controller = new BusinessCategoriesController(_userManager, _context);
+
+            bc.Name = "New Name";
+            //Act
+            var result = await controller.Edit(bc.Id, bc);
+            var newBc = await _context.BusinessCategories.FirstOrDefaultAsync(a=>a.Id == bc.Id);
+
+            //Assert
+            Assert.IsType<RedirectToActionResult>(result);
+            Assert.NotNull(newBc);
+            Assert.Equal(bc.Name, newBc.Name);
+
+            //Cleanup
+            await _context.Database.ExecuteSqlRawAsync("Delete from BusinessCategories;");
+        }
+
+
+        [Fact]
+        public async Task Delete_Get_IdIsNull_ReturnsNotFound()
+        {
+            //Arrange
+            var controller = new BusinessCategoriesController(_userManager, null!);
+
+            //Act
+            var result = await controller.Delete(null);
+
+            //Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+
+        [Fact]
+        public async Task Delete_Get_CategoryDoesnExist_ReturnsNotFound()
+        {
+            //Arrange
+            using var scope = _factory.Services.CreateScope();
+            var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            _context.Database.EnsureCreated();
+            var controller = new BusinessCategoriesController(_userManager, _context);
+
+            //Act
+            var result = await controller.Delete(It.IsAny<Guid>());
+
+            //Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+
+        [Fact]
+        public async Task Delete_Get_CategoryExists_ReturnsViewWithCategory()
+        {
+            //Arrange
+            using var scope = _factory.Services.CreateScope();
+            var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            _context.Database.EnsureCreated();
+            var bc = new BusinessCategory() { Id = Guid.NewGuid(), Name = "Test Details", Description = "Test Details" };
+            _context.BusinessCategories.Add(bc);
+            await _context.SaveChangesAsync();
+            var controller = new BusinessCategoriesController(_userManager, _context);
+
+            //Act
+            var result = await controller.Delete(bc.Id);
+
+            //Assert
+            var vr = Assert.IsType<ViewResult>(result);
+            Assert.NotNull(vr.Model);
+            Assert.Equal(bc.Id, ((BusinessCategory)vr.Model).Id);
+
+            //Cleanup
+            await _context.Database.ExecuteSqlRawAsync("Delete from BusinessCategories;");
+        }
+
+
+        [Fact]
+        public async Task Delete_Post_CategoryExists_RemovedCategory()
+        {
+            //Arrange
+            using var scope = _factory.Services.CreateScope();
+            var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            _context.Database.EnsureDeleted();
+            _context.Database.EnsureCreated();
+            var bc = new BusinessCategory() { Id = Guid.NewGuid(), Name = "Test Details", Description = "Test Details" };
+            _context.BusinessCategories.Add(bc);
+            await _context.SaveChangesAsync();
+            var controller = new BusinessCategoriesController(_userManager, _context);
+
+            //Act
+            var result = await controller.DeleteConfirmed(bc.Id);
+            var delBc = _context.BusinessCategories.FirstOrDefault(a => a.Id == bc.Id);
+            //Assert
+            Assert.IsType<RedirectToActionResult>(result);
+            Assert.Null(delBc);
+
+            //Cleanup
+            await _context.Database.ExecuteSqlRawAsync("Delete from BusinessCategories;");
+        }
 
     }
 }
