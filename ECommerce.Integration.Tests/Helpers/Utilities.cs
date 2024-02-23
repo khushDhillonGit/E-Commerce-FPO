@@ -55,7 +55,7 @@ namespace ECommerce.Integration.Tests.Helpers
         public static async Task SeedDbWithUsersAndBusinesses(this ApplicationDbContext? _context, UserManager<ApplicationUser> _userManager)
         {
             if (_context == null) return;
-
+            _context.Database.EnsureCreated();
             _context.BusinessCategories.Add(new BusinessCategory() { Id = Guid.Parse("9C6E1E9B-1CB2-4D9F-8B6C-47B4A8584EAD"), Name = "Retail", Description = "Retail shops", CreatedDate = DateTimeOffset.UtcNow });
             _context.BusinessCategories.Add(new BusinessCategory() { Id = Guid.Parse("01EA3BA8-CDAF-4927-89EA-3CF7C7C8B5E5"), Name = "Health", Description = "Medical shops", CreatedDate = DateTimeOffset.UtcNow });
             _context.Roles.Add(new ApplicationRole() { Name = ApplicationRole.SuperAdmin,NormalizedName = ApplicationRole.SuperAdmin.ToUpper()});
@@ -109,6 +109,24 @@ namespace ECommerce.Integration.Tests.Helpers
                 TwoFactorEnabled = false
             };
             bo.Address = address;
+
+            ApplicationUser bo2 = new()
+            {
+                Id = Guid.Parse("6D969212-285E-401A-8EA7-350E50179988"),
+                Email = "bo2@test.ca",
+                EmailConfirmed = true,
+                NormalizedEmail = "bo2@test.ca".ToUpper(),
+                UserName = "bo2@test.ca",
+                Name = "Business Owner",
+                NormalizedUserName = "bo2@test.ca".ToUpper(),
+                PhoneNumber = "7057225555",
+                PhoneNumberConfirmed = true,
+                TwoFactorEnabled = false
+            };
+
+            bo2.Address = address;
+            await _userManager.CreateAsync(bo2);
+            await _userManager.AddToRoleAsync(bo2,ApplicationRole.BusinessOwner);
 
             var walmart = new Business()
             {
