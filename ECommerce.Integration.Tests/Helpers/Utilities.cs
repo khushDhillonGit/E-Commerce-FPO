@@ -1,12 +1,15 @@
 ﻿using ECommerce.Data;
 using ECommerce.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Claims;
 
 namespace ECommerce.Integration.Tests.Helpers
 {
@@ -204,5 +207,17 @@ namespace ECommerce.Integration.Tests.Helpers
             await _userManager.CreateAsync(bo, "Test@1234");
             await _userManager.AddToRoleAsync(bo, ApplicationRole.BusinessOwner);
         }
+
+        public static void SetUserHttpContext(this Controller controller,string userName, string role) 
+        {
+            controller.ControllerContext.HttpContext = new DefaultHttpContext()
+            {
+                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, userName), new Claim(ClaimTypes.Role, role)
+                }))
+            };
+        }
+
     }
 }

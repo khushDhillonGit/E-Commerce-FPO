@@ -38,15 +38,8 @@ namespace ECommerce.Integration.Tests
 
             var controller = new BusinessesController(_imageUtility,_userManager,_context);
             var bo = _context.Users.FirstOrDefault(a=>a.Id == Guid.Parse("2CFD97F6-8136-4FCD-BBC5-5F2B72539B42"));
-            var context = new DefaultHttpContext()
-            {
-                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, bo.UserName), new Claim(ClaimTypes.Role, ApplicationRole.BusinessOwner)
-                }))
-            };
-
-            controller.ControllerContext.HttpContext = context;
+            Assert.NotNull(bo);
+            controller.SetUserHttpContext(bo.UserName,ApplicationRole.BusinessOwner);
 
             //Act
             var result = await controller.Index();
@@ -54,7 +47,6 @@ namespace ECommerce.Integration.Tests
             //Assert
             var vr = Assert.IsType<ViewResult>(result);
             var vm = Assert.IsType<List<BusinessViewModel>>(vr.Model);
-            Assert.NotNull(bo);
             Assert.Equal(bo.Businesses.Count, vm.Count);
             Assert.Equal(bo.Businesses.SelectMany(a=>a.ProductCategories).SelectMany(a=>a.Products).Count(), vm.Sum(a=>a.TotalProducts));
             Assert.Equal(bo.Businesses.SelectMany(a=>a.Employees).Count(), vm.Sum(a=>a.TotalEmployees));
