@@ -18,7 +18,6 @@ namespace ECommerce.Integration.Tests
     {
         private readonly CustomWebApplicationFactory<Program> _factory;
         private readonly ImageUtility _imageUtility;
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly string imageSavePath = Path.Combine("images", "businesses");
 
         public BusinessesControllerTests(CustomWebApplicationFactory<Program> factory) 
@@ -57,7 +56,9 @@ namespace ECommerce.Integration.Tests
             var vm = Assert.IsType<List<BusinessViewModel>>(vr.Model);
             Assert.NotNull(bo);
             Assert.Equal(bo.Businesses.Count, vm.Count);
-            Assert.Equal(bo.Businesses.SelectMany(a=>a.ProductCategories).Select(a=>a.Products).Count(), vm.Sum(a=>a.TotalProducts));
+            Assert.Equal(bo.Businesses.SelectMany(a=>a.ProductCategories).SelectMany(a=>a.Products).Count(), vm.Sum(a=>a.TotalProducts));
+            Assert.Equal(bo.Businesses.SelectMany(a=>a.Employees).Count(), vm.Sum(a=>a.TotalEmployees));
+            Assert.Equal(bo.Businesses.SelectMany(a=>a.ProductCategories).Count(), vm.Sum(a=>a.TotalCategories));
         }
 
     }

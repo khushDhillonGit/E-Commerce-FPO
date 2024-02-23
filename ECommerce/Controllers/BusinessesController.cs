@@ -59,7 +59,7 @@ namespace ECommerce.Controllers
 
                     vm.TotalProducts = bussinessData.TotalProducts;
                     vm.TotalOrders = bussinessData.TotalOrders;
-                    vm.TotalProducts = bussinessData.TotalCategories;
+                    vm.TotalCategories = bussinessData.TotalCategories;
                     vm.TotalEmployees = bussinessData.TotalEmployees;
 
                 }
