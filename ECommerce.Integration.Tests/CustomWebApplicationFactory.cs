@@ -31,16 +31,16 @@ namespace ECommerce.Integration.Tests
                     services.Remove(dbDescriptor);
                 }
 
-                services.AddSingleton<DbConnection>(container =>
+                services.AddScoped<DbConnection>(container =>
                 {
-                    var connection = new SqliteConnection("DataSource=:memory:");
+                    var connection = new SqliteConnection(string.Format("DataSource=file::memory:?{0}",Guid.NewGuid().ToString()));
                     connection.Open();
 
                     return connection;
                 });
 
 
-                services.AddDbContext<ApplicationDbContext>((ct, options) => { 
+                services.AddDbContext<ApplicationDbContext>((ct, options) => {
                     var cn = ct.GetRequiredService<DbConnection>();
                     options.UseSqlite(cn);
                 });
