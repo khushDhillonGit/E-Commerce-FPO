@@ -13,6 +13,10 @@ using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using NuGet.ContentModel;
 using System.Linq;
+using NuGet.Protocol;
+using Newtonsoft.Json;
+using Moq;
+using ECommerce.Models.Api;
 
 namespace ECommerce.Integration.Tests
 {
@@ -22,11 +26,17 @@ namespace ECommerce.Integration.Tests
         private readonly CustomWebApplicationFactory<Program> _factory;
         private readonly ImageUtility _imageUtility;
         private readonly string imageSavePath = Path.Combine("images", "businesses");
+        private readonly Mapper _mapper;
 
         public BusinessesControllerTests(CustomWebApplicationFactory<Program> factory)
         {
             _factory = factory;
             _imageUtility = _factory.Services.GetRequiredService<ImageUtility>();
+            _mapper = new Mapper(new MapperConfiguration(a => 
+            { 
+                a.CreateMap<BusinessViewModel, Business>().ReverseMap();
+                a.CreateMap<Address,AddressViewModel>().ReverseMap();
+            }));
         }
 
         [Fact]
