@@ -11,6 +11,8 @@ using ECommerce.ViewModels;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using NuGet.ContentModel;
+using System.Linq;
 
 namespace ECommerce.Integration.Tests
 {
@@ -73,6 +75,37 @@ namespace ECommerce.Integration.Tests
 
             //Assert
             Assert.IsType<UnauthorizedResult>(result);
+        }
+
+
+        [Fact]
+        public async Task CurrentBusiness_AuthorisedUser_ReturnsViewWithBusiness()
+        {
+            //Arrange
+            using var scope = _factory.Services.CreateScope();
+            var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var _userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            await _context.SeedDbWithUsersAndBusinesses(_userManager);
+
+            Guid bussId = Guid.Parse("4B9DA798-63E4-456E-9177-AEB61494C94A");
+            var controller = new BusinessesController(_imageUtility, _userManager, _context);
+            //this user doesnt have any business registered
+            var bo = _context.Users.FirstOrDefault(a => a.Id == Guid.Parse("2CFD97F6-8136-4FCD-BBC5-5F2B72539B42"));
+            if (bo == null) throw new NullReferenceException("User is null, please check Id and make sure you are seeding database");
+            controller.SetUserHttpContext(bo.UserName, ApplicationRole.BusinessOwner);
+
+            var buss = _context.Businesses.FirstOrDefault(a=>a.Id == bussId);
+            if (buss == null) throw new NullReferenceException("business is null, please check Id and make sure you are seeding database");
+            //Act
+            var result = await controller.CurrentBusiness(bussId);
+
+            //Assert
+            var vr = Assert.IsType<ViewResult>(result);
+            var vm = Assert.IsType<BusinessViewModel>(vr.Model);
+            Assert.Equal(bussId, vm.Id);
+            Assert.Equal(buss.ProductCategories.SelectMany(a => a.Products).Count(), vm.TotalProducts) ;
+            Assert.Equal(buss.Employees.Count(), vm.TotalEmployees);
+            Assert.Equal(buss.ProductCategories.Count(), vm.TotalCategories);
         }
 
     }
