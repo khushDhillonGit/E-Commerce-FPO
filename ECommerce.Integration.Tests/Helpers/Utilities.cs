@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Claims;
+using System.Text;
 
 namespace ECommerce.Integration.Tests.Helpers
 {
@@ -233,9 +234,48 @@ namespace ECommerce.Integration.Tests.Helpers
                 User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, userName), new Claim(ClaimTypes.Role, role)
-                }))
+                })),
+                Session = new Mock<ISession>().Object
             };
         }
 
+    }
+
+    public class MockHttpSession : ISession
+    {
+        readonly Dictionary<string, object> _sessionStorage = new Dictionary<string, object>();
+        string ISession.Id => throw new NotImplementedException();
+        bool ISession.IsAvailable => throw new NotImplementedException();
+        IEnumerable<string> ISession.Keys => _sessionStorage.Keys;
+        void ISession.Clear()
+        {
+            _sessionStorage.Clear();
+        }
+        Task ISession.CommitAsync(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+        Task ISession.LoadAsync(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+        void ISession.Remove(string key)
+        {
+            _sessionStorage.Remove(key);
+        }
+        void ISession.Set(string key, byte[] value)
+        {
+            _sessionStorage[key] = Encoding.UTF8.GetString(value);
+        }
+        bool ISession.TryGetValue(string key, out byte[] value)
+        {
+            if (_sessionStorage[key] != null)
+            {
+                value = Encoding.ASCII.GetBytes(_sessionStorage[key].ToString());
+                return true;
+            }
+            value = null;
+            return false;
+        }
     }
 }
