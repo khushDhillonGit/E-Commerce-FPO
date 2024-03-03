@@ -153,6 +153,7 @@ namespace ECommerce.Controllers
         public async Task<IActionResult> Edit(Guid id)
         {
             var business = await _context.Businesses.Include(a => a.Address).FirstOrDefaultAsync(x => x.Id == id);
+            if (business == null) return NotFound();
             BusinessViewModel viewModel = _mapper.Map<BusinessViewModel>(business);
             viewModel.Categories = GetBusinessCategoriesSelectList();
             return View(viewModel);
