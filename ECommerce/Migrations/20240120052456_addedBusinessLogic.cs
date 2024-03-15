@@ -13,9 +13,6 @@ namespace ECommerce.Migrations
                 name: "FK_ProductOrders_Orders_OrderId",
                 table: "ProductOrders");
 
-            migrationBuilder.DropColumn(
-                name: "FullAddress",
-                table: "Vender");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "AddressId",
@@ -281,11 +278,11 @@ namespace ECommerce.Migrations
                 name: "BusinessId",
                 table: "Categories");
 
-            migrationBuilder.AddColumn<string>(
-                name: "FullAddress",
-                table: "Vender",
-                type: "nvarchar(max)",
-                nullable: true);
+            //migrationBuilder.AddColumn<string>(
+            //    name: "FullAddress",
+            //    table: "Vender",
+            //    type: "nvarchar(max)",
+            //    nullable: true);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ProductOrders_Orders_OrderId",
