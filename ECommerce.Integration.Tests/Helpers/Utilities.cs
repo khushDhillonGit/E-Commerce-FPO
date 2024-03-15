@@ -235,7 +235,7 @@ namespace ECommerce.Integration.Tests.Helpers
                 {
                     new Claim(ClaimTypes.Name, userName), new Claim(ClaimTypes.Role, role)
                 })),
-                Session = new Mock<ISession>().Object
+                Session = new MockHttpSession()
             };
         }
 
