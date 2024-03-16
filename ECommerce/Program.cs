@@ -1,6 +1,6 @@
 using ECommerce.Controllers;
 using ECommerce.Data;
-using ECommerce.Models;
+using ECommerce.Data.Models;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
@@ -24,8 +24,17 @@ var connectionString = builder.Configuration["DefaultConnection"];
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    { var sqlBuilder = new SqlConnectionStringBuilder(connectionString);
-        options.UseSqlServer(sqlBuilder.ConnectionString); });
+    {
+        var sqlBuilder = new SqlConnectionStringBuilder(connectionString);
+        options.UseSqlServer(sqlBuilder.ConnectionString, x=>x.MigrationsAssembly("SqlServerMigrations"));
+    });
+
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//{
+//    options.UseNpgsql(connectionString);
+//});
+
+
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

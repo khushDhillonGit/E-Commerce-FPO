@@ -2,7 +2,6 @@
 using ECommerce.Data;
 using ECommerce.Services;
 using Microsoft.Extensions.DependencyInjection;
-using ECommerce.Models;
 using ECommerce.Integration.Tests.Helpers;
 using Microsoft.AspNetCore.Identity;
 using ECommerce.Controllers;
@@ -16,7 +15,8 @@ using System.Linq;
 using NuGet.Protocol;
 using Newtonsoft.Json;
 using Moq;
-using ECommerce.Models.Api;
+using ECommerce.Data.Models.Api;
+using ECommerce.Data.Models;
 
 namespace ECommerce.Integration.Tests
 {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ECommerce.Models
+namespace ECommerce.Data.Models
 {
     public class BusinessEmployee
     {

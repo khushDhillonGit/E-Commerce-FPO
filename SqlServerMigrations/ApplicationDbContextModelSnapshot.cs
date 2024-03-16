@@ -34,7 +34,7 @@ namespace ECommerce.Migrations
 
                     b.HasIndex("OwnersId");
 
-                    b.ToTable("ApplicationUserBusiness");
+                    b.ToTable("ApplicationUserBusiness", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Models.Address", b =>
@@ -74,7 +74,7 @@ namespace ECommerce.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Models.ApplicationRole", b =>
@@ -327,7 +327,7 @@ namespace ECommerce.Migrations
 
                     b.HasIndex("BusinessCategoryId");
 
-                    b.ToTable("Businesses");
+                    b.ToTable("Businesses", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Models.BusinessCategory", b =>
@@ -352,7 +352,7 @@ namespace ECommerce.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BusinessCategories");
+                    b.ToTable("BusinessCategories", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Models.BusinessEmployee", b =>
@@ -374,7 +374,7 @@ namespace ECommerce.Migrations
                     b.HasIndex("EmployeeId")
                         .IsUnique();
 
-                    b.ToTable("BusinessEmployees");
+                    b.ToTable("BusinessEmployees", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Models.Category", b =>
@@ -404,7 +404,7 @@ namespace ECommerce.Migrations
 
                     b.HasIndex("BusinessId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Models.Order", b =>
@@ -452,7 +452,7 @@ namespace ECommerce.Migrations
 
                     b.HasIndex("BusinessId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Models.Product", b =>
@@ -497,7 +497,7 @@ namespace ECommerce.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Models.ProductOrder", b =>
@@ -524,7 +524,7 @@ namespace ECommerce.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductOrders");
+                    b.ToTable("ProductOrders", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Models.Vender", b =>
@@ -557,7 +557,7 @@ namespace ECommerce.Migrations
 
                     b.HasIndex("BusinessId");
 
-                    b.ToTable("Venders");
+                    b.ToTable("Venders", (string)null);
                 });
 
             modelBuilder.Entity("ApplicationUserBusiness", b =>

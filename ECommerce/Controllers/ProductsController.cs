@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ECommerce.Data;
-using ECommerce.Models;
+using ECommerce.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using ECommerce.Services;
 using Serilog;
-using ECommerce.Models.Api;
+using ECommerce.Data.Models.Api;
 using AutoMapper;
 using ECommerce.ViewModels;
 using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;

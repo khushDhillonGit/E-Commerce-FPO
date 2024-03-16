@@ -1,8 +1,7 @@
-﻿using Org.BouncyCastle.Utilities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ECommerce.Models
+namespace ECommerce.Data.Models
 {
     public class Business
     {

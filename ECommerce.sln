@@ -5,9 +5,13 @@ VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerce", "ECommerce\ECommerce.csproj", "{C4CB7268-54DD-421A-8599-0F95881DAFD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Tests", "ECommerce.Tests\ECommerce.Tests.csproj", "{C6A91FA4-7031-40E3-8998-32A92719BF3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerce.Tests", "ECommerce.Tests\ECommerce.Tests.csproj", "{C6A91FA4-7031-40E3-8998-32A92719BF3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Integration.Tests", "ECommerce.Integration.Tests\ECommerce.Integration.Tests.csproj", "{2FEED9D8-DE6E-425C-9FA6-73822B693136}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerce.Integration.Tests", "ECommerce.Integration.Tests\ECommerce.Integration.Tests.csproj", "{2FEED9D8-DE6E-425C-9FA6-73822B693136}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlServerMigrations", "SqlServerMigrations\SqlServerMigrations.csproj", "{BE272B7E-E98A-48CD-8D63-772F1C43D073}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Data", "ECommerce.Data\ECommerce.Data.csproj", "{64E76B83-2F23-4B3B-8A00-158BF300C11D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{2FEED9D8-DE6E-425C-9FA6-73822B693136}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FEED9D8-DE6E-425C-9FA6-73822B693136}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FEED9D8-DE6E-425C-9FA6-73822B693136}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE272B7E-E98A-48CD-8D63-772F1C43D073}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE272B7E-E98A-48CD-8D63-772F1C43D073}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE272B7E-E98A-48CD-8D63-772F1C43D073}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE272B7E-E98A-48CD-8D63-772F1C43D073}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64E76B83-2F23-4B3B-8A00-158BF300C11D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64E76B83-2F23-4B3B-8A00-158BF300C11D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64E76B83-2F23-4B3B-8A00-158BF300C11D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64E76B83-2F23-4B3B-8A00-158BF300C11D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

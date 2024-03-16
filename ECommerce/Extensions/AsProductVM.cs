@@ -1,5 +1,5 @@
 ﻿using ECommerce.ViewModels;
-using ECommerce.Models;
+using ECommerce.Data.Models;
 using AutoMapper;
 
 namespace ECommerce.Extensions

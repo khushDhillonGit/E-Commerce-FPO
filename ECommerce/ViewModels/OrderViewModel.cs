@@ -1,4 +1,4 @@
-﻿using ECommerce.Models;
+﻿using ECommerce.Data.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace ECommerce.ViewModels

@@ -1,6 +1,6 @@
-﻿using Microsoft.Build.Framework;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace ECommerce.Models
+namespace ECommerce.Data.Models
 {
     public class BusinessCategory
     {

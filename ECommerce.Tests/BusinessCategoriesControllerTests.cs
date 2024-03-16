@@ -1,6 +1,6 @@
 using ECommerce.Controllers;
 using ECommerce.Data;
-using ECommerce.Models;
+using ECommerce.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;

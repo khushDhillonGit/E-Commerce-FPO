@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Web;
-
-namespace ECommerce.Models.Api
+﻿
+namespace ECommerce.Data.Models.Api
 {
     public class PostBackModel
     {

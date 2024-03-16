@@ -1,5 +1,5 @@
 ﻿using ECommerce.Data;
-using ECommerce.Models;
+using ECommerce.Data.Models;
 using ECommerce.Services;
 using ECommerce.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using AutoMapper;
-using ECommerce.Models.Api;
+using ECommerce.Data.Models.Api;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 

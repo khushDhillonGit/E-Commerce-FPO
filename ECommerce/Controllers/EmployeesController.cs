@@ -1,5 +1,5 @@
 ﻿using ECommerce.Data;
-using ECommerce.Models;
+using ECommerce.Data.Models;
 using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -19,7 +19,7 @@ using System.Net;
 using ECommerce.Services;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using ECommerce.Models.Api;
+using ECommerce.Data.Models.Api;
 
 namespace ECommerce.Controllers
 {

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ECommerce.Data;
-using ECommerce.Models;
-using ECommerce.Models.Api;
+using ECommerce.Data.Models;
+using ECommerce.Data.Models.Api;
 using ECommerce.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

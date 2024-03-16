@@ -1,8 +1,7 @@
-﻿using Castle.Components.DictionaryAdapter;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ECommerce.Models
+namespace ECommerce.Data.Models
 {
     public class ApplicationUser: IdentityUser<Guid>
     {

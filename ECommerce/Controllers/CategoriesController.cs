@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ECommerce.Data;
-using ECommerce.Models;
+using ECommerce.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using ECommerce.Models.Api;
+using ECommerce.Data.Models.Api;
 
 namespace ECommerce.Controllers
 {

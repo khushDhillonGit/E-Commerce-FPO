@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ECommerce.Models
+namespace ECommerce.Data.Models
 {
     public class Product
     {
@@ -20,6 +20,7 @@ namespace ECommerce.Models
         public string? ImageUrl { get; set; }
         public string? SKU { get; set; }
         public decimal Quantity { get; set; }
+        public string? Test { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public Guid CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
