@@ -20,20 +20,18 @@ Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configurat
 builder.Host.UseSerilog();
 
 // Add services to the container.
-var connectionString = builder.Configuration["DefaultConnection"];
+var databaseProvide = builder.Configuration["databaseProvider"] ?? "SqlServer";
 
+builder.Services.AddDbContext<ApplicationDbContext>(options => _ = databaseProvide switch
+{
+    "SqlServer" =>
+    options.UseSqlServer(builder.Configuration["SqlServerCnn"], x => x.MigrationsAssembly("SqlServerMigrations")),
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    {
-        var sqlBuilder = new SqlConnectionStringBuilder(connectionString);
-        options.UseSqlServer(sqlBuilder.ConnectionString, x=>x.MigrationsAssembly("SqlServerMigrations"));
-    });
+    "Postgresql" =>
+    options.UseNpgsql(builder.Configuration["PostgresqlCnn"], x => x.MigrationsAssembly("PostgresqlMigrations")),
 
-//builder.Services.AddDbContext<ApplicationDbContext>(options =>
-//{
-//    options.UseNpgsql(connectionString);
-//});
-
+    _ => throw new NotSupportedException("Provider not recognised")
+});
 
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -106,7 +104,7 @@ catch (Exception ex)
     Log.Fatal(ex, "Fatal: Application failed to start");
     throw;
 }
-finally 
+finally
 {
     Log.CloseAndFlush();
 }
