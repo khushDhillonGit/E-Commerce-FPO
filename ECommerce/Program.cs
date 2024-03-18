@@ -97,6 +97,10 @@ try
 
     app.MapRazorPages();
 
+    //using var scope = app.Services.CreateScope();
+    //var contextSeed = new ContextSeed(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(), scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>(), scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>());
+    //await contextSeed.SeedUsersAndRoles();
+
     app.Run();
 }
 catch (Exception ex)
