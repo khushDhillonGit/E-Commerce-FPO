@@ -12,6 +12,8 @@ namespace ECommerce.Data
         public virtual DbSet<ProductOrder<Order>> OrderProducts { get; set; }  
         public virtual DbSet<ProductOrder<Cart>> CartProducts { get; set; }  
         public virtual DbSet<ProductOrder<CustomerOrder>> CustomerOrderProducts { get; set; }  
+        public virtual DbSet<Cart> Carts { get; set; }  
+        public virtual DbSet<CustomerOrder> CustomerOrders { get; set; }  
         public virtual DbSet<BusinessCategory> BusinessCategories { get; set; }  
         public virtual DbSet<BusinessEmployee> BusinessEmployees { get; set; }  
         public virtual DbSet<Business> Businesses { get; set; }  
