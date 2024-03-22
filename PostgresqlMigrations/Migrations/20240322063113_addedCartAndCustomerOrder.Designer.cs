@@ -3,6 +3,7 @@ using System;
 using ECommerce.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace PostgresqlMigrations.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240322063113_addedCartAndCustomerOrder")]
+    partial class addedCartAndCustomerOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +36,7 @@ namespace PostgresqlMigrations.Migrations
 
                     b.HasIndex("OwnersId");
 
-                    b.ToTable("ApplicationUserBusiness", (string)null);
+                    b.ToTable("ApplicationUserBusiness");
                 });
 
             modelBuilder.Entity("ECommerce.Data.Models.Address", b =>
@@ -74,7 +76,7 @@ namespace PostgresqlMigrations.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Addresses", (string)null);
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("ECommerce.Data.Models.ApplicationRole", b =>
@@ -325,7 +327,7 @@ namespace PostgresqlMigrations.Migrations
 
                     b.HasIndex("BusinessCategoryId");
 
-                    b.ToTable("Businesses", (string)null);
+                    b.ToTable("Businesses");
                 });
 
             modelBuilder.Entity("ECommerce.Data.Models.BusinessCategory", b =>
@@ -350,7 +352,7 @@ namespace PostgresqlMigrations.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BusinessCategories", (string)null);
+                    b.ToTable("BusinessCategories");
                 });
 
             modelBuilder.Entity("ECommerce.Data.Models.BusinessEmployee", b =>
@@ -372,7 +374,7 @@ namespace PostgresqlMigrations.Migrations
                     b.HasIndex("EmployeeId")
                         .IsUnique();
 
-                    b.ToTable("BusinessEmployees", (string)null);
+                    b.ToTable("BusinessEmployees");
                 });
 
             modelBuilder.Entity("ECommerce.Data.Models.Cart", b =>
@@ -388,7 +390,7 @@ namespace PostgresqlMigrations.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Cart", (string)null);
+                    b.ToTable("Cart");
                 });
 
             modelBuilder.Entity("ECommerce.Data.Models.Category", b =>
@@ -418,7 +420,7 @@ namespace PostgresqlMigrations.Migrations
 
                     b.HasIndex("BusinessId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("ECommerce.Data.Models.CustomerOrder", b =>
@@ -462,7 +464,7 @@ namespace PostgresqlMigrations.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("CustomerOrder", (string)null);
+                    b.ToTable("CustomerOrder");
                 });
 
             modelBuilder.Entity("ECommerce.Data.Models.Order", b =>
@@ -510,7 +512,7 @@ namespace PostgresqlMigrations.Migrations
 
                     b.HasIndex("BusinessId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("ECommerce.Data.Models.Product", b =>
@@ -558,7 +560,7 @@ namespace PostgresqlMigrations.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("ECommerce.Data.Models.ProductOrder<ECommerce.Data.Models.Cart>", b =>
@@ -585,7 +587,7 @@ namespace PostgresqlMigrations.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartProducts", (string)null);
+                    b.ToTable("CartProducts");
                 });
 
             modelBuilder.Entity("ECommerce.Data.Models.ProductOrder<ECommerce.Data.Models.CustomerOrder>", b =>
@@ -612,7 +614,7 @@ namespace PostgresqlMigrations.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CustomerOrderProducts", (string)null);
+                    b.ToTable("CustomerOrderProducts");
                 });
 
             modelBuilder.Entity("ECommerce.Data.Models.ProductOrder<ECommerce.Data.Models.Order>", b =>
@@ -639,7 +641,7 @@ namespace PostgresqlMigrations.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderProducts", (string)null);
+                    b.ToTable("OrderProducts");
                 });
 
             modelBuilder.Entity("ECommerce.Data.Models.Vender", b =>
@@ -672,7 +674,7 @@ namespace PostgresqlMigrations.Migrations
 
                     b.HasIndex("BusinessId");
 
-                    b.ToTable("Venders", (string)null);
+                    b.ToTable("Venders");
                 });
 
             modelBuilder.Entity("ApplicationUserBusiness", b =>
