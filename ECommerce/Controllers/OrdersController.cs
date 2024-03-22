@@ -32,7 +32,7 @@ namespace ECommerce.Controllers
             {
                 var model = new OrderPaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.LocalDateTime.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, CustomerName = order.CustomerName, CustomerPhone = order.CustomerPhone };
 
-                foreach (var product in order.ProductOrders)
+                foreach (var product in order.OrderProducts)
                 {
                     model.Products.Add(new OrderProductsModel { ProductId = product.ProductId, Name = product.Product?.Name, Quantity = product.Quantity, TotalPrice = product.TotalPrice, SellingPrice = product.Product?.SellingPrice, UnitPrice = product.Product?.UnitPrice });
                 }
@@ -51,7 +51,7 @@ namespace ECommerce.Controllers
             {
                 var model = new OrderUnpaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.LocalDateTime.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, PaidByCustomer = order.PaidByCustomer, CustomerName = order.CustomerName, CustomerPhone = order.CustomerPhone };
 
-                foreach (var product in order.ProductOrders)
+                foreach (var product in order.OrderProducts)
                 {
                     model.Products.Add(new OrderProductsModel { ProductId = product.ProductId, Name = product.Product?.Name, Quantity = product.Quantity, TotalPrice = product.TotalPrice, SellingPrice = product.Product?.SellingPrice, UnitPrice = product.Product?.UnitPrice });
                 }
@@ -66,13 +66,13 @@ namespace ECommerce.Controllers
             var user = await GetCurrentUserAsync();
             if (user == null || !(IsAuthorisedForBusiness(user.Id,CurrentBusinessId))) { return RedirectToAction("Index", "Home"); }
 
-            var orders = _context.Orders.Include(a=>a.ProductOrders).Where(a=>a.FullyPaid && a.BusinessId == CurrentBusinessId);
+            var orders = _context.Orders.Include(a=>a.OrderProducts).ThenInclude(a=>a.Product).Where(a=>a.FullyPaid && a.BusinessId == CurrentBusinessId);
             List<OrderPaidModel> result = new();
             foreach (var order in orders)
             {
                 var model = new OrderPaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.LocalDateTime.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, CustomerName = order.CustomerName, CustomerPhone = order.CustomerPhone };
 
-                foreach (var product in order.ProductOrders)
+                foreach (var product in order.OrderProducts)
                 {
                     model.Products.Add(new OrderProductsModel { ProductId = product.ProductId, Name = product.Product?.Name, Quantity = product.Quantity, TotalPrice = product.TotalPrice, SellingPrice = product.Product?.SellingPrice, UnitPrice = product.Product?.UnitPrice });
                 }
@@ -87,13 +87,13 @@ namespace ECommerce.Controllers
             var user = await GetCurrentUserAsync();
             if (user == null || !(IsAuthorisedForBusiness(user.Id, CurrentBusinessId))) { return RedirectToAction("Index", "Home"); }
 
-            var orders = _context.Orders.Include(a=>a.ProductOrders).Where(a => a.BusinessId == CurrentBusinessId && !a.FullyPaid);
+            var orders = _context.Orders.Include(a=>a.OrderProducts).Where(a => a.BusinessId == CurrentBusinessId && !a.FullyPaid);
             List<OrderUnpaidModel> result = new();
             foreach (var order in orders)
             {
                 var model = new OrderUnpaidModel { OrderNumber = order.OrderNumber, OrderId = order.Id, OrderDate = order.OrderDate.LocalDateTime.ToString("o"), BillPrice = order.BillPrice, Price = order.Price, Discount = order.Discount, Employee = order.EmployeeId, PaidByCustomer = order.PaidByCustomer, CustomerName = order.CustomerName, CustomerPhone = order.CustomerPhone};
 
-                foreach (var product in order.ProductOrders) 
+                foreach (var product in order.OrderProducts) 
                 {
                     model.Products.Add(new OrderProductsModel { ProductId = product.ProductId, Name = product.Product?.Name, Quantity = product.Quantity, TotalPrice = product.TotalPrice, SellingPrice = product.Product?.SellingPrice, UnitPrice = product.Product?.UnitPrice });
                 }
@@ -188,9 +188,9 @@ namespace ECommerce.Controllers
                 {
                     throw new InvalidDataException("Quantity is invalid");
                 }
-                var productOrder = new ProductOrder { ProductId = product.Id, Quantity = item.Quantity, TotalPrice = product.SellingPrice * item.Quantity };
+                var productOrder = new ProductOrder<Order> { ProductId = product.Id, Quantity = item.Quantity, TotalPrice = product.SellingPrice * item.Quantity };
                 result += productOrder.TotalPrice;
-                order.ProductOrders?.Add(productOrder);
+                order.OrderProducts?.Add(productOrder);
                 product.Quantity -= item.Quantity;
             }
             return result;
@@ -215,7 +215,7 @@ namespace ECommerce.Controllers
             var userName = this.HttpContext?.User?.Identity?.Name;
             if (userName != null)
             {
-                return await _context.Users.Include(a => a.Businesses).ThenInclude(a => a.Orders).ThenInclude(a=>a.ProductOrders).Include(a=>a.Businesses).ThenInclude(a=>a.Address).FirstOrDefaultAsync(a => a.UserName == userName);
+                return await _context.Users.Include(a => a.Businesses).ThenInclude(a => a.Orders).ThenInclude(a=>a.OrderProducts).Include(a=>a.Businesses).ThenInclude(a=>a.Address).FirstOrDefaultAsync(a => a.UserName == userName);
             }
             return null;
         }

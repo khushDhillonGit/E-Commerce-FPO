@@ -8,13 +8,13 @@ namespace ECommerce.Data.Models
     {
         public Order()
         {
-            ProductOrders = new List<ProductOrder>();
+            OrderProducts = new List<ProductOrder<Order>>();
             OrderNumber = string.Empty;
         }
 
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
-        public virtual ICollection<ProductOrder> ProductOrders { get; set; }
+        public virtual ICollection<ProductOrder<Order>> OrderProducts { get; set; }
         [Required]
         public string OrderNumber { get; set; }
         [Required]

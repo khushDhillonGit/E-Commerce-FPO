@@ -9,7 +9,9 @@ namespace ECommerce.Data
         public virtual DbSet<Category> Categories { get; set; }  
         public virtual DbSet<Order> Orders { get; set; }  
         public virtual DbSet<Product> Products { get; set; }  
-        public virtual DbSet<ProductOrder> ProductOrders { get; set; }  
+        public virtual DbSet<ProductOrder<Order>> OrderProducts { get; set; }  
+        public virtual DbSet<ProductOrder<Cart>> CartProducts { get; set; }  
+        public virtual DbSet<ProductOrder<CustomerOrder>> CustomerOrderProducts { get; set; }  
         public virtual DbSet<BusinessCategory> BusinessCategories { get; set; }  
         public virtual DbSet<BusinessEmployee> BusinessEmployees { get; set; }  
         public virtual DbSet<Business> Businesses { get; set; }  
@@ -90,9 +92,9 @@ namespace ECommerce.Data
                 b.HasOne(e => e.Business).WithMany(e=>e.Venders).OnDelete(DeleteBehavior.NoAction);
             });
 
-            modelBuilder.Entity<ProductOrder>(b =>
+            modelBuilder.Entity<ProductOrder<Order>>(b =>
             {
-                b.HasOne(e => e.Order).WithMany(e => e.ProductOrders).OnDelete(DeleteBehavior.NoAction);
+                b.HasOne(e => e.Link).WithMany(e => e.OrderProducts).OnDelete(DeleteBehavior.NoAction);
             });
 
         }
