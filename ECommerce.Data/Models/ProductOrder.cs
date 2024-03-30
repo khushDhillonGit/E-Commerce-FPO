@@ -18,6 +18,12 @@ namespace ECommerce.Data.Models
 
         public decimal Quantity { get; set; }
 
-        public decimal TotalPrice { get; set;  }
+        public decimal TotalPrice
+        {
+            get
+            {
+                return Quantity * Product?.UnitPrice ?? 0;
+            }
+        }
     }
 }
