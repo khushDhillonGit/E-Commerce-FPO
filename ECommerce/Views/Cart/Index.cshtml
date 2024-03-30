@@ -11,8 +11,9 @@
             <th>Product</th>
             <th>Price</th>
             <th>Quantity</th>
-            <th>Total</th>
             <th></th>
+            <th></th>
+            <th>Total</th>
         </tr>
     </thead>
     <tbody>
@@ -29,15 +30,25 @@
                 totalPrice += price;
             }
             <tr>
-                <td>@count</td>
-                <td>@product.Product.Name</td>
-                <td>@product.Product.SellingPrice</td>
-                <td>@product.Quantity</td>
-                <td>@price</td>
-                <td><a class="btn btn-danger" asp-action="DeleteItem" asp-controller="Cart" asp-route-cartProductId="@product.Id">Delete</a></td>
+                <form asp-action="UpdateQuantity" asp-controller="Cart">
+                    <td>@count</td>
+                    <td>@product.Product.Name</td>
+                    <td>@product.Product.SellingPrice</td>
+                    <td><input type="number" name="quantity" value="@product.Quantity" /></td>
+                    <td>
+                        <a class="btn btn-danger" asp-action="DeleteItem" asp-controller="Cart" asp-route-cartProductId="@product.Id">Delete</a>
+                    </td>
+                    <td>
+                        <input type="hidden" name="cartProductId" value="@product.Id"/>
+                        <button class="btn btn-success" type="submit">Update Quantity</button>
+                    </td>
+                    <td>@price</td>
+                </form>
             </tr>    
         }
         <tr>
+            <td></td>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>
