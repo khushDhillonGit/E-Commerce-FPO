@@ -11,7 +11,7 @@ namespace ECommerce.Data.Models
     public class Cart
     {
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public virtual ICollection<ProductOrder<Cart>> CartProducts { get; set; } = new List<ProductOrder<Cart>>();
         public Guid CustomerId { get; set; }
         [ForeignKey(nameof(CustomerId))]

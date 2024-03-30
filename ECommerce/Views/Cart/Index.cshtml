@@ -1,0 +1,48 @@
+﻿@model ECommerce.Data.Models.Cart;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Index";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int count = 0;
+            decimal totalPrice = 0;
+            decimal price = 0;
+        }
+        @foreach (var product in Model.CartProducts)
+        {
+            {
+                price = product.Quantity * product.Product.SellingPrice;
+                count++;
+                totalPrice += price;
+            }
+            <tr>
+                <td>@count</td>
+                <td>@product.Product.Name</td>
+                <td>@product.Product.SellingPrice</td>
+                <td>@product.Quantity</td>
+                <td>@price</td>
+                <td><a class="btn btn-danger" asp-action="DeleteItem" asp-controller="Cart" asp-route-cartProductId="@product.Id">Delete</a></td>
+            </tr>    
+        }
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>@totalPrice</td>
+        </tr>
+    </tbody>
+</table>

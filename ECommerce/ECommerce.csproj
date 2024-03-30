@@ -36,7 +36,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\ECommerce.Data\ECommerce.Data.csproj" />
-		<ProjectReference Include="..\PostgresqlMigrations\PostgresqlMigrations.csproj" >
+		<ProjectReference Include="..\PostgresqlMigrations\PostgresqlMigrations.csproj">
 			<PrivateAssets>all</PrivateAssets>
 			<ExcludeAssets>compile</ExcludeAssets>
 		</ProjectReference>
