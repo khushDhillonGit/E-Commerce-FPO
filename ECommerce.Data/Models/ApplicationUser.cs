@@ -11,6 +11,7 @@ namespace ECommerce.Data.Models
             Tokens = new List<ApplicationUserToken>();
             UserRoles = new List<ApplicationUserRole>();
             Claims = new List<ApplicationUserClaim>();
+            CustomerOrders = new List<CustomerOrder>();
         }
         public string? Name { get; set; }
         public bool IsDelete { get; set; }
@@ -22,6 +23,7 @@ namespace ECommerce.Data.Models
         public virtual ICollection<ApplicationUserLogin> Logins { get; set; }
         public virtual ICollection<ApplicationUserToken> Tokens { get; set; }
         public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
+        public virtual ICollection<CustomerOrder> CustomerOrders { get; set; }
         public virtual ICollection<Business> Businesses { get; set;} = new List<Business>();
         public virtual BusinessEmployee? BusinessEmployee { get; set; }
     }
