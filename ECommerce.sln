@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlServerMigrations", "SqlS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Data", "ECommerce.Data\ECommerce.Data.csproj", "{64E76B83-2F23-4B3B-8A00-158BF300C11D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostgresqlMigrations", "PostgresqlMigrations\PostgresqlMigrations.csproj", "{DD697B8D-38BC-444B-A32C-94A9C4D8481E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{64E76B83-2F23-4B3B-8A00-158BF300C11D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64E76B83-2F23-4B3B-8A00-158BF300C11D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64E76B83-2F23-4B3B-8A00-158BF300C11D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD697B8D-38BC-444B-A32C-94A9C4D8481E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD697B8D-38BC-444B-A32C-94A9C4D8481E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD697B8D-38BC-444B-A32C-94A9C4D8481E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD697B8D-38BC-444B-A32C-94A9C4D8481E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

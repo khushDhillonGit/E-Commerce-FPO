@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ECommerce.Data.Models
 {
-    public class ProductOrder
+    public class ProductOrder<T>
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -12,12 +12,18 @@ namespace ECommerce.Data.Models
         [ForeignKey(nameof(ProductId))]
         public virtual Product? Product { get; set; }
 
-        public Guid OrderId { get; set; }
-        [ForeignKey(nameof(OrderId))]
-        public virtual Order? Order { get; set; }
+        public Guid LinkId { get; set; }
+        [ForeignKey(nameof(LinkId))]
+        public virtual T? Link { get; set; }
 
         public decimal Quantity { get; set; }
 
-        public decimal TotalPrice { get; set;  }
+        public decimal TotalPrice
+        {
+            get
+            {
+                return Quantity * Product?.UnitPrice ?? 0;
+            }
+        }
     }
 }

@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using Moq;
 using ECommerce.Data.Models.Api;
 using ECommerce.Data.Models;
+using Microsoft.AspNetCore.TestHost;
 
 namespace ECommerce.Integration.Tests
 {
@@ -27,7 +28,9 @@ namespace ECommerce.Integration.Tests
         private readonly ImageUtility _imageUtility;
         private readonly string imageSavePath = Path.Combine("images", "businesses");
         private readonly Mapper _mapper;
-
+        private UserManager<ApplicationUser>? _userManager;
+        private ApplicationDbContext? _context;
+        private readonly TestServer _server;
         public BusinessesControllerTests(CustomWebApplicationFactory<Program> factory)
         {
             _factory = factory;
@@ -39,13 +42,20 @@ namespace ECommerce.Integration.Tests
             }));
         }
 
+        private void RenewScopedServices() 
+        {
+            using (var scope = _factory.Services.CreateScope())
+            {
+                _userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            }
+        }
+
         [Fact]
         public async Task Index_WithCurrentUser_ReturnsCurrentUserBusinesses()
         {
             //Arrange
-            using var scope = _factory.Services.CreateScope();
-            var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var _userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            RenewScopedServices();
             await _context.SeedDbWithUsersAndBusinesses(_userManager);
 
             var controller = new BusinessesController(_imageUtility, _userManager, _context);
@@ -69,9 +79,9 @@ namespace ECommerce.Integration.Tests
         public async Task CurrentBusiness_UnauthorisedUser_ReturnsUnauthorised()
         {
             //Arrange
+            RenewScopedServices();
             using var scope = _factory.Services.CreateScope();
             var _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var _userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             await _context.SeedDbWithUsersAndBusinesses(_userManager);
 
             var controller = new BusinessesController(_imageUtility, _userManager, _context);

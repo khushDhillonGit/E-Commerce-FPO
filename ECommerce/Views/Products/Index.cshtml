@@ -10,7 +10,7 @@
             All Products
         </h2>
     </div>
-    @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+    @if (User.IsInRole("Business Owner") || User.IsInRole("SuperAdmin"))
     {
         <div class="col-12 d-flex justify-content-end">
             <a class="btn primary-btn" asp-action="Create" asp-controller="Products">Add New</a>
