@@ -70,7 +70,7 @@ namespace ECommerce.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BusinessesList",
+                name: "Businesses",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -119,7 +119,7 @@ namespace ECommerce.Migrations
                     table.ForeignKey(
                         name: "FK_ApplicationUserBusiness_Businesses_BusinessesId",
                         column: x => x.BusinessesId,
-                        principalTable: "BusinessesList",
+                        principalTable: "Businesses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -144,7 +144,7 @@ namespace ECommerce.Migrations
                     table.ForeignKey(
                         name: "FK_BusinessEmployees_Businesses_BusinessId",
                         column: x => x.BusinessId,
-                        principalTable: "BusinessesList",
+                        principalTable: "Businesses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -181,19 +181,19 @@ namespace ECommerce.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Businesses_AddressId",
-                table: "BusinessesList",
+                table: "Businesses",
                 column: "AddressId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Businesses_BusinessCategoryId",
-                table: "BusinessesList",
+                table: "Businesses",
                 column: "BusinessCategoryId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Categories_Businesses_BusinessId",
                 table: "Categories",
                 column: "BusinessId",
-                principalTable: "BusinessesList",
+                principalTable: "Businesses",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
 
@@ -201,7 +201,7 @@ namespace ECommerce.Migrations
                 name: "FK_Orders_Businesses_BusinessId",
                 table: "Orders",
                 column: "BusinessId",
-                principalTable: "BusinessesList",
+                principalTable: "Businesses",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
 
@@ -246,7 +246,7 @@ namespace ECommerce.Migrations
                 name: "BusinessEmployees");
 
             migrationBuilder.DropTable(
-                name: "BusinessesList");
+                name: "Businesses");
 
             migrationBuilder.DropTable(
                 name: "Addresses");
