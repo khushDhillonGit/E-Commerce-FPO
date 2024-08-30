@@ -35,6 +35,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Include="wwwroot\**\*">
+			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
+		</None>
+	</ItemGroup>
+	
+	<ItemGroup>
 		<ProjectReference Include="..\ECommerce.Data\ECommerce.Data.csproj" />
 		<ProjectReference Include="..\PostgresqlMigrations\PostgresqlMigrations.csproj">
 			<PrivateAssets>all</PrivateAssets>
