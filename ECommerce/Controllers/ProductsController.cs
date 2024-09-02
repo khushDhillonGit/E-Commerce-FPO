@@ -12,6 +12,7 @@ using AutoMapper;
 using ECommerce.ViewModels;
 using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
 using ECommerce.Extensions;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace ECommerce.Controllers
 {
@@ -144,6 +145,11 @@ namespace ECommerce.Controllers
                 }
                 _context.Add(product);
                 await _context.SaveChangesAsync();
+
+                var user = await GetCurrentUserAsync();
+                await _context.ProductHistories.AddAsync(new ProductHistory { Id = Guid.NewGuid(), ProductId = product.Id, CreatedDate = DateTimeOffset.UtcNow, Quantity = product.Quantity, SellingPrice = product.SellingPrice, UnitPrice = product.UnitPrice, UserId = user.Id });
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
@@ -179,7 +185,9 @@ namespace ECommerce.Controllers
         [Authorize(Roles = $"{ApplicationRole.SuperAdmin},{ApplicationRole.BusinessOwner}")]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Description,UnitPrice,SellingPrice,SKU,Quantity,CategoryId,ImageUrl")] Product product, IFormFile? Image)
         {
-            if (id != product.Id)
+
+            var productInDb = await _context.Products.AsNoTracking().Include(a=>a.ProductHistories).FirstOrDefaultAsync(a => a.Id == id);
+            if (id != product.Id || productInDb == null)
             {
                 return NotFound();
             }
@@ -200,7 +208,11 @@ namespace ECommerce.Controllers
                             Log.Logger.Error(ex, "{Date}: {Message}", DateTimeOffset.UtcNow, ex.Message);
                         }
                     }
-
+                    if (productInDb.Quantity != product.Quantity || productInDb.UnitPrice != product.UnitPrice || productInDb.SellingPrice != product.SellingPrice) 
+                    {
+                        var user = await GetCurrentUserAsync();
+                        await _context.ProductHistories.AddAsync(new ProductHistory { Id = Guid.NewGuid(), ProductId = productInDb.Id, CreatedDate = DateTimeOffset.UtcNow, Quantity = product.Quantity, SellingPrice = product.SellingPrice, UnitPrice = product.UnitPrice, UserId =  user.Id});
+                    }
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }
