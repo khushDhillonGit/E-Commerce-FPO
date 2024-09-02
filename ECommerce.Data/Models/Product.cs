@@ -26,5 +26,6 @@ namespace ECommerce.Data.Models
         [ForeignKey(nameof(CategoryId))]
         public virtual Category? Category { get; set; } 
         public bool IsDelete { get; set; }
+        public virtual ICollection<ProductHistory> ProductHistories { get; set; } = new List<ProductHistory>();
     }
 }

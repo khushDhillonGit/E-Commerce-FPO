@@ -19,8 +19,7 @@ namespace ECommerce.Data
         public virtual DbSet<Business> Businesses { get; set; }  
         public virtual DbSet<Address> Addresses { get; set; }  
         public virtual DbSet<Vender> Venders { get; set; }  
-
-
+        public virtual DbSet<ProductHistory> ProductHistories { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
