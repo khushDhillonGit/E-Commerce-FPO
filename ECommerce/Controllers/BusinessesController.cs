@@ -141,7 +141,7 @@ namespace ECommerce.Controllers
                     Log.Logger.Error(ex, "{Date}, Message:{Message}", DateTimeOffset.UtcNow, ex.Message);
                     ModelState.AddModelError("ErrorMessage", "Something went wrong, Please contact administrator");
                 }
-                return RedirectToAction(nameof(Create));
+                return RedirectToAction(nameof(Index));
             }
             businessModel.Categories = GetBusinessCategoriesSelectList();
             return View(businessModel);
